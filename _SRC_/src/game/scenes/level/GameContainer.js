@@ -1,0 +1,118 @@
+import { Container, TilingSprite, ColorMatrixFilter } from "pixi.js";
+import { tickerAdd, tickerRemove } from "../../../app/application";
+import { images } from "../../../app/assets";
+import { EventHub, events, startScene } from "../../../app/events";
+import { SCENE_NAME } from "../SceneManager";
+import Asteroids from "./Asteroids";
+import Clouds from "./Clouds";
+import Obstacles from "./Obstacles";
+import Player from "./Player";
+import Smoke from "./Smoke";
+import SparksParticles from "./SparksParticles";
+import StonesParticles from "./StonesParticles";
+
+const BG_WIDTH = 900
+const BG_HEIGHT = 980
+const SIZE = 900 // эталонный размер для отличной отрисовки и ширины и высоты
+const TOP_SPEED_RATE = 0.66
+
+export let timeScale = 1
+const SLOW_DOWN_STEP = 0.0003
+
+export default class GameContainer extends Container {
+    constructor(shaker) {
+        super()
+
+        this.scrollSpeed = 0.66
+
+        this.shaker = shaker
+
+        this.bgBottom = new TilingSprite(images.bg_bottom)
+        this.bgBottom.anchor.set(0.5, 1)
+        this.bgBottom.position.set(0, BG_HEIGHT * 0.5)
+        this.addChild(this.bgBottom)
+
+        this.bgTop = new TilingSprite(images.bg_top)
+        this.bgTop.anchor.set(0.5, 0)
+        this.bgTop.position.set(0, -BG_HEIGHT * 0.5)
+        this.addChild(this.bgTop)
+
+        this.clouds = new Clouds(this.scrollSpeed)
+        this.addChild(this.clouds)
+
+        this.player = new Player( -300, -350, 150)
+
+        this.obstacles = new Obstacles(this.scrollSpeed, this.player)
+        this.addChild(this.obstacles)
+
+        this.stones = new StonesParticles(this.scrollSpeed)
+        this.addChild(this.stones.container)
+
+        this.addChild(this.player)
+
+        this.smokeContainer = new Smoke(this.scrollSpeed)
+        this.addChild(this.smokeContainer)
+
+        this.asteroids = new Asteroids(this.scrollSpeed, this.player)
+        this.addChild(this.asteroids)
+
+        this.sparks = new SparksParticles(this.scrollSpeed)
+        this.addChild(this.sparks.container)
+
+        EventHub.on( events.slowDown, this.slowDown, this )
+
+        tickerAdd(this)
+    }
+
+    screenResize(screenData) {
+        let scale = screenData.width / SIZE
+        if (screenData.isLandscape) scale = screenData.height / SIZE
+
+        const width = screenData.width / scale
+        const height = screenData.height / scale
+
+        this.bgTop.width = width
+        this.bgBottom.width = width
+
+        this.scale.set(scale)
+
+        this.clouds.resize(width)
+        this.obstacles.resize(width)
+        this.asteroids.resize(width)
+        this.stones.resize(width, height)
+        this.sparks.resize(width, height)
+    }
+
+    getFlyClick() {
+        if (this.player && timeScale === 1) this.player.fly()
+    }
+
+    slowDown() {
+        if (timeScale < 1) return
+
+        timeScale -= SLOW_DOWN_STEP
+
+        const sepiaFilter = new ColorMatrixFilter()
+        sepiaFilter.sepia(true)
+        this.filters = [sepiaFilter]
+    }
+
+    tick(deltaMs) {
+        if (timeScale < 1) {
+            timeScale = Math.max(0, timeScale - SLOW_DOWN_STEP * deltaMs)
+            if (timeScale === 0) startScene(SCENE_NAME.Load)
+        }
+
+        const scrollStep = this.scrollSpeed * deltaMs * timeScale
+
+        this.bgTop.tilePosition.x -= Math.round(scrollStep * TOP_SPEED_RATE)
+        if (this.bgTop.tilePosition.x < -BG_WIDTH) this.bgTop.tilePosition.x += BG_WIDTH
+
+        this.bgBottom.tilePosition.x -= Math.round(scrollStep)
+        if (this.bgBottom.tilePosition.x < -BG_WIDTH) this.bgBottom.tilePosition.x += BG_WIDTH
+    }
+
+    kill() {
+        EventHub.off( events.slowDown, this.slowDown, this )
+    }
+}
