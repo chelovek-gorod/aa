@@ -25,7 +25,6 @@ export const events = createEnum([
     'slowDown',
     'removePlyerSave',
     'getNextLevel',
-    'showRedScreen'
 ])
 
 export function screenResize( data ) {
@@ -80,7 +79,4 @@ export function removePlyerSave() {
 }
 export function getNextLevel() {
     EventHub.emit( events.getNextLevel )
-}
-export function showRedScreen() {
-    EventHub.emit( events.showRedScreen )
 }

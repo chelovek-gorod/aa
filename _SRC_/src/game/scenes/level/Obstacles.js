@@ -412,7 +412,6 @@ export default class Obstacles extends Container {
         if (collideObstaclesList.length) {
             resetCombo()
             playerUseSave()
-            showRedScreen()
             if (playerSaves < 0) slowDown()
             else removePlyerSave()
         }
