@@ -1,5 +1,5 @@
 import { Container, Text, Point, Graphics, Sprite } from "pixi.js";
-import { getSafeAreaOffsets } from "../../../app/application";
+import { getSafeAreaOffsets, tickerAdd, tickerRemove } from "../../../app/application";
 import { images } from "../../../app/assets";
 import { EventHub, events } from "../../../app/events";
 import { styles } from "../../../app/styles";
@@ -43,6 +43,7 @@ export default class UI extends Container {
         this.pauseButton.scale.set(0.5)
         this.addChild(this.pauseButton)
 
+        this.coinAnimations = 0
         this.coinIcon = new Sprite(images.coin)
         this.coinIcon.anchor.set(0, 1)
         this.coinIcon.scale.set(0.5)
@@ -52,6 +53,7 @@ export default class UI extends Container {
         this.coinsText.anchor.set(0, 1)
         this.addChild(this.coinsText)
 
+        this.saveAnimations = 0
         this.saveIcon = new Sprite(images.save)
         this.saveIcon.anchor.set(1, 1)
         this.saveIcon.scale.set(0.5)
@@ -137,6 +139,8 @@ export default class UI extends Container {
     }
     removeSave() {
         this.savesText.text = 'x' + Math.max(0, playerSaves)
+        this.saveAnimations++
+        tickerAdd(this)
     }
     updateLevel() {
         if (this.combo < playerLevel) this.combo = playerLevel
@@ -144,6 +148,33 @@ export default class UI extends Container {
         this.targetText.text = playerTarget
         this.coinsText.text = 'x' + playerCoins
         this.gameContainer.addChild( new FlyText(null, 0, 0) )
+        this.coinAnimations += 2
+        tickerAdd(this)
+    }
+
+    tick(deltaMs) {
+        if (this.saveAnimations > 0) {
+            this.saveIcon.scale.set( this.saveIcon.scale.x + 0.0012 * deltaMs )
+            this.saveIcon.alpha = Math.max(0, this.saveIcon.alpha - 0.0012 * deltaMs)
+            if (this.saveIcon.alpha === 0) {
+                this.saveAnimations--
+                this.saveIcon.scale.set(0.5)
+                this.saveIcon.alpha = 1
+                if (this.saveAnimations === 0 && this.coinAnimations === 0) tickerRemove(this)
+            }
+        }
+        if (this.coinAnimations > 0) {
+            if (this.coinAnimations % 2 === 0) {
+                this.coinIcon.scale.set( Math.min(0.6, this.coinIcon.scale.x + 0.0006 * deltaMs) )
+                if (this.coinIcon.scale.x === 0.6) this.coinAnimations--
+            } else {
+                this.coinIcon.scale.set( Math.max(0.5, this.coinIcon.scale.x - 0.0006 * deltaMs) )
+                if (this.coinIcon.scale.x === 0.5) {
+                    this.coinAnimations--
+                    if (this.saveAnimations === 0 && this.coinAnimations === 0) tickerRemove(this)
+                }
+            }
+        }
     }
 
     kill() {

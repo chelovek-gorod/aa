@@ -4,7 +4,7 @@ import { updateStoredData } from "../game/storage"
 export let isAdAvailable = true
 
 export let playerCoins = 0
-export let playerSaves = 3
+export let playerSaves = 0
 export let playerLevel = 1
 export let playerScore = 0
 export let playerTarget = 10 // score for next level
