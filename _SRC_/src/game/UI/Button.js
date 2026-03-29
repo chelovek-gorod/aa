@@ -4,7 +4,7 @@ import { removeCursorPointer, setCursorPointer } from "../../utils/functions"
 import { styles } from "../../app/styles"
 import { soundPlay } from "../../app/sound"
 import { tickerAdd, tickerRemove } from "../../app/application"
-import { TEXT_BUTTON } from "../localText"
+// import { TEXT_BUTTON_START } from "../localText"
 import { getLanguage } from "../localization"
 import { EventHub, events } from "../../app/events"
 
@@ -125,7 +125,7 @@ export default class Button extends Container {
     }
 
     updateLanguage(lang) {
-        this.value.text = TEXT_BUTTON[ this.textKey ][ lang ]
+       // this.value.text = TEXT_BUTTON[ this.textKey ][ lang ]
     }
 
     kill() {

@@ -5,13 +5,15 @@ import { EventHub, events } from "../../app/events"
 
 import LevelScene from "./level/LevelScene"
 import LoadScene from "./load/LoadScene"
+import MenuScene from "./menu/MenuScene"
 
 export const SCENE_NAME = createEnum(
-    ['Level', 'Load']
+    ['Menu', 'Level', 'Load']
 )
 
 const SCENES = {
     [SCENE_NAME.Load] : LoadScene,
+    [SCENE_NAME.Menu] : MenuScene,
     [SCENE_NAME.Level] : LevelScene,
 }
 
@@ -72,6 +74,7 @@ export default class SceneManager {
         this.blocker.fill(BLOCKER_COLOR)
     }
     showScreenBlocker() {
+        this.blocker.alpha = SCENE_ALPHA_MIN
         this.blocker.visible = true
         sceneAdd(this.blocker)
         document.body.style.cursor = "default"

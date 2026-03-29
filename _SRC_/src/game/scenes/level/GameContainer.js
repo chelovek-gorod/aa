@@ -1,5 +1,5 @@
 import { Container, TilingSprite, ColorMatrixFilter } from "pixi.js";
-import { tickerAdd, tickerRemove } from "../../../app/application";
+import { kill, tickerAdd, tickerRemove } from "../../../app/application";
 import { images } from "../../../app/assets";
 import { EventHub, events, startScene } from "../../../app/events";
 import { SCENE_NAME } from "../SceneManager";
@@ -23,6 +23,8 @@ export default class GameContainer extends Container {
     constructor(shaker) {
         super()
 
+        timeScale = 1
+
         this.scrollSpeed = 0.66
 
         this.shaker = shaker
@@ -40,7 +42,7 @@ export default class GameContainer extends Container {
         this.clouds = new Clouds(this.scrollSpeed)
         this.addChild(this.clouds)
 
-        this.player = new Player( -300, -350, 150)
+        this.player = new Player(-300, -350, 150)
 
         this.obstacles = new Obstacles(this.scrollSpeed, this.player)
         this.addChild(this.obstacles)
@@ -90,6 +92,8 @@ export default class GameContainer extends Container {
     slowDown() {
         if (timeScale < 1) return
 
+        if (navigator.vibrate) navigator.vibrate([200, 50, 200, 350])
+
         timeScale -= SLOW_DOWN_STEP
 
         const sepiaFilter = new ColorMatrixFilter()
@@ -100,7 +104,11 @@ export default class GameContainer extends Container {
     tick(deltaMs) {
         if (timeScale < 1) {
             timeScale = Math.max(0, timeScale - SLOW_DOWN_STEP * deltaMs)
-            if (timeScale === 0) startScene(SCENE_NAME.Load)
+            if (timeScale === 0) {
+                tickerRemove(this)
+                kill(this)
+                startScene(SCENE_NAME.Menu)
+            }
         }
 
         const scrollStep = this.scrollSpeed * deltaMs * timeScale
@@ -114,5 +122,13 @@ export default class GameContainer extends Container {
 
     kill() {
         EventHub.off( events.slowDown, this.slowDown, this )
+
+        this.sparks.kill()
+        this.sparks = null
+
+        this.stones.kill()
+        this.stones = null
+
+        console.log('GameContainer - kill')
     }
 }

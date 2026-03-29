@@ -23,6 +23,11 @@ export const fonts = {
 export const images = {
     logo: 'logo.png',
 
+    bg_main: 'bg_main.png',
+
+    button: 'button_hover.png',
+    button_hover: 'button_hover.png',
+
     bg_top: 'bg_top.png',
     bg_bottom: 'bg_bottom.png',
 

@@ -106,6 +106,7 @@ export default class Player extends Container {
             this.rotation = 0
             if (this.shakePower > 0) {
                 shakeScreen({powerX: this.shakePower, powerY: this.shakePower * 2})
+                if (navigator.vibrate) navigator.vibrate(50)
 
                 const fallSteps =  Math.ceil(this.shakePower * 2) + 1
                 const step = (SMOKE.fallMaxX - SMOKE.fallMinX) / fallSteps

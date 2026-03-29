@@ -1,11 +1,12 @@
 import { Container, Graphics } from 'pixi.js'
 import { music } from '../../../app/assets'
-import { EventHub, events } from '../../../app/events'
+import { EventHub, events, startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import { getLanguage } from '../../localization'
 import Shaker from './Shaker'
 import GameContainer from './GameContainer'
 import UI from './UI'
+import { SCENE_NAME } from '../SceneManager'
 
 export default class LevelScene extends Container {
     constructor() {
@@ -59,9 +60,7 @@ export default class LevelScene extends Container {
 
     kill() {
         EventHub.off( events.updateLanguage, this.updateLanguage, this )
-        EventHub.off( events.addScore, this.addScore, this )
-        EventHub.off( events.resetCombo, this.resetCombo, this )
         
-        this.tapArea.on('pointerdown', this.getFlyClick, this)
+        this.tapArea.off('pointerdown', this.getFlyClick, this)
     }
 }

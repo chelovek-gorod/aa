@@ -228,8 +228,9 @@ export function musicPlay() {
 function loadBgMusic() {
     const token = musicToken
 
-    // 🔥 УНИЧТОЖАЕМ старый трек полностью
     if (musicHowl) {
+        musicHowl.off('load')
+        musicHowl.off('loaderror')
         musicHowl.stop()
         musicHowl.unload()
         musicHowl = null

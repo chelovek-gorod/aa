@@ -342,6 +342,9 @@ export default class Obstacles extends Container {
     constructor(scrollSpeed, player) {
         super()
 
+        obstacleIndex = 0
+        buildingIndex = 1
+
         this.player = player
 
         this.offset = 0
@@ -408,6 +411,7 @@ export default class Obstacles extends Container {
         if (collideObstaclesList.length) {
             resetCombo()
             slowDown()
+            if (navigator.vibrate) navigator.vibrate(200)
         }
         
         while (collideObstaclesList.length) {
