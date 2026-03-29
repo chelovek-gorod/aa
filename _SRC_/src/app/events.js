@@ -23,6 +23,8 @@ export const events = createEnum([
     'addScore',
     'resetCombo',
     'slowDown',
+    'removePlyerSave',
+    'getNextLevel',
 ])
 
 export function screenResize( data ) {
@@ -71,4 +73,10 @@ export function resetCombo() {
 }
 export function slowDown() {
     EventHub.emit( events.slowDown )
+}
+export function removePlyerSave() {
+    EventHub.emit( events.removePlyerSave )
+}
+export function getNextLevel() {
+    EventHub.emit( events.getNextLevel )
 }

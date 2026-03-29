@@ -4,14 +4,14 @@ import { styles } from "../../../app/styles";
 
 export default class FlyText extends Text {
     constructor(text, x, y) {
-        super({text: text, style: styles.flyText}) 
+        super({text: text ? text : 'Новый уровень!', style: text ? styles.flyText : styles.flyTextLevel}) 
         this.anchor.set(0.5)
 
         this.position.set(x,y)
 
-        this.lifeTime = 300
-        this.alphaStep = 0.0012
-        this.flySpeed = 0.24
+        this.lifeTime = text ? 300 : 450
+        this.alphaStep = text ? 0.0012 : 0.0009
+        this.flySpeed = text ? 0.24 : 0.18
 
         tickerAdd(this)
     }

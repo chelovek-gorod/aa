@@ -43,11 +43,13 @@ export let styles = {
     /* Font keys (init all fonts in function bellow) */
     loading: null,
     level: null,
+    target: null,
     score: null,
     combo: null,
     coins: null,
     saves: null,
     flyText: null,
+    flyTextLevel: null,
     button: null,
     buttonHover: null,
     shineCounter: null,
@@ -76,6 +78,17 @@ export function initFontStyles() {
         fontFamily: fonts.P,
         fontSize: 32,
         fill: levelGradient,
+        align: 'left',
+    
+        stroke: {
+            color: 0x000000,
+            width: 4
+        },
+    })
+    styles.target = new TextStyle({
+        fontFamily: fonts.P,
+        fontSize: 16,
+        fill: 0xffffff,
         align: 'left',
     
         stroke: {
@@ -133,6 +146,28 @@ export function initFontStyles() {
         fontSize: 64,
         fill: scoreGradient,
         align: 'left',
+
+        stroke: {
+            color: 0x000000,
+            width: 6
+        },
+
+        dropShadow: true,
+        dropShadowColor: '#ff0000',
+        dropShadowBlur: 6,
+        dropShadowAngle: Math.PI * 0.5,
+        dropShadowDistance: 6,
+    })
+
+    styles.flyTextLevel = new TextStyle({
+        fontFamily: fonts.P,
+        fontSize: 64,
+        fill: comboGradient,
+        align: 'center',
+
+        wordWrap: true,
+        wordWrapWidth: 700,
+        lineHeight: 64,
 
         stroke: {
             color: 0x000000,

@@ -6,6 +6,7 @@ import { setMusicList } from '../../../app/sound'
 import { SCENE_NAME } from '../SceneManager'
 import BackgroundImage from '../../BG/BackgroundImage'
 import Button from '../../UI/Button'
+import { playerAddSave, resetScoreToPrevious } from '../../state'
 //import { TEXT_BUTTON_TYPE } from '../../localText'
 //import Title from './Title'
 
@@ -14,6 +15,8 @@ export default class Menu extends Container {
         super()
         this.isMenuActive = true
 
+        resetScoreToPrevious()
+
         this.bg = new BackgroundImage( images.bg_main )
         this.addChild(this.bg)
 
@@ -21,6 +24,9 @@ export default class Menu extends Container {
         this.logo.scale.set(0.75)
         this.logo.anchor.set(1)
         this.addChild(this.logo)
+
+        this.logo.eventMode = 'static'
+        this.logo.on('pointerdown', this.addSave, this)
         
         /*
         this.title = new Title()
@@ -43,6 +49,10 @@ export default class Menu extends Container {
         setMusicList([music.bgm_0, music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4])
     }
 
+    addSave() {
+        playerAddSave(1)
+    }
+
     screenResize(screenData) {
         // set scene container in center of screen
         this.position.set( screenData.centerX, screenData.centerY )
@@ -60,5 +70,9 @@ export default class Menu extends Container {
         */
 
         this.startButton.position.set(0, screenData.centerY * 0.5)
+    }
+
+    kill() {
+        this.logo.off('touchstart', this.addSave, this)
     }
 }

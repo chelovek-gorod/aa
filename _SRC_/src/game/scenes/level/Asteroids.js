@@ -136,7 +136,6 @@ export default class Asteroids extends Container {
                     addRadialSmoke(asteroid.x, asteroid.y)
 
                     addScore({score: asteroid.score, x: asteroid.x, y: asteroid.y, parent: this.parent})
-                    if (navigator.vibrate) navigator.vibrate(100)
                 }
             }
         }

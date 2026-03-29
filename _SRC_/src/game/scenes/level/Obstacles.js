@@ -1,8 +1,9 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerRemove, tickerAdd, kill } from "../../../app/application";
 import { images } from "../../../app/assets";
-import { addExplosion, addSmoke, addSparks, resetCombo, shakeScreen, slowDown } from "../../../app/events";
+import { addExplosion, addSmoke, addSparks, resetCombo, shakeScreen, slowDown, removePlyerSave } from "../../../app/events";
 import { createEnum } from "../../../utils/functions";
+import { playerSaves, playerUseSave } from "../../state";
 import { timeScale } from "./GameContainer";
 import { PLAYER_X, PLAYER_WIDTH } from "./Player";
 
@@ -410,8 +411,9 @@ export default class Obstacles extends Container {
 
         if (collideObstaclesList.length) {
             resetCombo()
-            slowDown()
-            if (navigator.vibrate) navigator.vibrate(200)
+            playerUseSave()
+            if (playerSaves < 0) slowDown()
+            else removePlyerSave()
         }
         
         while (collideObstaclesList.length) {

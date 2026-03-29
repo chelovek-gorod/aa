@@ -92,8 +92,6 @@ export default class GameContainer extends Container {
     slowDown() {
         if (timeScale < 1) return
 
-        if (navigator.vibrate) navigator.vibrate([200, 50, 200, 350])
-
         timeScale -= SLOW_DOWN_STEP
 
         const sepiaFilter = new ColorMatrixFilter()
