@@ -1,7 +1,7 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerRemove, tickerAdd, kill } from "../../../app/application";
 import { images } from "../../../app/assets";
-import { addExplosion, addSmoke, addSparks, resetCombo, shakeScreen, slowDown, removePlyerSave, showRedScreen } from "../../../app/events";
+import { addExplosion, addSmoke, addSparks, resetCombo, shakeScreen, slowDown, removePlyerSave } from "../../../app/events";
 import { createEnum } from "../../../utils/functions";
 import { playerSaves, playerUseSave } from "../../state";
 import { timeScale } from "./GameContainer";
