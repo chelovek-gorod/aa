@@ -1,7 +1,8 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerRemove, tickerAdd } from "../../../app/application";
-import { images } from "../../../app/assets";
+import { images, sounds } from "../../../app/assets";
 import { addExplosion, addScore, addSmoke, addSparks, addStones, shakeScreen, resetCombo } from "../../../app/events";
+import { soundPlay } from "../../../app/sound";
 import { createEnum } from "../../../utils/functions";
 import { timeScale } from "./GameContainer";
 import { PLAYER_X, PLAYER_WIDTH } from "./Player";
@@ -135,7 +136,11 @@ export default class Asteroids extends Container {
                     shakeScreen({powerX: 12, powerY: 12})
                     addRadialSmoke(asteroid.x, asteroid.y)
 
+                    this.player.addSquash()
+
                     addScore({score: asteroid.score, x: asteroid.x, y: asteroid.y, parent: this.parent})
+
+                    soundPlay(sounds.se_asteroid_explosion.rate(0.7 + Math.random() * 0.6))
                 }
             }
         }

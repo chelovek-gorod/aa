@@ -15,11 +15,12 @@ const ANGLE_FACTOR = 0.5
 const ANGLE_SMOOTH = 0.009
 const ANGLE_MAX = Math.PI * 0.5
 
-const EYE_MAX_ANGLE = Math.PI * 0.5
+const EYE_MAX_ANGLE = Math.PI * 0.3
 const EYE_SPEED = 0.006
 const EYE_MIN_TIME = 600
 const EYE_MAX_TIME = 1200 
 const EYE_MID_TIME = EYE_MAX_TIME -  EYE_MIN_TIME
+const EYE_BLINK_SPEED = 0.0012
 
 const SHAKE_POWER = 0.003
 
@@ -90,10 +91,19 @@ export default class Player extends Container {
             const pointY = SMOKE.minY + Math.random() * SMOKE.offsetY
             addSmoke({x: this.x + SMOKE.pointX, y: this.y + pointY})
         }
+
+        soundPlay(sounds.se_player_up.rate(0.8 + Math.random() * 0.4))
+    }
+
+    addSquash() {
+        this.eye.scale.y = 0.18
+        this.eye.rotation = 0
+        this.eyeTimeout = EYE_MIN_TIME + EYE_MID_TIME * Math.random()
     }
 
     tick(deltaMs) {
         const scaledDeltaMs = deltaMs * timeScale
+
         // fly
         this.flyPower -= GRAVITY * scaledDeltaMs
         this.y -= this.flyPower * scaledDeltaMs
@@ -132,7 +142,9 @@ export default class Player extends Container {
         this.rotation = this.currentAngle
 
         // eye
-        if (this.eyeTimeout > 0) {
+        if (this.eye.scale.y < 1) {
+            this.eye.scale.y = Math.min(1, this.eye.scale.y + EYE_BLINK_SPEED * scaledDeltaMs)
+        } else if (this.eyeTimeout > 0) {
             this.eyeTimeout -= scaledDeltaMs
             if (this.eyeTimeout <= 0) {
                 this.eyeTargetAngle = -EYE_MAX_ANGLE + Math.random() * (EYE_MAX_ANGLE * 2)

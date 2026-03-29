@@ -1,7 +1,8 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerRemove, tickerAdd, kill } from "../../../app/application";
-import { images } from "../../../app/assets";
+import { images, sounds } from "../../../app/assets";
 import { addExplosion, addSmoke, addSparks, resetCombo, shakeScreen, slowDown, removePlyerSave } from "../../../app/events";
+import { soundPlay } from "../../../app/sound";
 import { createEnum } from "../../../utils/functions";
 import { playerSaves, playerUseSave } from "../../state";
 import { timeScale } from "./GameContainer";
@@ -412,6 +413,8 @@ export default class Obstacles extends Container {
         if (collideObstaclesList.length) {
             resetCombo()
             playerUseSave()
+            this.player.addSquash()
+            soundPlay(sounds.se_obstacle_explosion)
             if (playerSaves < 0) slowDown()
             else removePlyerSave()
         }

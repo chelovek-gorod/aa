@@ -178,8 +178,10 @@ export default class UI extends Container {
     }
 
     kill() {
+        tickerRemove(this)
         EventHub.off( events.addScore, this.addScore, this )
         EventHub.off( events.resetCombo, this.resetCombo, this )
         EventHub.off( events.removePlyerSave, this.removeSave, this )
+        EventHub.off( events.getNextLevel, this.updateLevel, this )
     }
 }

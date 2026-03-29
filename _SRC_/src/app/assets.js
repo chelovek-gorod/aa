@@ -88,6 +88,9 @@ export const sounds = {
     se_hover: 'se_hover.mp3',
     se_click: 'se_click.mp3',
     se_full: 'se_full.mp3',
+    se_asteroid_explosion: 'se_asteroid.mp3',
+    se_obstacle_explosion: 'se_obstacle_explosion.mp3',
+    se_player_up: 'se_player_up.mp3',
 }
 export const music = {
     bgm_0: 'bgm_0.mp3',
