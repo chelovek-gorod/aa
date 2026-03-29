@@ -170,6 +170,17 @@ export function getInputCapabilities() {
     return deviceInfo.capabilities
 }
 
+export function getSafeAreaOffsets() {
+    const style = getComputedStyle(document.documentElement)
+    
+    return {
+        top: parseInt(style.getPropertyValue('--sat')) || 0,
+        bottom: parseInt(style.getPropertyValue('--sab')) || 0,
+        left: parseInt(style.getPropertyValue('--sal')) || 0,
+        right: parseInt(style.getPropertyValue('--sar')) || 0,
+    }
+}
+
 function startFullScreen() {
     if (!isAutoFoolScreen) return
     

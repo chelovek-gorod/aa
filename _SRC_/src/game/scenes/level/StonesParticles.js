@@ -141,6 +141,5 @@ export default class StonesParticles {
         }
         this.stones.length = 0
         this.pool.length = 0
-        console.log('stones container killed')
     }
 }

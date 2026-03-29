@@ -128,7 +128,5 @@ export default class GameContainer extends Container {
 
         this.stones.kill()
         this.stones = null
-
-        console.log('GameContainer - kill')
     }
 }

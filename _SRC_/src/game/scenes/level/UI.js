@@ -1,4 +1,5 @@
 import { Container, Text, Point, Graphics, Sprite } from "pixi.js";
+import { getSafeAreaOffsets } from "../../../app/application";
 import { images } from "../../../app/assets";
 import { EventHub, events } from "../../../app/events";
 import { styles } from "../../../app/styles";
@@ -66,23 +67,25 @@ export default class UI extends Container {
     }
 
     screenResize(screenData) {
+        const safeArea = getSafeAreaOffsets()
+
         this.levelProgressBar.point.x = -screenData.centerX + 70,
-        this.levelProgressBar.point.y = -screenData.centerY + 50,
+        this.levelProgressBar.point.y = -screenData.centerY + 50 + safeArea.top,
         this.updateProgressBar()
 
-        this.levelIcon.position.set(-screenData.centerX + 10, -screenData.centerY + 10)
-        this.levelText.position.set(-screenData.centerX + 70, -screenData.centerY + 5)
+        this.levelIcon.position.set(-screenData.centerX + 10, -screenData.centerY + 10 + safeArea.top)
+        this.levelText.position.set(-screenData.centerX + 70, -screenData.centerY + 5 + safeArea.top)
 
-        this.centerTop.y = -screenData.centerY + (screenData.isLandscape ? 10 : 80)
+        this.centerTop.y = -screenData.centerY + (screenData.isLandscape ? 10 : 80) + safeArea.top
         this.updateTopCenter()
 
-        this.pauseButton.position.set(screenData.centerX - 10, -screenData.centerY + 10)
+        this.pauseButton.position.set(screenData.centerX - 10, -screenData.centerY + 10 + safeArea.top)
 
-        this.coinIcon.position.set(-screenData.centerX + 10, screenData.centerY - 10)
-        this.coinsText.position.set(-screenData.centerX + 80, screenData.centerY - 20)
+        this.coinIcon.position.set(-screenData.centerX + 10, screenData.centerY - 10 - safeArea.bottom)
+        this.coinsText.position.set(-screenData.centerX + 80, screenData.centerY - 20 - safeArea.bottom)
 
-        this.saveIcon.position.set(screenData.centerX - 10, screenData.centerY - 10)
-        this.savesText.position.set(screenData.centerX - 80, screenData.centerY - 15)
+        this.saveIcon.position.set(screenData.centerX - 10, screenData.centerY - 10 - safeArea.bottom)
+        this.savesText.position.set(screenData.centerX - 80, screenData.centerY - 15 - safeArea.bottom)
     }
 
     updateProgressBar() {
