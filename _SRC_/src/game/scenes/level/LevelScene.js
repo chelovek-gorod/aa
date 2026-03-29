@@ -37,7 +37,7 @@ export default class LevelScene extends Container {
         this.UI = new UI(this.gameContainer)
         this.addChild(this.UI)
 
-        EventHub.on( events.resetCombo, this.redHighlight, this )
+        EventHub.on( events.showRedScreen, this.showRedScreen, this )
         
         setMusicList([ music.bgm_0, music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4 ])
     }
@@ -70,9 +70,9 @@ export default class LevelScene extends Container {
         this.gameContainer.getFlyClick()
     }
 
-    redHighlight() {
+    showRedScreen() {
         if (playerSaves < 0) return
-        
+
         this.tapAreaColor = 0xff0000
         this.tapArea.alpha = 0.0003
         this.redIsUp = true
