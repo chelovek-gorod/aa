@@ -4,7 +4,7 @@ import { images, sounds } from "../../../app/assets";
 import { addExplosion, addSmoke, addSparks, resetCombo, shakeScreen, slowDown, removePlyerSave } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { createEnum } from "../../../utils/functions";
-import { isWaterLevel, playerSaves, playerUseSave } from "../../state";
+import { levelType, LEVEL_TYPE, playerSaves, playerUseSave } from "../../state";
 import { timeScale } from "./GameContainer";
 import { PLAYER_X, PLAYER_WIDTH } from "./Player";
 
@@ -15,9 +15,11 @@ const AIR_MIN_Y = -400
 const AIR_MAX_Y = 80
 const COPTER_MIN_Y = -400
 const COPTER_MAX_Y = 0
+const WAGON_Y = 0
 
 const OBSTACLE_TYPE = createEnum([
-    'BUS', 'BUILDING', 'PLANE', 'AIRSHIP', 'COPTER', 'AEROSTAT', 'SHIP', 'SIGN'
+    'BUS', 'BUILDING', 'PLANE', 'AIRSHIP', 'COPTER', 'AEROSTAT', 'SHIP', 'SIGN',
+    'DRONE', 'WAGON', 'BASE', 'TRACK'
 ])
 const OBSTACLE_GROUND_LIST = [
     OBSTACLE_TYPE.PLANE, OBSTACLE_TYPE.BUILDING, OBSTACLE_TYPE.AIRSHIP, OBSTACLE_TYPE.BUS,
@@ -28,6 +30,11 @@ const OBSTACLE_WATER_LIST = [
     OBSTACLE_TYPE.AIRSHIP, OBSTACLE_TYPE.SHIP, OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.SIGN,
     OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.SHIP, OBSTACLE_TYPE.AIRSHIP, OBSTACLE_TYPE.SHIP,
     OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.SIGN,
+]
+const OBSTACLE_SNOW_LIST = [
+    OBSTACLE_TYPE.WAGON, OBSTACLE_TYPE.BASE, OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.TRACK,
+    OBSTACLE_TYPE.DRONE, OBSTACLE_TYPE.BASE, OBSTACLE_TYPE.DRONE, OBSTACLE_TYPE.BASE,
+    OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.TRACK,
 ]
 let obstacleIndex = 0
 let buildingIndex = 1
@@ -67,6 +74,19 @@ const COPTER_COLLIDERS = [
 const AEROSTAT_COLLIDERS = [
     {x: 0, y: 64, r2: Math.pow(130 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
     {x: 0, y: 140, r2: Math.pow(50 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+]
+const BASE_COLLIDERS = [
+    {x: 6, y: -62, r2: Math.pow(220 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+]
+const DRONE_COLLIDERS = [
+    {x: -50, y: 36, r2: Math.pow(64 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: 47, y: 36, r2: Math.pow(64 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+]
+const TRACK_COLLIDERS = [
+    {x: 0, y: -52, r2: Math.pow(300 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+]
+const WAGON_COLLIDERS = [
+    {x: 0, y: 136, r2: Math.pow(110 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
 ]
 
 class Bus extends Sprite {
@@ -191,6 +211,7 @@ class Ship extends Sprite {
     setDamage() {
         this.isAlive = false
         this.texture = images.ship_black
+        this.smokePoint = 0
 
         addSparks({x: this.x - 126, y: this.y - 78, isExplosion: true, count: 16})
         addSparks({x: this.x - 80, y: this.y - 180, isExplosion: true, count: 16})
@@ -464,6 +485,191 @@ class Aerostat extends Sprite {
     }
 }
 
+class Base extends Sprite {
+    constructor() {
+        super(images.base)
+        this.anchor.set(0.5, 1)
+
+        this.speedRateX = 0.8
+        this.isAlive = true
+
+        this.isSliding = true
+
+        this.halfWidth = images.base.width * 0.5
+        this.position.set(START_X + this.halfWidth, BUILDING_Y)
+
+        this.playerMinX = PLAYER_X - this.halfWidth
+        this.playerMaxX = PLAYER_X + this.halfWidth
+        this.colliders = BASE_COLLIDERS
+
+        this.smokeTimeout = 96
+        this.smokePoints = [{x: -80, y: -80},{x: 10, y: -96},{x: 94, y: -86}]
+        this.smokePoint = 0
+    }
+
+    setDamage() {
+        this.isAlive = false
+        this.texture = images.base_black
+
+        addSparks({x: this.x - 80, y: this.y - 80, isExplosion: true, count: 16})
+        addSparks({x: this.x + 10, y: this.y - 96, isExplosion: true, count: 16})
+        addSparks({x: this.x + 94, y: this.y - 86, isExplosion: true, count: 16})
+        addExplosion({x: this.x - 80, y: this.y - 80})
+        addExplosion({x: this.x + 10, y: this.y - 96})
+        addExplosion({x: this.x + 94, y: this.y - 86})
+        shakeScreen({powerX: 16, powerY: 16})
+    }
+
+    destroyedMove(deltaMs) {
+        this.smokeTimeout -= deltaMs
+        if (this.smokeTimeout <= 0) {
+            this.smokeTimeout += 64
+            addSmoke({x: this.x + this.smokePoints[this.smokePoint].x, y: this.y + this.smokePoints[this.smokePoint].y})
+            this.smokePoint++
+            if (this.smokePoint === this.smokePoints.length) this.smokePoint = 0
+        }
+    }
+}
+
+class Drone extends Sprite {
+    constructor() {
+        super(images.drone)
+        this.anchor.set(0.5, 0)
+
+        this.speedRateX = 0.4
+        this.isAlive = true
+
+        this.maxY = AIR_MAX_Y - images.drone.height * 1.5
+        this.isMoveUp = Math.random() < 0.5
+
+        this.halfWidth = images.drone.width * 0.5
+        this.position.set(START_X + this.halfWidth, AIR_MIN_Y + (this.maxY - AIR_MIN_Y) * 0.5)
+
+        this.playerMinX = PLAYER_X - this.halfWidth
+        this.playerMaxX = PLAYER_X + this.halfWidth
+        this.colliders = DRONE_COLLIDERS
+
+        this.smokeTimeout = 96
+        this.smokePoint = 0
+    }
+
+    fly(deltaMs) {
+        const flySpeed = 0.09 * deltaMs
+        if (this.isMoveUp) {
+            this.y = Math.max(AIR_MIN_Y, this.y - flySpeed)
+            if (this.y === AIR_MIN_Y) this.isMoveUp = false
+        } else {
+            this.y = Math.min(this.maxY, this.y + flySpeed)
+            if (this.y === this.maxY) this.isMoveUp = true
+        }
+    }
+
+    setDamage() {
+        this.isAlive = false
+        this.texture = images.drone_black
+
+        addSparks({x: this.x - 50, y: this.y + 36, isExplosion: true, count: 12})
+        addSparks({x: this.x + 50, y: this.y + 36, isExplosion: true, count: 12})
+        addExplosion({x: this.x, y: this.y + 36})
+        shakeScreen({powerX: 12, powerY: 12})
+    }
+
+    destroyedMove(deltaMs) {
+        this.y += 0.4 * deltaMs
+        this.smokeTimeout -= deltaMs
+        if (this.smokeTimeout <= 0) {
+            this.smokeTimeout += 96
+            addSmoke({x: this.x + this.colliders[this.smokePoint].x, y: this.y + this.colliders[this.smokePoint].y})
+            this.smokePoint++
+            if (this.smokePoint === this.colliders.length) this.smokePoint = 0
+        }
+    }
+}
+
+class Track extends Sprite {
+    constructor() {
+        super(images.track)
+        this.anchor.set(0.5, 1)
+
+        this.speedRateX = 1
+        this.isAlive = true
+
+        this.halfWidth = images.track.width * 0.5
+        this.position.set(START_X + this.halfWidth, BUS_Y)
+
+        this.playerMinX = PLAYER_X - this.halfWidth
+        this.playerMaxX = PLAYER_X + this.halfWidth
+        this.colliders = BUS_COLLIDERS
+
+        this.smokeTimeout = 128
+        this.isSmokeLeft = true
+    }
+
+    setDamage() {
+        this.isAlive = false
+        this.texture = images.track_black
+
+        addSparks({x: this.x - 50, y: this.y - 150, isExplosion: true, count: 16})
+        addSparks({x: this.x + 100, y: this.y - 110, isExplosion: true, count: 16})
+        addExplosion({x: this.x + 30, y: this.y - 130})
+        shakeScreen({powerX: 16, powerY: 16})
+    }
+
+    destroyedMove(deltaMs) {
+        this.smokeTimeout -= deltaMs
+        if (this.smokeTimeout <= 0) {
+            this.smokeTimeout += 128
+            this.isSmokeLeft = !this.isSmokeLeft
+            addSmoke({x: this.isSmokeLeft ? this.x - 50 : this.x + 100, y: this.y - 130})
+        }
+    }
+}
+
+class Wagon extends Sprite {
+    constructor() {
+        super(images.wagon)
+        this.anchor.set(0.5, 1)
+
+        this.speedRateX = 0.9
+        this.isAlive = true
+
+        this.halfWidth = images.wagon.width * 0.5
+        this.position.set(START_X + this.halfWidth, WAGON_Y)
+
+        this.playerMinX = PLAYER_X - this.halfWidth
+        this.playerMaxX = PLAYER_X + this.halfWidth
+        this.colliders = SIGN_COLLIDERS
+
+        this.turnTime = 0
+        this.turnAngle = Math.PI / 18
+        this.turnSpeed = 0.0012
+
+        this.smokeTimeout = 96
+    }
+
+    fly(deltaMs) {
+        this.turnTime += this.turnSpeed * deltaMs
+        this.rotation = Math.sin(this.turnTime) * this.turnAngle
+    }
+
+    setDamage() {
+        this.isAlive = false
+        this.texture = images.wagon_black
+
+        addSparks({x: this.x, y: this.y + 134, isExplosion: true, count: 16})
+        addExplosion({x: this.x, y: this.y + 134})
+        shakeScreen({powerX: 10, powerY: 10})
+    }
+
+    destroyedMove(deltaMs) {
+        this.smokeTimeout -= deltaMs
+        if (this.smokeTimeout <= 0) {
+            this.smokeTimeout += 96
+            addSmoke({x: this.x, y: this.y + 134})
+        }
+    }
+}
+
 export default class Obstacles extends Container {
     constructor(scrollSpeed, player) {
         super()
@@ -473,7 +679,9 @@ export default class Obstacles extends Container {
 
         this.player = player
 
-        this.obstacles = isWaterLevel ? OBSTACLE_WATER_LIST : OBSTACLE_GROUND_LIST
+        this.obstacles = levelType === LEVEL_TYPE.GROUND
+            ? OBSTACLE_GROUND_LIST : levelType === LEVEL_TYPE.WATER
+            ? OBSTACLE_WATER_LIST : OBSTACLE_SNOW_LIST
 
         this.offset = 0
         this.scrollSpeed = scrollSpeed
@@ -501,6 +709,10 @@ export default class Obstacles extends Container {
             case OBSTACLE_TYPE.BUILDING : this.addChild( new Building() ); break;
             case OBSTACLE_TYPE.COPTER : this.addChild( new Copter() ); break;
             case OBSTACLE_TYPE.PLANE : this.addChild( new Plane() ); break;
+            case OBSTACLE_TYPE.BASE : this.addChild( new Base() ); break;
+            case OBSTACLE_TYPE.DRONE : this.addChild( new Drone() ); break;
+            case OBSTACLE_TYPE.TRACK : this.addChild( new Track() ); break;
+            case OBSTACLE_TYPE.WAGON : this.addChild( new Wagon() ); break;
         }
     }
 

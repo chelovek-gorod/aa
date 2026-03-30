@@ -1,9 +1,11 @@
 import { EventHub, events, getNextLevel } from "../app/events"
 import { updateStoredData } from "../game/storage"
+import { createEnum } from "../utils/functions"
 
 export let isAdAvailable = true
 
-export let isWaterLevel = false
+export const LEVEL_TYPE = createEnum(['GROUND', 'WATER', 'SNOW'])
+export let levelType = LEVEL_TYPE.GROUND
 
 export let playerAvatarsShop = {
     player_1: 0, // set 0 if can be used
@@ -60,9 +62,10 @@ export function resetScoreToPrevious() {
     playerScore = playerPrevious
     playerProgress = (playerScore - playerPrevious) / (playerTarget - playerPrevious)
 
-    isWaterLevel = playerLevel % 3 === 0
+    levelType = playerLevel % 5 === 0
+        ? LEVEL_TYPE.SNOW : playerLevel % 3 === 0
+        ? LEVEL_TYPE.WATER : LEVEL_TYPE.GROUND
 }
-
 
 export function getStateData() {
 

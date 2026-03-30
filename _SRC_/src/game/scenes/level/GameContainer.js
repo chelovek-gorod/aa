@@ -2,7 +2,7 @@ import { Container, TilingSprite, ColorMatrixFilter } from "pixi.js";
 import { kill, tickerAdd, tickerRemove } from "../../../app/application";
 import { images } from "../../../app/assets";
 import { EventHub, events, shakeScreen, startScene } from "../../../app/events";
-import { isWaterLevel, playerSaves } from "../../state";
+import { levelType, playerSaves } from "../../state";
 import { SCENE_NAME } from "../SceneManager";
 import Asteroids from "./Asteroids";
 import Clouds from "./Clouds";
@@ -19,7 +19,7 @@ const BG_TOP_SPEED_RATE = 0.66
 
 export let timeScale = 1
 const SLOW_DOWN_STEP = 0.0003
-const SPEED_UP = 0.000003
+const SPEED_UP = 0.000006
 
 export default class GameContainer extends Container {
     constructor(shaker) {
@@ -31,12 +31,12 @@ export default class GameContainer extends Container {
 
         this.shaker = shaker
 
-        this.bgBottom = new TilingSprite(isWaterLevel ? images.bg_water_bottom : images.bg_ground_bottom)
+        this.bgBottom = new TilingSprite(images['bg_' + levelType.toLowerCase() + '_bottom'])
         this.bgBottom.anchor.set(0.5, 1)
         this.bgBottom.position.set(0, BG_HEIGHT * 0.5)
         this.addChild(this.bgBottom)
 
-        this.bgTop = new TilingSprite(isWaterLevel ? images.bg_water_top : images.bg_ground_top)
+        this.bgTop = new TilingSprite(images['bg_' + levelType.toLowerCase() + '_top'])
         this.bgTop.anchor.set(0.5, 0)
         this.bgTop.position.set(0, -BG_HEIGHT * 0.5)
         this.addChild(this.bgTop)

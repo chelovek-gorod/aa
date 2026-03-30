@@ -3,7 +3,7 @@ import { tickerAdd, tickerRemove } from "../../../app/application";
 import { images, sounds } from "../../../app/assets";
 import { addSmoke, addSparks, shakeScreen } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
-import { isWaterLevel, playerAvatarIndex, playerAvatarKeys } from "../../state";
+import { levelType, LEVEL_TYPE, playerAvatarIndex, playerAvatarKeys } from "../../state";
 import { timeScale } from "./GameContainer";
 
 export const AVATARS = {
@@ -141,7 +141,7 @@ export default class Player extends Container {
                 }
 
                 this.shakePower = 0
-                soundPlay(sounds.se_fall.rate(isWaterLevel ? 0.5 : 1))
+                soundPlay(sounds.se_fall.rate(levelType === LEVEL_TYPE.GROUND ? 1 : 0.5))
             }
         } else if(this.y < this.minY) {
             this.y = this.minY

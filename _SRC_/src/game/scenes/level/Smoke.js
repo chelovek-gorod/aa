@@ -5,7 +5,7 @@ import { EventHub, events } from "../../../app/events";
 import { timeScale } from "./GameContainer";
 
 class Part extends AnimatedSprite {
-    constructor(x, y, speedX, scale, pull) {
+    constructor(x, y, speedX, scale, pull, isPrefab = false) {
         super(atlases.smoke.animations.go)
 
         this.parentPull = pull
@@ -21,9 +21,11 @@ class Part extends AnimatedSprite {
         this.animationSpeed = 0.36 * timeScale
         this.loop = false
         this.onComplete = this.done.bind(this)
-        this.play()
 
-        tickerAdd(this)
+        if (!isPrefab) {
+            this.play()
+            tickerAdd(this)
+        }
     }
 
     done() {
@@ -38,7 +40,7 @@ class Part extends AnimatedSprite {
 }
 
 class Explosion extends AnimatedSprite {
-    constructor(x, y, speedX, pull) {
+    constructor(x, y, speedX, pull, isPrefab = false) {
         super(atlases.explosion.animations.go)
 
         this.parentPull = pull
@@ -54,9 +56,11 @@ class Explosion extends AnimatedSprite {
         this.animationSpeed = 0.67 * timeScale
         this.loop = false
         this.onComplete = this.done.bind(this)
-        this.play()
-
-        tickerAdd(this)
+       
+        if (!isPrefab) {
+            this.play()
+            tickerAdd(this)
+        }
     }
 
     done() {
@@ -77,7 +81,14 @@ export default class Smoke extends Container {
         this.scrollSpeed = scrollSpeed * 0.7
 
         this.smokePull = []
+        for(let i = 25; i > 0; i--) {
+            this.smokePull.push( new Part(0, 0, 0, 1, this.smokePull, true) )
+        }
+
         this.explosionPull = []
+        for(let i = 2; i > 0; i--) {
+            this.explosionPull.push( new Explosion(0, 0, 0, this.explosionPull, true) )
+        }
 
         EventHub.on( events.addSmoke, this.addSmoke, this )
         EventHub.on( events.addExplosion, this.addExplosion, this )
@@ -93,6 +104,7 @@ export default class Smoke extends Container {
             smoke.position.set(data.x, data.y)
             smoke.speedX = speedX
             smoke.scale.set(scale)
+            smoke.animationSpeed = 0.36 * timeScale
             smoke.gotoAndPlay(0)
             smoke.scale.set(scale)
             this.addChild(smoke)
@@ -110,6 +122,7 @@ export default class Smoke extends Container {
             const explosion = this.explosionPull.pop()
             explosion.position.set(data.x, data.y)
             explosion.speedX = this.scrollSpeed
+            explosion.animationSpeed = 0.67 * timeScale
             explosion.gotoAndPlay(0)
             this.addChild(explosion)
             tickerAdd(explosion)

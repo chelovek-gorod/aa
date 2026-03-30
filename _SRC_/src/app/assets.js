@@ -32,6 +32,8 @@ export const images = {
     bg_ground_bottom: 'bg_ground_bottom.png',
     bg_water_top: 'bg_water_top.png',
     bg_water_bottom: 'bg_water_bottom.png',
+    bg_snow_top: 'bg_snow_top.png',
+    bg_snow_bottom: 'bg_snow_bottom.png',
 
     progress: 'progress.png',
     coin: 'coin.png',
@@ -72,6 +74,10 @@ export const images = {
     building_1: 'building_1.png',
     building_2: 'building_2.png',
     building_3: 'building_3.png',
+    drone: 'drone.png',
+    base: 'base.png',
+    track: 'track.png',
+    wagon: 'wagon.png',
 
     plane_black: 'plane_black.png',
     aerostat_black: 'aerostat_black.png',
@@ -83,6 +89,10 @@ export const images = {
     building_1_black: 'building_1_black.png',
     building_2_black: 'building_2_black.png',
     building_3_black: 'building_3_black.png',
+    drone_black: 'drone_black.png',
+    base_black: 'base_black.png',
+    track_black: 'track_black.png',
+    wagon_black: 'wagon_black.png',
 
     spark: 'spark.png',
 
