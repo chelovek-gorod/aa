@@ -74,7 +74,6 @@ export default class SceneManager {
         this.blocker.fill(BLOCKER_COLOR)
     }
     showScreenBlocker() {
-        this.blocker.alpha = SCENE_ALPHA_MIN
         this.blocker.visible = true
         sceneAdd(this.blocker)
         document.body.style.cursor = "default"

@@ -83,7 +83,7 @@ export default class LevelScene extends Container {
         this.currentLanguage = lang
     }
 
-    tick(deltaMs) { console.log(this.redIsUp)
+    tick(deltaMs) {
         if (this.redIsUp) {
             this.tapArea.alpha = Math.min(0.6, this.tapArea.alpha + this.redSpeed * deltaMs)
             if (this.tapArea.alpha === 0.6) this.redIsUp = false

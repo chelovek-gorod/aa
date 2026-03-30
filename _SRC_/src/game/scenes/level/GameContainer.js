@@ -1,7 +1,8 @@
 import { Container, TilingSprite, ColorMatrixFilter } from "pixi.js";
 import { kill, tickerAdd, tickerRemove } from "../../../app/application";
 import { images } from "../../../app/assets";
-import { EventHub, events, startScene } from "../../../app/events";
+import { EventHub, events, shakeScreen, startScene } from "../../../app/events";
+import { isWaterLevel, playerSaves } from "../../state";
 import { SCENE_NAME } from "../SceneManager";
 import Asteroids from "./Asteroids";
 import Clouds from "./Clouds";
@@ -13,11 +14,12 @@ import StonesParticles from "./StonesParticles";
 
 const BG_WIDTH = 900
 const BG_HEIGHT = 980
-const SIZE = 900 // эталонный размер для отличной отрисовки и ширины и высоты
-const TOP_SPEED_RATE = 0.66
+const BG_SIZE = 900 // эталонный размер для отличной отрисовки и ширины и высоты
+const BG_TOP_SPEED_RATE = 0.66
 
 export let timeScale = 1
 const SLOW_DOWN_STEP = 0.0003
+const SPEED_UP = 0.000003
 
 export default class GameContainer extends Container {
     constructor(shaker) {
@@ -29,12 +31,12 @@ export default class GameContainer extends Container {
 
         this.shaker = shaker
 
-        this.bgBottom = new TilingSprite(images.bg_bottom)
+        this.bgBottom = new TilingSprite(isWaterLevel ? images.bg_water_bottom : images.bg_ground_bottom)
         this.bgBottom.anchor.set(0.5, 1)
         this.bgBottom.position.set(0, BG_HEIGHT * 0.5)
         this.addChild(this.bgBottom)
 
-        this.bgTop = new TilingSprite(images.bg_top)
+        this.bgTop = new TilingSprite(isWaterLevel ? images.bg_water_top : images.bg_ground_top)
         this.bgTop.anchor.set(0.5, 0)
         this.bgTop.position.set(0, -BG_HEIGHT * 0.5)
         this.addChild(this.bgTop)
@@ -67,8 +69,8 @@ export default class GameContainer extends Container {
     }
 
     screenResize(screenData) {
-        let scale = screenData.width / SIZE
-        if (screenData.isLandscape) scale = screenData.height / SIZE
+        let scale = screenData.width / BG_SIZE
+        if (screenData.isLandscape) scale = screenData.height / BG_SIZE
 
         const width = screenData.width / scale
         const height = screenData.height / scale
@@ -86,32 +88,37 @@ export default class GameContainer extends Container {
     }
 
     getFlyClick() {
-        if (this.player && timeScale === 1) this.player.fly()
+        if (this.player && playerSaves >= 0) this.player.fly()
     }
 
     slowDown() {
         if (timeScale < 1) return
 
-        timeScale -= SLOW_DOWN_STEP
+        timeScale = 0.999
 
         const sepiaFilter = new ColorMatrixFilter()
         sepiaFilter.sepia(true)
         this.filters = [sepiaFilter]
+        shakeScreen({powerX: 50, powerY: 50})
     }
 
     tick(deltaMs) {
         if (timeScale < 1) {
             timeScale = Math.max(0, timeScale - SLOW_DOWN_STEP * deltaMs)
+            //timeScale = Math.max(0, timeScale - Math.sin(SLOW_DOWN_STEP * deltaMs))
             if (timeScale === 0) {
+                //timeScale = 1
                 tickerRemove(this)
-                kill(this)
+                // kill(this)
                 startScene(SCENE_NAME.Menu)
             }
+        } else {
+            timeScale += SPEED_UP * deltaMs
         }
 
         const scrollStep = this.scrollSpeed * deltaMs * timeScale
 
-        this.bgTop.tilePosition.x -= Math.round(scrollStep * TOP_SPEED_RATE)
+        this.bgTop.tilePosition.x -= Math.round(scrollStep * BG_TOP_SPEED_RATE)
         if (this.bgTop.tilePosition.x < -BG_WIDTH) this.bgTop.tilePosition.x += BG_WIDTH
 
         this.bgBottom.tilePosition.x -= Math.round(scrollStep)

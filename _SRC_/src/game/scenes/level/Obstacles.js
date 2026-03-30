@@ -4,7 +4,7 @@ import { images, sounds } from "../../../app/assets";
 import { addExplosion, addSmoke, addSparks, resetCombo, shakeScreen, slowDown, removePlyerSave } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { createEnum } from "../../../utils/functions";
-import { playerSaves, playerUseSave } from "../../state";
+import { isWaterLevel, playerSaves, playerUseSave } from "../../state";
 import { timeScale } from "./GameContainer";
 import { PLAYER_X, PLAYER_WIDTH } from "./Player";
 
@@ -16,11 +16,18 @@ const AIR_MAX_Y = 80
 const COPTER_MIN_Y = -400
 const COPTER_MAX_Y = 0
 
-const OBSTACLE_TYPE = createEnum(['BUS', 'BUILDING', 'PLANE', 'AIRSHIP', 'COPTER', 'AEROSTAT'])
-const OBSTACLE_LIST = [
+const OBSTACLE_TYPE = createEnum([
+    'BUS', 'BUILDING', 'PLANE', 'AIRSHIP', 'COPTER', 'AEROSTAT', 'SHIP', 'SIGN'
+])
+const OBSTACLE_GROUND_LIST = [
     OBSTACLE_TYPE.PLANE, OBSTACLE_TYPE.BUILDING, OBSTACLE_TYPE.AIRSHIP, OBSTACLE_TYPE.BUS,
     OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.BUILDING, OBSTACLE_TYPE.PLANE, OBSTACLE_TYPE.BUS,
     OBSTACLE_TYPE.AEROSTAT, OBSTACLE_TYPE.BUILDING,
+]
+const OBSTACLE_WATER_LIST = [
+    OBSTACLE_TYPE.AIRSHIP, OBSTACLE_TYPE.SHIP, OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.SIGN,
+    OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.SHIP, OBSTACLE_TYPE.AIRSHIP, OBSTACLE_TYPE.SHIP,
+    OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.SIGN,
 ]
 let obstacleIndex = 0
 let buildingIndex = 1
@@ -32,6 +39,16 @@ const BUS_COLLIDERS = [
 const BUILDING_COLLIDERS = [
     {x: 0, y: -190, r2: Math.pow(100 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
     {x: 0, y: -100, r2: Math.pow(120 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+]
+const SHIP_COLLIDERS = [
+    {x: -198, y: -104, r2: Math.pow(90 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: -66, y: -120, r2: Math.pow(230 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: 30, y: -136, r2: Math.pow(250 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: 160, y: -90, r2: Math.pow(150 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+]
+const SIGN_COLLIDERS = [
+    {x: 0, y: -112, r2: Math.pow(20 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: 0, y: -46, r2: Math.pow(40 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
 ]
 const PLANE_COLLIDERS = [
     {x: -87, y: 72, r2: Math.pow(80 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
@@ -103,6 +120,8 @@ class Building extends Sprite {
         this.speedRateX = 0.7
         this.isAlive = true
 
+        this.isSliding = true
+
         this.halfWidth = images['building_' + this.buildingIndex].width * 0.5
         this.position.set(START_X + this.halfWidth, BUILDING_Y)
 
@@ -130,6 +149,111 @@ class Building extends Sprite {
             this.smokeTimeout += 128
             this.isSmokeTop = !this.isSmokeTop
             addSmoke({x: this.x, y: this.isSmokeTop ? this.y - 190 : this.y - 100})
+        }
+    }
+}
+
+class Ship extends Sprite {
+    constructor() {
+        super(images.ship)
+        this.anchor.set(0.5, 1)
+
+        this.speedRateX = 0.8
+        this.isAlive = true
+
+        this.isSliding = true
+
+        this.halfWidth = images.ship.width * 0.5
+        this.position.set(START_X + this.halfWidth, BUILDING_Y)
+
+        this.playerMinX = PLAYER_X - this.halfWidth
+        this.playerMaxX = PLAYER_X + this.halfWidth
+        this.colliders = SHIP_COLLIDERS
+
+        this.smokeTimeout = 96
+        this.smokePoints = [{x: -10, y: -270},{x: 48, y: -260},{x: 108, y: -250}]
+        this.smokePoint = 0
+    }
+
+    fly(deltaMs) {
+        this.smokeTimeout -= deltaMs
+        if (this.smokeTimeout <= 0) {
+            this.smokeTimeout = 96
+            addSmoke({
+                x: this.x + this.smokePoints[this.smokePoint].x,
+                y: this.y + this.smokePoints[this.smokePoint].y
+            })
+            this.smokePoint++
+            if (this.smokePoint === this.smokePoints.length) this.smokePoint = 0
+        }
+    }
+
+    setDamage() {
+        this.isAlive = false
+        this.texture = images.ship_black
+
+        addSparks({x: this.x - 126, y: this.y - 78, isExplosion: true, count: 16})
+        addSparks({x: this.x - 80, y: this.y - 180, isExplosion: true, count: 16})
+        addSparks({x: this.x + 84, y: this.y - 160, isExplosion: true, count: 16})
+        addSparks({x: this.x + 160, y: this.y - 140, isExplosion: true, count: 16})
+        addExplosion({x: this.x - 124, y: this.y - 130})
+        addExplosion({x: this.x + 25, y: this.y - 150})
+        addExplosion({x: this.x + 140, y: this.y - 120})
+        shakeScreen({powerX: 16, powerY: 16})
+    }
+
+    destroyedMove(deltaMs) {
+        this.smokeTimeout -= deltaMs
+        if (this.smokeTimeout <= 0) {
+            this.smokeTimeout += 64
+            addSmoke({x: this.x + this.colliders[this.smokePoint].x, y: this.y + this.colliders[this.smokePoint].y})
+            this.smokePoint++
+            if (this.smokePoint === this.colliders.length) this.smokePoint = 0
+        }
+    }
+}
+
+class Sign extends Sprite {
+    constructor() {
+        super(images.sign)
+        this.anchor.set(0.5, 1)
+
+        this.speedRateX = 0.6
+        this.isAlive = true
+
+        this.halfWidth = images.sign.width * 0.5
+        this.position.set(START_X + this.halfWidth, BUS_Y)
+
+        this.playerMinX = PLAYER_X - this.halfWidth
+        this.playerMaxX = PLAYER_X + this.halfWidth
+        this.colliders = SIGN_COLLIDERS
+
+        this.turnTime = 0
+        this.turnAngle = Math.PI / 12
+        this.turnSpeed = 0.0012
+
+        this.smokeTimeout = 96
+    }
+
+    fly(deltaMs) {
+        this.turnTime += this.turnSpeed * deltaMs
+        this.rotation = Math.sin(this.turnTime) * this.turnAngle
+    }
+
+    setDamage() {
+        this.isAlive = false
+        this.texture = images.sign_black
+
+        addSparks({x: this.x, y: this.y - 56, isExplosion: true, count: 16})
+        addExplosion({x: this.x, y: this.y - 56})
+        shakeScreen({powerX: 10, powerY: 10})
+    }
+
+    destroyedMove(deltaMs) {
+        this.smokeTimeout -= deltaMs
+        if (this.smokeTimeout <= 0) {
+            this.smokeTimeout += 96
+            addSmoke({x: this.x, y: this.y - 60})
         }
     }
 }
@@ -349,6 +473,8 @@ export default class Obstacles extends Container {
 
         this.player = player
 
+        this.obstacles = isWaterLevel ? OBSTACLE_WATER_LIST : OBSTACLE_GROUND_LIST
+
         this.offset = 0
         this.scrollSpeed = scrollSpeed
 
@@ -362,14 +488,16 @@ export default class Obstacles extends Container {
     }
 
     addObstacle() {
-        const obstacleKey = OBSTACLE_LIST[obstacleIndex]
+        const obstacleKey = this.obstacles[obstacleIndex]
         obstacleIndex++
-        if (obstacleIndex === OBSTACLE_LIST.length) obstacleIndex = 0
+        if (obstacleIndex === this.obstacles.length) obstacleIndex = 0
 
         switch(obstacleKey) {
             case OBSTACLE_TYPE.BUS : this.addChild( new Bus() ); break;
             case OBSTACLE_TYPE.AEROSTAT : this.addChild( new Aerostat() ); break;
             case OBSTACLE_TYPE.AIRSHIP : this.addChild( new Airship() ); break;
+            case OBSTACLE_TYPE.SHIP : this.addChild( new Ship() ); break;
+            case OBSTACLE_TYPE.SIGN : this.addChild( new Sign() ); break;
             case OBSTACLE_TYPE.BUILDING : this.addChild( new Building() ); break;
             case OBSTACLE_TYPE.COPTER : this.addChild( new Copter() ); break;
             case OBSTACLE_TYPE.PLANE : this.addChild( new Plane() ); break;
@@ -391,7 +519,7 @@ export default class Obstacles extends Container {
                 kill(obstacle)
             }
 
-            if('buildingIndex' in obstacle && this.player.y === this.player.maxY) continue
+            if(obstacle.isSliding && this.player.y === this.player.maxY) continue
 
             if('fly' in obstacle && obstacle.isAlive) obstacle.fly(scaledDeltaMs)
 

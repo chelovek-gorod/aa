@@ -126,19 +126,19 @@ export default class Smoke extends Container {
 
         while(this.smokePull.length) {
             const smoke = this.smokePull.pop()
-            smoke.destroy({children: true})
+            smoke.destroy()
         }
 
         while(this.explosionPull.length) {
             const explosion = this.explosionPull.pop()
-            explosion.destroy({children: true})
+            explosion.destroy()
         }
 
         while(this.children.length) {
             const effect = this.children[0]
             tickerRemove(effect)
             this.removeChild(effect)
-            effect.destroy({children: true})
+            effect.destroy()
         }
     }
 }

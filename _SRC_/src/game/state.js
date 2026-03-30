@@ -3,10 +3,32 @@ import { updateStoredData } from "../game/storage"
 
 export let isAdAvailable = true
 
+export let isWaterLevel = false
+
+export let playerAvatarsShop = {
+    player_1: 0, // set 0 if can be used
+    player_2: 5,
+    player_3: 7,
+    player_4: 10,
+    player_5: 15,
+    player_6: 25,
+    player_7: 35,
+    player_8: 50,
+    player_9: 70,
+}
+export let playerAvatarKeys = Object.keys(playerAvatarsShop)
+export let playerAvatarIndex = Math.min( 0, playerAvatarKeys.length - 1)
+export function nextAvatar() {
+    let index = playerAvatarIndex + 1
+    if (index === playerAvatarKeys.length) index = 0
+    playerAvatarIndex = index
+}
+
 export let playerCoins = 0
 export let playerSaves = 0
 export let playerLevel = 1
 export let playerScore = 0
+export let playerScoreX2 = 0
 export let playerTarget = 10 // score for next level
 export let playerPrevious = 0 // score before next level
 export let playerProgress = 0 // score rate for next level
@@ -37,6 +59,8 @@ export function resetScoreToPrevious() {
     playerSaves = 0
     playerScore = playerPrevious
     playerProgress = (playerScore - playerPrevious) / (playerTarget - playerPrevious)
+
+    isWaterLevel = playerLevel % 3 === 0
 }
 
 

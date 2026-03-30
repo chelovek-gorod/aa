@@ -3,7 +3,20 @@ import { tickerAdd, tickerRemove } from "../../../app/application";
 import { images, sounds } from "../../../app/assets";
 import { addSmoke, addSparks, shakeScreen } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
+import { isWaterLevel, playerAvatarIndex, playerAvatarKeys } from "../../state";
 import { timeScale } from "./GameContainer";
+
+export const AVATARS = {
+    player_1: {eye: 'player_eye_c', tongue: 'player_tongue_r'},
+    player_2: {eye: 'player_eye_b', tongue: 'player_tongue_p'},
+    player_3: {eye: 'player_eye_b', tongue: 'player_tongue_r'},
+    player_4: {eye: 'player_eye_c', tongue: 'player_tongue_p'},
+    player_5: {eye: 'player_eye_b', tongue: 'player_tongue_r'},
+    player_6: {eye: 'player_eye_b', tongue: 'player_tongue_r'},
+    player_7: {eye: 'player_eye_b', tongue: 'player_tongue_p'},
+    player_8: {eye: 'player_eye_b', tongue: 'player_tongue_p'},
+    player_9: {eye: 'player_eye_b', tongue: 'player_tongue_r'},
+}
 
 export const PLAYER_X = -300
 export const PLAYER_WIDTH = 200
@@ -44,15 +57,17 @@ export default class Player extends Container {
     constructor(x, minY, maxY) {
         super()
 
+        const AVA_KEY = playerAvatarKeys[playerAvatarIndex]
+
         this.shakePower = 0
 
         this.position.set(x, minY)
 
-        this.body = new Sprite(images.player_1)
+        this.body = new Sprite(images[AVA_KEY])
         this.body.anchor.set(0.5)
         this.addChild(this.body)
 
-        this.eye = new Sprite(images.player_eye)
+        this.eye = new Sprite(images[ AVATARS[AVA_KEY].eye ])
         this.eye.anchor.set(0.5)
         this.eye.position.set(32, -16)
         this.addChild(this.eye)
@@ -60,12 +75,12 @@ export default class Player extends Container {
         this.eyeTimeout = EYE_MIN_TIME + EYE_MID_TIME * Math.random()
 
         this.tongue = new MeshPlane({
-            texture: images.player_tongue,
+            texture: images[ AVATARS[AVA_KEY].tongue ],
             verticesX: 9,
             verticesY: 3
         })
         this.tongue.pivot.set(47, 7)
-        this.tongue.position.set(30, 24)
+        this.tongue.position.set(26, 26)
         this.addChild(this.tongue)
         this.tongueOriginalVertices = this.tongue.geometry.getBuffer('aPosition').data.slice()
         this.tongueTime = 0
@@ -126,7 +141,7 @@ export default class Player extends Container {
                 }
 
                 this.shakePower = 0
-                soundPlay(sounds.se_full)
+                soundPlay(sounds.se_fall.rate(isWaterLevel ? 0.5 : 1))
             }
         } else if(this.y < this.minY) {
             this.y = this.minY

@@ -1,4 +1,4 @@
-import { Container, Sprite } from 'pixi.js'
+import { Container, Sprite, Text } from 'pixi.js'
 import { kill } from '../../../app/application'
 import { atlases, images, music } from '../../../app/assets'
 import { startScene } from '../../../app/events'
@@ -6,7 +6,9 @@ import { setMusicList } from '../../../app/sound'
 import { SCENE_NAME } from '../SceneManager'
 import BackgroundImage from '../../BG/BackgroundImage'
 import Button from '../../UI/Button'
-import { playerAddSave, resetScoreToPrevious } from '../../state'
+import { nextAvatar, playerAddSave, playerAvatarIndex, playerAvatarKeys, playerSaves, resetScoreToPrevious } from '../../state'
+import { AVATARS } from '../level/Player'
+import { styles } from '../../../app/styles'
 //import { TEXT_BUTTON_TYPE } from '../../localText'
 //import Title from './Title'
 
@@ -17,16 +19,40 @@ export default class Menu extends Container {
 
         resetScoreToPrevious()
 
-        this.bg = new BackgroundImage( images.bg_main )
+        this.bg = new BackgroundImage( images.bg_main, 0x777777 )
         this.addChild(this.bg)
+
+        this.playerContainer = new Container()
+        const AVA_KEY = playerAvatarKeys[playerAvatarIndex]
+        this.playerBody = new Sprite(images[ AVA_KEY ])
+        this.playerBody.anchor.set(0.5)
+        this.playerBody.eventMode = 'static'
+        this.playerBody.on('pointerdown', this.changeAvatar, this)
+        this.playerContainer.addChild(this.playerBody)
+        this.playerEye = new Sprite(images[ AVATARS[AVA_KEY].eye ])
+        this.playerEye.anchor.set(0.5)
+        this.playerEye.position.set(32, -16)
+        this.playerContainer.addChild(this.playerEye)
+        this.playerTongue = new Sprite(images[ AVATARS[AVA_KEY].tongue ])
+        this.playerTongue.pivot.set(47, 7)
+        this.playerTongue.position.set(26, 26)
+        this.playerContainer.addChild(this.playerTongue)
+        this.addChild(this.playerContainer)
+
+        this.save = new Sprite(images.save)
+        this.save.scale.set(0.5)
+        this.save.anchor.set(0.5)
+        this.addChild(this.save)
+        this.save.eventMode = 'static'
+        this.save.on('pointerdown', this.addSave, this)
+        this.saveText = new Text({text: playerSaves, style: styles.saves})
+        this.addChild(this.saveText)
 
         this.logo = new Sprite(images.logo)
         this.logo.scale.set(0.75)
         this.logo.anchor.set(1)
         this.addChild(this.logo)
 
-        this.logo.eventMode = 'static'
-        this.logo.on('pointerdown', this.addSave, this)
         
         /*
         this.title = new Title()
@@ -51,6 +77,15 @@ export default class Menu extends Container {
 
     addSave() {
         playerAddSave(1)
+        this.saveText.text = playerSaves
+    }
+
+    changeAvatar() {
+        nextAvatar()
+        const AVA_KEY = playerAvatarKeys[playerAvatarIndex]
+        this.playerBody.texture = images[ AVA_KEY ]
+        this.playerEye.texture = images[ AVATARS[AVA_KEY].eye ]
+        this.playerTongue.texture = images[ AVATARS[AVA_KEY].tongue ]
     }
 
     screenResize(screenData) {
@@ -60,6 +95,10 @@ export default class Menu extends Container {
         this.bg.screenResize(screenData)
 
         this.logo.position.set(screenData.centerX - 12, screenData.centerY - 12)
+
+        this.playerContainer.position.set(-100, 70)
+        this.save.position.set(100, 70)
+        this.saveText.position.set(100, 70)
 
         /*
         const titleScaleX = Math.min(1, screenData.width / (this.titleStartWidth + 120))
@@ -74,5 +113,6 @@ export default class Menu extends Container {
 
     kill() {
         this.logo.off('touchstart', this.addSave, this)
+        this.playerBody.off('pointerdown', this.changeAvatar, this)
     }
 }
