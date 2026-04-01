@@ -3,8 +3,7 @@ import { tickerAdd, tickerRemove } from "../../../app/application"
 import { images } from "../../../app/assets"
 import { EventHub, events } from "../../../app/events"
 import { timeScale } from "./GameContainer"
-
-const _2PI = Math.PI * 2
+import { NOISE_BUFFER, NOISE_BUFFER_SIZE, NOISE_MASK, _2PI } from "./constants"
 
 const SMALL_SCALE_MIN = 0.2
 const SMALL_SCALE_MAX = 0.4
@@ -38,7 +37,10 @@ function createSpark( isBig = false ) {
         rotation: Math.random() * _2PI,
         alpha: 1
     })
-    spark.data = {isBig: isBig}
+    spark.data = {
+        isBig: isBig,
+        noiseOffset: Math.floor(Math.random() * NOISE_BUFFER_SIZE)
+    }
     return spark
 }
 
@@ -135,9 +137,18 @@ export default class SparksParticles {
             if (data.gravity) data.dy += data.gravity * scaledDeltaMs
 
             data.speed *= data.deceleration
-            if (data.speed < data.turnSteed) {
-                data.dx += Math.random() - 0.5
-                data.dy += Math.random() - 0.5
+            if (data.speed < data.turnSpeed) {
+                // 1. Получаем индекс: (текущий_оффсет + шаг) & маска
+                // Добавляем небольшой инкремент 3, чтобы частица ползла по шуму
+                const noiseIndex = (data.noiseOffset + 3) & NOISE_MASK
+                // 2. Берем предзаписанное значение из буфера
+                // Буфер содержит значения от -1 до 1, умножаем на коэффициент дрожания
+                const jitter = NOISE_BUFFER[noiseIndex] * 0.05 
+                data.dx += jitter
+                data.dy += jitter
+
+                //data.dx += Math.random() - 0.5
+                //data.dy += Math.random() - 0.5
             }
 
             spark.alpha = Math.max(0, spark.alpha - data.alphaDecay * scaledDeltaMs)

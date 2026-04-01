@@ -3,8 +3,7 @@ import { tickerAdd, tickerRemove } from "../../../app/application"
 import { images } from "../../../app/assets"
 import { EventHub, events } from "../../../app/events"
 import { ASTEROID_TYPE } from "./Asteroids"
-
-const _2PI = Math.PI * 2
+import { NOISE_BUFFER, NOISE_BUFFER_SIZE, NOISE_MASK, _2PI } from "./constants"
 
 const SPREAD = 30
 const SPREAD_2 = SPREAD * 2

@@ -2,13 +2,14 @@ import { Container, TilingSprite, ColorMatrixFilter } from "pixi.js";
 import { kill, tickerAdd, tickerRemove } from "../../../app/application";
 import { images } from "../../../app/assets";
 import { EventHub, events, shakeScreen, startScene } from "../../../app/events";
-import { levelType, playerSaves } from "../../state";
+import { levelType, LEVEL_TYPE, playerSaves } from "../../state";
 import { SCENE_NAME } from "../SceneManager";
 import Asteroids from "./Asteroids";
 import Clouds from "./Clouds";
 import Obstacles from "./Obstacles";
 import Player from "./Player";
 import Smoke from "./Smoke";
+import SnowParticles from "./SnowParticles";
 import SparksParticles from "./SparksParticles";
 import StonesParticles from "./StonesParticles";
 
@@ -63,6 +64,11 @@ export default class GameContainer extends Container {
         this.sparks = new SparksParticles(this.scrollSpeed)
         this.addChild(this.sparks.container)
 
+        if (levelType === LEVEL_TYPE.SNOW) {
+            this.snow = new SnowParticles(this.scrollSpeed)
+            this.addChild(this.snow.container)
+        }
+        
         EventHub.on( events.slowDown, this.slowDown, this )
 
         tickerAdd(this)
@@ -85,6 +91,7 @@ export default class GameContainer extends Container {
         this.asteroids.resize(width)
         this.stones.resize(width, height)
         this.sparks.resize(width, height)
+        if (this.snow) this.snow.resize(screenData)
     }
 
     getFlyClick() {
@@ -133,5 +140,10 @@ export default class GameContainer extends Container {
 
         this.stones.kill()
         this.stones = null
+
+        if (this.snow) {
+            this.snow.kill()
+            this.snow = null
+        }
     }
 }

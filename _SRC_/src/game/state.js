@@ -5,7 +5,7 @@ import { createEnum } from "../utils/functions"
 export let isAdAvailable = true
 
 export const LEVEL_TYPE = createEnum(['GROUND', 'WATER', 'SNOW'])
-export let levelType = LEVEL_TYPE.GROUND
+export let levelType = LEVEL_TYPE.SNOW
 
 export let playerAvatarsShop = {
     player_1: 0, // set 0 if can be used

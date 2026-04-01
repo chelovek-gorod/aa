@@ -496,7 +496,7 @@ class Base extends Sprite {
         this.isSliding = true
 
         this.halfWidth = images.base.width * 0.5
-        this.position.set(START_X + this.halfWidth, BUILDING_Y)
+        this.position.set(START_X + this.halfWidth, BUILDING_Y - 50)
 
         this.playerMinX = PLAYER_X - this.halfWidth
         this.playerMaxX = PLAYER_X + this.halfWidth

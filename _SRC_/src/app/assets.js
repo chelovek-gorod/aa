@@ -95,6 +95,7 @@ export const images = {
     wagon_black: 'wagon_black.png',
 
     spark: 'spark.png',
+    snowflake: 'snowflake.png',
 
     asteroid_stone_1: 'asteroid_stone_1.png',
     asteroid_stone_2: 'asteroid_stone_2.png',
