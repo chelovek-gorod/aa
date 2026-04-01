@@ -4,9 +4,12 @@ import { images, sounds } from "../../../app/assets";
 import { addExplosion, addSmoke, addSparks, resetCombo, shakeScreen, slowDown, removePlyerSave } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { createEnum } from "../../../utils/functions";
-import { levelType, LEVEL_TYPE, playerSaves, playerUseSave } from "../../state";
+import { levelType, LEVEL_TYPE, playerLevel, playerSaves, playerUseSave } from "../../state";
+import { HELP_DURATION, HELP_IN_OUT } from "./constants";
 import { timeScale } from "./GameContainer";
 import { PLAYER_X, PLAYER_WIDTH } from "./Player";
+
+const ADD_TIME = 1769
 
 const START_X = 6200 * 0.5
 const BUS_Y = 250
@@ -29,12 +32,12 @@ const OBSTACLE_GROUND_LIST = [
 const OBSTACLE_WATER_LIST = [
     OBSTACLE_TYPE.AIRSHIP, OBSTACLE_TYPE.SHIP, OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.SIGN,
     OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.SHIP, OBSTACLE_TYPE.AIRSHIP, OBSTACLE_TYPE.SHIP,
-    OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.SIGN,
+    OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.SIGN, OBSTACLE_TYPE.COPTER,
 ]
 const OBSTACLE_SNOW_LIST = [
     OBSTACLE_TYPE.WAGON, OBSTACLE_TYPE.BASE, OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.TRACK,
-    OBSTACLE_TYPE.DRONE, OBSTACLE_TYPE.BASE, OBSTACLE_TYPE.DRONE, OBSTACLE_TYPE.BASE,
-    OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.TRACK,
+    OBSTACLE_TYPE.DRONE, OBSTACLE_TYPE.BASE, OBSTACLE_TYPE.WAGON, OBSTACLE_TYPE.BASE,
+    OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.TRACK, OBSTACLE_TYPE.DRONE, OBSTACLE_TYPE.BASE,
 ]
 let obstacleIndex = 0
 let buildingIndex = 1
@@ -686,7 +689,9 @@ export default class Obstacles extends Container {
         this.offset = 0
         this.scrollSpeed = scrollSpeed
 
-        this.addTimeout = 1769
+        this.addTimeout = playerLevel === 1
+            ? ADD_TIME + HELP_DURATION + HELP_IN_OUT * 2
+            : ADD_TIME
 
         tickerAdd(this)
     }
@@ -707,8 +712,8 @@ export default class Obstacles extends Container {
             case OBSTACLE_TYPE.SHIP : this.addChild( new Ship() ); break;
             case OBSTACLE_TYPE.SIGN : this.addChild( new Sign() ); break;
             case OBSTACLE_TYPE.BUILDING : this.addChild( new Building() ); break;
-            case OBSTACLE_TYPE.COPTER : this.addChild( new Copter() ); break;
-            case OBSTACLE_TYPE.PLANE : this.addChild( new Plane() ); break;
+            case OBSTACLE_TYPE.COPTER : if (playerLevel > 12) this.addChild( new Copter() ); break;
+            case OBSTACLE_TYPE.PLANE : if (playerLevel > 6) this.addChild( new Plane() ); break;
             case OBSTACLE_TYPE.BASE : this.addChild( new Base() ); break;
             case OBSTACLE_TYPE.DRONE : this.addChild( new Drone() ); break;
             case OBSTACLE_TYPE.TRACK : this.addChild( new Track() ); break;
@@ -753,7 +758,7 @@ export default class Obstacles extends Container {
         if (collideObstaclesList.length) {
             resetCombo()
             playerUseSave()
-            this.player.addSquash(collideObstaclesList[0].x, collideObstaclesList[0].y)
+            this.player.addSquash()
             soundPlay(sounds.se_obstacle_explosion)
             if (playerSaves < 0) slowDown()
             else removePlyerSave()
@@ -766,7 +771,7 @@ export default class Obstacles extends Container {
 
         this.addTimeout -= scaledDeltaMs
         if (this.addTimeout <= 0) {
-            this.addTimeout += 1769
+            this.addTimeout += ADD_TIME
             this.addObstacle()
         }
     }

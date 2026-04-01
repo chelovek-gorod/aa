@@ -1,13 +1,14 @@
-import { Container, Graphics } from 'pixi.js'
-import { music } from '../../../app/assets'
+import { Container, Graphics, Sprite } from 'pixi.js'
+import { images, music } from '../../../app/assets'
 import { EventHub, events } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import { getLanguage } from '../../localization'
 import Shaker from './Shaker'
 import GameContainer from './GameContainer'
 import UI from './UI'
-import { tickerAdd, tickerRemove } from '../../../app/application'
-import { playerSaves } from '../../state'
+import { kill, tickerAdd, tickerRemove } from '../../../app/application'
+import { playerLevel, playerSaves, playerScore } from '../../state'
+import { HELP_DURATION, HELP_IN_OUT } from './constants'
 
 const musics = [ 
     music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4,
@@ -33,6 +34,17 @@ export default class LevelScene extends Container {
 
         this.gameContainer = new GameContainer(this.shaker)
         this.shaker.addChild(this.gameContainer)
+
+        if (playerLevel === 1) {
+            this.help = new Sprite(images.help)
+            this.help.anchor.set(0.5)
+            this.help.alpha = 0
+            this.help.time = HELP_DURATION + HELP_IN_OUT
+            this.help.alphaStep = 1 / HELP_IN_OUT
+            this.addChild(this.help)
+
+            tickerAdd(this)
+        }
 
         this.tapArea = new Graphics()
         this.tapArea.alpha = 0.0003
@@ -65,6 +77,15 @@ export default class LevelScene extends Container {
         this.tapAreaDrawData.w = screenData.width
         this.tapAreaDrawData.h = screenData.height
         this.redrawTapArea()
+
+        if(this.help) {
+            const helpScale = Math.min(
+                1,
+                screenData.width / this.help.texture.width,
+                screenData.height / this.help.texture.height
+            )
+            this.help.scale.set( helpScale )
+        }
         
         this.shaker.screenResize(screenData)
     }
@@ -96,6 +117,29 @@ export default class LevelScene extends Container {
     }
 
     tick(deltaMs) {
+        if(this.help) {
+            if (this.help.time > HELP_DURATION) {
+                this.help.alpha = Math.min(1, this.help.alpha + this.help.alphaStep * deltaMs)
+                if (this.help.alpha === 1) this.help.time = HELP_DURATION
+            } else {
+                if (this.help.alpha === 1) {
+                    this.help.time -= deltaMs
+                    if (this.help.time <= 0) {
+                        this.help.alpha -= this.help.alphaStep
+                        this.help.time = HELP_IN_OUT
+                    }
+                } else {
+                    this.help.alpha = Math.max(0, this.help.alpha - this.help.alphaStep * deltaMs)
+                    if (this.help.alpha === 0) {
+                        this.help.destroy()
+                        this.help = null
+                        tickerRemove(this)
+                    }
+                }
+            }
+            return
+        }
+
         if (this.redIsUp) {
             this.tapArea.alpha = Math.min(0.6, this.tapArea.alpha + this.redSpeed * deltaMs)
             if (this.tapArea.alpha === 0.6) this.redIsUp = false

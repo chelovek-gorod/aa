@@ -42,6 +42,8 @@ export const images = {
     x2: 'x2.png',
     pause: 'pause.png',
 
+    help: 'help.png',
+
     player_1: 'player_1.png',
     player_2: 'player_2.png',
     player_3: 'player_3.png',

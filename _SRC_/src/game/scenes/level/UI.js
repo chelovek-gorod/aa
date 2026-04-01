@@ -6,26 +6,17 @@ import { styles } from "../../../app/styles";
 import { isPlayerScoreX2Active, playerAddScore, playerCoins, playerLevel, playerProgress, playerSaves, playerScore, playerTarget } from "../../state";
 import FlyText from "./FlyText"
 
+const PROGRESS_WIDTH = 110
+
 function formatNumber(n, isRoundUp = false) {
-    if (n < 1e3) return String(n)
-    
-    let suffix, divisor
-    if (n < 1e6) {
-        suffix = 'K'
-        divisor = 1e3
-    } else if (n < 1e9) {
-        suffix = 'M'
-        divisor = 1e6
-    } else if (n < 1e12) {
-        suffix = 'B'
-        divisor = 1e9
-    } else {
-        suffix = 'T'
-        divisor = 1e12
-    }
-    const v = n / divisor
-    const rounded = (isRoundUp ? Math.ceil(v * 10) : Math.floor(v * 10)) / 10
-    return rounded + suffix
+    if (n < 1_000_000) return n.toLocaleString('ru-RU')
+
+    const millions = n / 1_000_000
+    const factor = 1000
+    const rounded = isRoundUp
+        ? Math.ceil(millions * factor) / factor
+        : Math.floor(millions * factor) / factor
+    return rounded.toFixed(3) + ' M'
 }
 
 export default class UI extends Container {
@@ -34,6 +25,8 @@ export default class UI extends Container {
 
         this.gameContainer = gameContainer
 
+        this.flyTextNextLevelY = 0
+
         this.centerTop = new Container()
         this.addChild(this.centerTop)
 
@@ -41,14 +34,15 @@ export default class UI extends Container {
         this.levelIcon.scale.set(0.5)
         this.addChild(this.levelIcon)
 
-        this.levelText = new Text({text: 'Уровень ' + playerLevel, style: styles.level})
+        this.levelText = new Text({text: 'x' + playerLevel, style: styles.level})
         this.addChild(this.levelText)
 
         this.levelProgressBar = new Graphics()
         this.levelProgressBar.point = {x: 0, y: 0}
         this.addChild(this.levelProgressBar)
 
-        this.targetText = new Text({text: formatNumber(playerTarget, true), style: styles.target})
+        const targetScore = playerTarget - playerScore
+        this.targetText = new Text({text: formatNumber(targetScore, true), style: styles.target})
         this.addChild(this.targetText)
 
         this.scoreText = new Text({text: formatNumber(playerScore), style: styles.score})
@@ -101,13 +95,15 @@ export default class UI extends Container {
     screenResize(screenData) {
         const safeArea = getSafeAreaOffsets()
 
+        this.flyTextNextLevelY = screenData.centerY - 50 - safeArea.bottom
+
         this.levelProgressBar.point.x = -screenData.centerX + 70,
         this.levelProgressBar.point.y = -screenData.centerY + 50 + safeArea.top,
         this.updateProgressBar()
 
         this.levelIcon.position.set(-screenData.centerX + 10, -screenData.centerY + 10 + safeArea.top)
         this.levelText.position.set(-screenData.centerX + 70, -screenData.centerY + 5 + safeArea.top)
-        this.targetText.position.set(-screenData.centerX + 180, -screenData.centerY + 42 + safeArea.top)
+        this.targetText.position.set(-screenData.centerX + 80 + PROGRESS_WIDTH, -screenData.centerY + 42 + safeArea.top)
 
         this.centerTop.y = -screenData.centerY + (screenData.isLandscape ? 10 : 80) + safeArea.top
         this.updateTopCenter()
@@ -124,13 +120,13 @@ export default class UI extends Container {
     }
 
     updateProgressBar() {
-        let lineWidth = 100 * playerProgress
-        if (lineWidth > 0) lineWidth = Math.max(8, Math.min(100, lineWidth))
+        let lineWidth = PROGRESS_WIDTH * playerProgress
+        if (lineWidth > 0) lineWidth = Math.max(8, Math.min(PROGRESS_WIDTH, lineWidth))
 
         const point = this.levelProgressBar.point
 
         this.levelProgressBar.clear()
-        this.levelProgressBar.roundRect( point.x, point.y, 102, 10, 5 )
+        this.levelProgressBar.roundRect( point.x, point.y, PROGRESS_WIDTH + 2, 10, 5 )
         this.levelProgressBar.fill(0x777777)
         this.levelProgressBar.stroke({width: 2, color: 0x000000})
         if (lineWidth > 0) {
@@ -153,6 +149,8 @@ export default class UI extends Container {
         playerAddScore(addScore)
         this.scoreText.text = formatNumber(playerScore)
 
+        this.targetText.text = formatNumber(playerTarget - playerScore, true)
+
         this.combo++
         this.comboText.text = ' x' + this.combo
 
@@ -168,17 +166,17 @@ export default class UI extends Container {
 
         this.updateTopCenter()
     }
-    removeSave() { console.log('removeSave')
+    removeSave() {
         this.savesText.text = 'x' + Math.max(0, playerSaves)
         this.saveAnimations++
         tickerAdd(this)
     }
     updateLevel() {
         if (this.combo < playerLevel) this.combo = playerLevel
-        this.levelText.text = 'Уровень ' + playerLevel
-        this.targetText.text = formatNumber(playerTarget, true)
+        this.levelText.text = 'x' + playerLevel
+        this.targetText.text = formatNumber(playerTarget - playerScore, true)
         this.coinsText.text = 'x' + playerCoins
-        this.gameContainer.addChild( new FlyText(null, 0, 0) )
+        this.gameContainer.addChild( new FlyText(null, 0, this.flyTextNextLevelY) )
         this.coinAnimations += 2
         tickerAdd(this)
     }

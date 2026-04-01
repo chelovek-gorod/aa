@@ -37,8 +37,8 @@ export default class FlyText extends Text {
 
         this.position.set(x,y)
 
-        this.lifeTime = text ? 300 : 450
-        this.alphaStep = text ? 0.0012 : 0.0009
+        this.lifeTime = text ? 300 : 900
+        this.alphaStep = text ? 0.0012 : 0.0003
         this.flySpeed = text ? 0.24 : 0.18
 
         this.x2point = (isPlayerScoreX2Active && text) ? {x, y} : null

@@ -4,8 +4,12 @@ import { images, sounds } from "../../../app/assets";
 import { addExplosion, addScore, addSmoke, addSparks, addStones, shakeScreen, resetCombo } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { createEnum } from "../../../utils/functions";
+import { playerLevel } from "../../state";
+import { HELP_DURATION, HELP_IN_OUT } from "./constants";
 import { timeScale } from "./GameContainer";
 import { PLAYER_X, PLAYER_WIDTH } from "./Player";
+
+const ASTEROID_TIME = 2400
 
 const ASTEROID_WIDTH = 280
 const START_X = (6200 + ASTEROID_WIDTH) * 0.5
@@ -75,7 +79,9 @@ export default class Asteroids extends Container {
         this.smokeContainer = new Container()
         this.addChild
 
-        this.addAsteroidTimeout = 2400
+        this.addAsteroidTimeout = playerLevel === 1
+            ? ASTEROID_TIME + HELP_DURATION + HELP_IN_OUT * 2
+            : ASTEROID_TIME
 
         tickerAdd(this)
     }
@@ -136,7 +142,7 @@ export default class Asteroids extends Container {
                     shakeScreen({powerX: 12, powerY: 12})
                     addRadialSmoke(asteroid.x, asteroid.y)
 
-                    this.player.addSquash(asteroid.x, asteroid.y)
+                    this.player.addSquash()
 
                     addScore({score: asteroid.score, x: asteroid.x, y: asteroid.y, parent: this.parent})
 
@@ -147,7 +153,7 @@ export default class Asteroids extends Container {
 
         this.addAsteroidTimeout -= scaledDeltaMs
         if (this.addAsteroidTimeout <= 0) {
-            this.addAsteroidTimeout = 2400
+            this.addAsteroidTimeout = ASTEROID_TIME
             this.addAsteroid()
         }
     }
