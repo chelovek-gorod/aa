@@ -136,7 +136,7 @@ export default class Asteroids extends Container {
                     shakeScreen({powerX: 12, powerY: 12})
                     addRadialSmoke(asteroid.x, asteroid.y)
 
-                    this.player.addSquash()
+                    this.player.addSquash(asteroid.x, asteroid.y)
 
                     addScore({score: asteroid.score, x: asteroid.x, y: asteroid.y, parent: this.parent})
 

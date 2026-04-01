@@ -753,7 +753,7 @@ export default class Obstacles extends Container {
         if (collideObstaclesList.length) {
             resetCombo()
             playerUseSave()
-            this.player.addSquash()
+            this.player.addSquash(collideObstaclesList[0].x, collideObstaclesList[0].y)
             soundPlay(sounds.se_obstacle_explosion)
             if (playerSaves < 0) slowDown()
             else removePlyerSave()

@@ -35,6 +35,9 @@ const EYE_MAX_TIME = 1200
 const EYE_MID_TIME = EYE_MAX_TIME -  EYE_MIN_TIME
 const EYE_BLINK_SPEED = 0.0012
 
+const SQUASH_RATE = 0.18
+const SQUASH_DURATION = 60
+
 const SHAKE_POWER = 0.003
 
 const TONGUE_SPEED = 0.009
@@ -62,6 +65,8 @@ export default class Player extends Container {
         this.shakePower = 0
 
         this.position.set(x, minY)
+
+        this.squashTimer = 0
 
         this.body = new Sprite(images[AVA_KEY])
         this.body.anchor.set(0.5)
@@ -111,6 +116,8 @@ export default class Player extends Container {
     }
 
     addSquash() {
+        this.squashTimer = SQUASH_DURATION
+
         this.eye.scale.y = 0.18
         this.eye.rotation = 0
         this.eyeTimeout = EYE_MIN_TIME + EYE_MID_TIME * Math.random()
@@ -155,6 +162,20 @@ export default class Player extends Container {
 
         this.currentAngle += (targetAngle - this.currentAngle) * ANGLE_SMOOTH * scaledDeltaMs
         this.rotation = this.currentAngle
+
+        // деформация
+        if (this.squashTimer > 0) {
+            this.squashTimer -= scaledDeltaMs
+            if (this.squashTimer <= 0) {
+                this.scale.set(1, 1)
+            } else {
+                let t = this.squashTimer / SQUASH_DURATION
+                if (t < 0) t = 0
+                const scaleX = 1 - SQUASH_RATE * (1 - t)
+                const scaleY = 1 + SQUASH_RATE * (1 - t)
+                this.scale.set(scaleX, scaleY)
+            }
+        }
 
         // eye
         if (this.eye.scale.y < 1) {
