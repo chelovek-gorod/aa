@@ -9,6 +9,18 @@ import UI from './UI'
 import { tickerAdd, tickerRemove } from '../../../app/application'
 import { playerSaves } from '../../state'
 
+const musics = [ 
+    music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4,
+    music.bgm_5, music.bgm_6, music.bgm_7
+]
+let currentMusicIndex = Math.floor( Math.random() * musics.length )
+function getMusic() {
+    const music = musics[currentMusicIndex]
+    currentMusicIndex++
+    if (currentMusicIndex === musics.length) currentMusicIndex = 0
+    return music
+}
+
 export default class LevelScene extends Container {
     constructor() {
         super()
@@ -39,7 +51,7 @@ export default class LevelScene extends Container {
 
         EventHub.on( events.removePlyerSave, this.showRedScreen, this )
         
-        setMusicList([ music.bgm_0, music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4 ])
+        setMusicList( getMusic() )
     }
 
     screenResize(screenData) {

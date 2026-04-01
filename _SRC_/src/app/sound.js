@@ -264,6 +264,13 @@ function loadBgMusic() {
 
 function nextBgMusic() {
     if (!musicList || !musicList.length) return
+
+    // Если трек всего один — просто перезапускаем
+    if (musicList.length === 1 && musicHowl) {
+        musicHowl.stop()
+        musicPlay()
+        return
+    }
   
     musicIndex = (musicIndex + 1) % musicList.length
     musicToken++

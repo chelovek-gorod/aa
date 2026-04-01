@@ -120,11 +120,17 @@ export const sounds = {
     se_player_up: 'se_player_up.mp3',
 }
 export const music = {
-    bgm_0: 'bgm_0.mp3',
+    bgm_menu_1: 'bgm_menu_1.mp3',
+    bgm_menu_2: 'bgm_menu_2.mp3',
+    bgm_menu_3: 'bgm_menu_3.mp3',
+    bgm_menu_4: 'bgm_menu_4.mp3',
     bgm_1: 'bgm_1.mp3',
     bgm_2: 'bgm_2.mp3',
     bgm_3: 'bgm_3.mp3',
     bgm_4: 'bgm_4.mp3',
+    bgm_5: 'bgm_5.mp3',
+    bgm_6: 'bgm_6.mp3',
+    bgm_7: 'bgm_7.mp3',
 }
 
 export const assets = {fonts, images, atlases, sounds, music}

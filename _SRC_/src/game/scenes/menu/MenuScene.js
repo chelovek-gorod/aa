@@ -12,6 +12,15 @@ import { styles } from '../../../app/styles'
 //import { TEXT_BUTTON_TYPE } from '../../localText'
 //import Title from './Title'
 
+const musics = [ music.bgm_menu_1, music.bgm_menu_2, music.bgm_menu_3, music.bgm_menu_4 ]
+let currentMusicIndex = Math.floor( Math.random() * musics.length )
+function getMusic() {
+    const music = musics[currentMusicIndex]
+    currentMusicIndex++
+    if (currentMusicIndex === musics.length) currentMusicIndex = 0
+    return music
+}
+
 export default class Menu extends Container {
     constructor() {
         super()
@@ -72,7 +81,7 @@ export default class Menu extends Container {
         // this.startButton.scale.set(0.75)
         this.addChild(this.startButton)
 
-        setMusicList([music.bgm_0, music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4])
+        setMusicList( getMusic() )
     }
 
     addSave() {
