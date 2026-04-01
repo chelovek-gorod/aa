@@ -8,7 +8,7 @@ export const LEVEL_TYPE = createEnum(['GROUND', 'WATER', 'SNOW'])
 export let levelType = LEVEL_TYPE.GROUND
 
 export let playerAvatarsShop = {
-    player_1: 0, // set 0 if can be used
+    player_1: 0, // set 0 if purchased
     player_2: 5,
     player_3: 7,
     player_4: 10,
@@ -30,20 +30,27 @@ export let playerCoins = 0
 export let playerSaves = 0
 export let playerLevel = 1
 export let playerScore = 0
-export let playerScoreX2 = 0
-export let playerTarget = 10 // score for next level
+export let playerScoreX2 = 0 // additionalScoreRate
+export let isPlayerScoreX2Active = false
+export let isPlayerScoreX2Apply = false
+export let playerTarget = 20 // score for next level
 export let playerPrevious = 0 // score before next level
 export let playerProgress = 0 // score rate for next level
 export function playerAddScore(score) {
-    playerScore += score
+    playerScore += score * (isPlayerScoreX2Active ? 2 : 1)
     if (playerScore >= playerTarget) {
         playerPrevious = playerTarget
         playerLevel++
         playerCoins++
-        playerTarget += Math.floor(playerLevel * 1.2) * 10
+        playerTarget += Math.floor(playerLevel * 1.2) * 20
         getNextLevel()
     }           
     playerProgress = (playerScore - playerPrevious) / (playerTarget - playerPrevious)
+
+    if (isPlayerScoreX2Active && !isPlayerScoreX2Apply) {
+        playerScoreX2 = Math.max(0, playerScoreX2 - 1)
+        isPlayerScoreX2Apply = true
+    }
 }
 export function playerUseCoins(count) {
     playerCoins -= count
@@ -53,14 +60,23 @@ export function playerAddCoins(count) {
 }
 export function playerUseSave() {
     playerSaves--
+    isPlayerScoreX2Active = false
 }
 export function playerAddSave(count) {
     playerSaves += count
 }
+export function playerAddScoreX2(count) {
+    isPlayerScoreX2Active = true
+    playerScoreX2 += count
+}
+
 export function resetScoreToPrevious() {
     playerSaves = 0
     playerScore = playerPrevious
     playerProgress = (playerScore - playerPrevious) / (playerTarget - playerPrevious)
+
+    isPlayerScoreX2Apply = false
+    if (playerScoreX2 > 0) isPlayerScoreX2Active = true
 
     levelType = playerLevel % 5 === 0
         ? LEVEL_TYPE.SNOW : playerLevel % 3 === 0

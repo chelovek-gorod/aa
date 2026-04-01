@@ -6,7 +6,7 @@ import { setMusicList } from '../../../app/sound'
 import { SCENE_NAME } from '../SceneManager'
 import BackgroundImage from '../../BG/BackgroundImage'
 import Button from '../../UI/Button'
-import { nextAvatar, playerAddSave, playerAvatarIndex, playerAvatarKeys, playerSaves, resetScoreToPrevious } from '../../state'
+import { nextAvatar, playerAddSave, playerAddScoreX2, playerAvatarIndex, playerAvatarKeys, playerSaves, playerScoreX2, resetScoreToPrevious } from '../../state'
 import { AVATARS } from '../level/Player'
 import { styles } from '../../../app/styles'
 //import { TEXT_BUTTON_TYPE } from '../../localText'
@@ -57,6 +57,16 @@ export default class Menu extends Container {
         this.saveText = new Text({text: playerSaves, style: styles.saves})
         this.addChild(this.saveText)
 
+        this.x2 = new Sprite(images.x2)
+        this.x2.scale.set(0.5)
+        this.x2.anchor.set(0.5)
+        this.addChild(this.x2)
+        this.x2.eventMode = 'static'
+        this.x2.on('pointerdown', this.addX2, this)
+        this.x2Text = new Text({text: playerScoreX2, style: styles.score})
+        this.x2Text.scale.set(0.75)
+        this.addChild(this.x2Text)
+
         this.logo = new Sprite(images.logo)
         this.logo.scale.set(0.75)
         this.logo.anchor.set(1)
@@ -89,6 +99,11 @@ export default class Menu extends Container {
         this.saveText.text = playerSaves
     }
 
+    addX2() {
+        playerAddScoreX2(1)
+        this.x2Text.text = playerScoreX2
+    }
+
     changeAvatar() {
         nextAvatar()
         const AVA_KEY = playerAvatarKeys[playerAvatarIndex]
@@ -105,9 +120,11 @@ export default class Menu extends Container {
 
         this.logo.position.set(screenData.centerX - 12, screenData.centerY - 12)
 
-        this.playerContainer.position.set(-100, 70)
-        this.save.position.set(100, 70)
-        this.saveText.position.set(100, 70)
+        this.playerContainer.position.set(-120, screenData.centerY * -0.25)
+        this.save.position.set(60, screenData.centerY * -0.25)
+        this.saveText.position.set(60, screenData.centerY * -0.25)
+        this.x2.position.set(160, screenData.centerY * -0.25)
+        this.x2Text.position.set(160, screenData.centerY * -0.25)
 
         /*
         const titleScaleX = Math.min(1, screenData.width / (this.titleStartWidth + 120))
@@ -117,7 +134,7 @@ export default class Menu extends Container {
         this.title.position.set(0, -pointY)
         */
 
-        this.startButton.position.set(0, screenData.centerY * 0.5)
+        this.startButton.position.set(0, screenData.centerY * 0.25)
     }
 
     kill() {

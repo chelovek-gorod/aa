@@ -1,10 +1,32 @@
 import { Container, Text, Point, Graphics, Sprite } from "pixi.js";
-import { getSafeAreaOffsets, tickerAdd, tickerRemove } from "../../../app/application";
+import { getSafeAreaOffsets, kill, tickerAdd, tickerRemove } from "../../../app/application";
 import { images } from "../../../app/assets";
 import { EventHub, events } from "../../../app/events";
 import { styles } from "../../../app/styles";
-import { playerAddScore, playerCoins, playerLevel, playerProgress, playerSaves, playerScore, playerTarget } from "../../state";
+import { isPlayerScoreX2Active, playerAddScore, playerCoins, playerLevel, playerProgress, playerSaves, playerScore, playerTarget } from "../../state";
 import FlyText from "./FlyText"
+
+function formatNumber(n, isRoundUp = false) {
+    if (n < 1e3) return String(n)
+    
+    let suffix, divisor
+    if (n < 1e6) {
+        suffix = 'K'
+        divisor = 1e3
+    } else if (n < 1e9) {
+        suffix = 'M'
+        divisor = 1e6
+    } else if (n < 1e12) {
+        suffix = 'B'
+        divisor = 1e9
+    } else {
+        suffix = 'T'
+        divisor = 1e12
+    }
+    const v = n / divisor
+    const rounded = (isRoundUp ? Math.ceil(v * 10) : Math.floor(v * 10)) / 10
+    return rounded + suffix
+}
 
 export default class UI extends Container {
     constructor(gameContainer) {
@@ -26,10 +48,10 @@ export default class UI extends Container {
         this.levelProgressBar.point = {x: 0, y: 0}
         this.addChild(this.levelProgressBar)
 
-        this.targetText = new Text({text: playerTarget, style: styles.target})
+        this.targetText = new Text({text: formatNumber(playerTarget, true), style: styles.target})
         this.addChild(this.targetText)
 
-        this.scoreText = new Text({text: playerScore, style: styles.score})
+        this.scoreText = new Text({text: formatNumber(playerScore), style: styles.score})
         this.scoreText.anchor.set(1, 0.1)
         this.centerTop.addChild(this.scoreText)
 
@@ -52,6 +74,13 @@ export default class UI extends Container {
         this.coinsText = new Text({text: 'x' + playerCoins, style: styles.coins})
         this.coinsText.anchor.set(0, 1)
         this.addChild(this.coinsText)
+
+        if (isPlayerScoreX2Active) {
+            this.x2Icon = new Sprite(images.x2)
+            this.x2Icon.anchor.set(0.5, 1)
+            this.x2Icon.scale.set(0.5)
+            this.addChild(this.x2Icon)
+        }
 
         this.saveAnimations = 0
         this.saveIcon = new Sprite(images.save)
@@ -88,6 +117,8 @@ export default class UI extends Container {
         this.coinIcon.position.set(-screenData.centerX + 10, screenData.centerY - 10 - safeArea.bottom)
         this.coinsText.position.set(-screenData.centerX + 80, screenData.centerY - 20 - safeArea.bottom)
 
+        if (this.x2Icon) this.x2Icon.position.set(0, screenData.centerY - 10 - safeArea.bottom)
+
         this.saveIcon.position.set(screenData.centerX - 10, screenData.centerY - 10 - safeArea.bottom)
         this.savesText.position.set(screenData.centerX - 80, screenData.centerY - 15 - safeArea.bottom)
     }
@@ -120,7 +151,7 @@ export default class UI extends Container {
 
         const addScore = data.score * this.combo
         playerAddScore(addScore)
-        this.scoreText.text = playerScore
+        this.scoreText.text = formatNumber(playerScore)
 
         this.combo++
         this.comboText.text = ' x' + this.combo
@@ -137,7 +168,7 @@ export default class UI extends Container {
 
         this.updateTopCenter()
     }
-    removeSave() {
+    removeSave() { console.log('removeSave')
         this.savesText.text = 'x' + Math.max(0, playerSaves)
         this.saveAnimations++
         tickerAdd(this)
@@ -145,7 +176,7 @@ export default class UI extends Container {
     updateLevel() {
         if (this.combo < playerLevel) this.combo = playerLevel
         this.levelText.text = 'Уровень ' + playerLevel
-        this.targetText.text = playerTarget
+        this.targetText.text = formatNumber(playerTarget, true)
         this.coinsText.text = 'x' + playerCoins
         this.gameContainer.addChild( new FlyText(null, 0, 0) )
         this.coinAnimations += 2
@@ -156,13 +187,25 @@ export default class UI extends Container {
         if (this.saveAnimations > 0) {
             this.saveIcon.scale.set( this.saveIcon.scale.x + 0.0012 * deltaMs )
             this.saveIcon.alpha = Math.max(0, this.saveIcon.alpha - 0.0012 * deltaMs)
+
+            if (this.x2Icon) {
+                this.x2Icon.scale.set( this.saveIcon.scale.x )
+                this.x2Icon.alpha = this.saveIcon.alpha
+            }
+
             if (this.saveIcon.alpha === 0) {
                 this.saveAnimations--
                 this.saveIcon.scale.set(0.5)
                 this.saveIcon.alpha = 1
                 if (this.saveAnimations === 0 && this.coinAnimations === 0) tickerRemove(this)
+
+                if (this.x2Icon) {
+                    kill(this.x2Icon)
+                    this.x2Icon = null
+                }
             }
         }
+
         if (this.coinAnimations > 0) {
             if (this.coinAnimations % 2 === 0) {
                 this.coinIcon.scale.set( Math.min(0.6, this.coinIcon.scale.x + 0.0006 * deltaMs) )

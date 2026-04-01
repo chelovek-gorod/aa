@@ -39,6 +39,7 @@ export const images = {
     coin: 'coin.png',
     cup: 'cup.png',
     save: 'save.png',
+    x2: 'x2.png',
     pause: 'pause.png',
 
     player_1: 'player_1.png',
