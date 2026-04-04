@@ -160,7 +160,7 @@ export default class Asteroids extends Container {
 
     kill() {
         tickerRemove(this)
-        
+
         while(this.pull.length) {
             const asteroid = this.pull.pop()
             asteroid.destroy({children: true})

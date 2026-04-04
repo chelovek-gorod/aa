@@ -5,7 +5,17 @@ import { createEnum } from "../utils/functions"
 export let isAdAvailable = true
 
 export const LEVEL_TYPE = createEnum(['GROUND', 'WATER', 'SNOW'])
-export let levelType = LEVEL_TYPE.GROUND
+const levels = [
+    LEVEL_TYPE.GROUND, LEVEL_TYPE.GROUND,
+    LEVEL_TYPE.WATER, 
+    LEVEL_TYPE.GROUND,
+    LEVEL_TYPE.WATER, LEVEL_TYPE.WATER,
+    LEVEL_TYPE.GROUND,
+    LEVEL_TYPE.SNOW, LEVEL_TYPE.SNOW,
+    LEVEL_TYPE.GROUND,
+]
+let levelIndex = 0
+export let levelType = levels[levelIndex]
 
 export let playerAvatarsShop = {
     player_1: 0, // set 0 if purchased
@@ -78,9 +88,9 @@ export function resetScoreToPrevious() {
     isPlayerScoreX2Apply = false
     if (playerScoreX2 > 0) isPlayerScoreX2Active = true
 
-    levelType = playerLevel % 5 === 0
-        ? LEVEL_TYPE.SNOW : playerLevel % 3 === 0
-        ? LEVEL_TYPE.WATER : LEVEL_TYPE.GROUND
+    levelIndex++
+    if (levelIndex === levels.length) levelIndex = 0
+    levelType = levels[levelIndex]
 }
 
 export function getStateData() {

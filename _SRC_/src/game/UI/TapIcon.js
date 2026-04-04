@@ -5,8 +5,8 @@ import { styles } from "../../app/styles"
 import { soundPlay } from "../../app/sound"
 import { tickerAdd, tickerRemove } from "../../app/application"
 
-const MIN_SCALE = 0.9
-const MAX_SCALE = 1
+const MIN_SCALE = 0.5
+const MAX_SCALE = 0.56
 const SCALE_DURATION = 1200
 const SCALE_STEP = 1 / SCALE_DURATION
 
@@ -50,15 +50,13 @@ export default class TapIcon extends Sprite {
         if (!this.isActive || this.isOnHover) return
 
         this.isOnHover = true
-        if (this.isText) this.value.style = styles.buttonHover
-        soundPlay(sounds.se_scale)
+        soundPlay(sounds.se_hover)
         tickerAdd(this)
     }
     onOut() {
         if (!this.isOnHover) return
 
         this.isOnHover = false
-        if (this.isText) this.value.style = styles.button
         tickerAdd(this)
     }
 
@@ -69,12 +67,12 @@ export default class TapIcon extends Sprite {
         this.isOnHover = false
     }
 
-    tick(time) {
+    tick(deltaMs) {
         if (this.isOnHover) {
-            this.scale.set( Math.min(MAX_SCALE, this.scale.x + SCALE_STEP * time.deltaMS) )
+            this.scale.set( Math.min(MAX_SCALE, this.scale.x + SCALE_STEP * deltaMs) )
             if (this.scale.x === MAX_SCALE) tickerRemove(this)
         } else {
-            this.scale.set( Math.max(MIN_SCALE, this.scale.x - SCALE_STEP * time.deltaMS) )
+            this.scale.set( Math.max(MIN_SCALE, this.scale.x - SCALE_STEP * deltaMs) )
             if (this.scale.x === MIN_SCALE) tickerRemove(this)
         }
     }

@@ -25,6 +25,9 @@ export const events = createEnum([
     'slowDown',
     'removePlyerSave',
     'getNextLevel',
+
+    'pauseGameplay',
+    'resumeGameplay',
 ])
 
 export function screenResize( data ) {
@@ -79,4 +82,12 @@ export function removePlyerSave() {
 }
 export function getNextLevel() {
     EventHub.emit( events.getNextLevel )
+}
+
+export function pauseGameplay() {
+    EventHub.emit( events.pauseGameplay )
+}
+export function resumeGameplay() {
+    console.log('resume gameplay')
+    EventHub.emit( events.resumeGameplay )
 }

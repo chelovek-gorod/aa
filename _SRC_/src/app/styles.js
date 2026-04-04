@@ -42,23 +42,22 @@ export let styles = {
 
     /* Font keys (init all fonts in function bellow) */
     loading: null,
+
     level: null,
     target: null,
     score: null,
     combo: null,
     coins: null,
     saves: null,
+
     flyText: null,
     flyTextLevel: null,
+
     button: null,
     buttonHover: null,
-    shineCounter: null,
-    taskCount: null,
-    cardCount: null,
+    
     popupTitle: null,
     popupDescription: null,
-    popupTurnsText: null,
-    settingsReset: null,
 }
 
 export function initFontStyles() {
@@ -198,30 +197,24 @@ export function initFontStyles() {
         dropShadowDistance: 0,
     })
 
+    styles.popupTitle = new TextStyle({
+        fontFamily: fonts.P,
+        fontSize: 64,
+        fill: 0x000000,
+        align: 'center',
+        wordWrap: true,
+        wordWrapWidth: 700,
+        lineHeight: 64,
+    })
+
     styles.popupDescription = new TextStyle({
         fontFamily: fonts.P,
         fontSize: 32,
-        fill: 0xcc00cc,
+        fill: 0x333333,
         align: 'center',
         wordWrap: true,
         wordWrapWidth: 700,
         lineHeight: 32,
-    })
-
-    styles.popupTurnsText = new TextStyle({
-        fontFamily: fonts.P,
-        fontSize: 40,
-        fill: 0xee0000,
-    })
-
-    styles.settingsReset = new TextStyle({
-        fontFamily: fonts.P,
-        fontSize: 24,
-        fill: 0xee0000,
-        align: 'right',
-        wordWrap: true,
-        wordWrapWidth: 640,
-        lineHeight: 24,
     })
 
     styles.isReady = true

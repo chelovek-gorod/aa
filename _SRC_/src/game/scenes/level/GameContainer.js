@@ -19,6 +19,7 @@ const BG_SIZE = 900 // эталонный размер для отличной �
 const BG_TOP_SPEED_RATE = 0.66
 
 export let timeScale = 1
+let previousTimeScale = 1
 const SLOW_DOWN_STEP = 0.0003
 const SPEED_UP = 0.000006
 
@@ -31,6 +32,8 @@ export default class GameContainer extends Container {
         this.scrollSpeed = 0.66
 
         this.shaker = shaker
+
+        this.isGamePaused = false
 
         this.bgBottom = new TilingSprite(images['bg_' + levelType.toLowerCase() + '_bottom'])
         this.bgBottom.anchor.set(0.5, 1)
@@ -70,6 +73,8 @@ export default class GameContainer extends Container {
         }
         
         EventHub.on( events.slowDown, this.slowDown, this )
+        EventHub.on( events.pauseGameplay, this.pause, this )
+        EventHub.on( events.resumeGameplay, this.resume, this )
 
         tickerAdd(this)
     }
@@ -109,8 +114,26 @@ export default class GameContainer extends Container {
         shakeScreen({powerX: 50, powerY: 50})
     }
 
+    pause() {
+        this.isGamePaused = true
+        previousTimeScale = timeScale
+        timeScale = 0
+        tickerRemove(this)
+
+        const sepiaFilter = new ColorMatrixFilter()
+        sepiaFilter.sepia(true)
+        this.filters = [sepiaFilter]
+    }
+    resume() {
+        this.isGamePaused = false
+        if (previousTimeScale >= 1) this.filters = []
+
+        timeScale = previousTimeScale
+        tickerAdd(this)
+    }
+
     tick(deltaMs) {
-        if (timeScale < 1) {
+        if (timeScale < 1 && !this.isGamePaused) {
             timeScale = Math.max(0, timeScale - SLOW_DOWN_STEP * deltaMs)
             //timeScale = Math.max(0, timeScale - Math.sin(SLOW_DOWN_STEP * deltaMs))
             if (timeScale === 0) {
@@ -134,6 +157,8 @@ export default class GameContainer extends Container {
 
     kill() {
         EventHub.off( events.slowDown, this.slowDown, this )
+        EventHub.off( events.pauseGameplay, this.pause, this )
+        EventHub.off( events.resumeGameplay, this.resume, this )
 
         this.sparks.kill()
         this.sparks = null

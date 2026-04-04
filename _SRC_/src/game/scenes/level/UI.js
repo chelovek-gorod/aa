@@ -1,10 +1,11 @@
 import { Container, Text, Point, Graphics, Sprite } from "pixi.js";
 import { getSafeAreaOffsets, kill, tickerAdd, tickerRemove } from "../../../app/application";
 import { images } from "../../../app/assets";
-import { EventHub, events } from "../../../app/events";
+import { EventHub, events, pauseGameplay } from "../../../app/events";
 import { styles } from "../../../app/styles";
 import { isPlayerScoreX2Active, playerAddScore, playerCoins, playerLevel, playerProgress, playerSaves, playerScore, playerTarget } from "../../state";
 import FlyText from "./FlyText"
+import TapIcon from "../../UI/TapIcon"
 
 const PROGRESS_WIDTH = 110
 
@@ -54,7 +55,7 @@ export default class UI extends Container {
         this.comboText.anchor.set(0, 0)
         this.centerTop.addChild(this.comboText)
 
-        this.pauseButton = new Sprite(images.pause)
+        this.pauseButton = new TapIcon( images.pause, pauseGameplay, true )
         this.pauseButton.anchor.set(1, 0)
         this.pauseButton.scale.set(0.5)
         this.addChild(this.pauseButton)

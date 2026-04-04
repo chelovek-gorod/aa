@@ -9,6 +9,7 @@ import UI from './UI'
 import { kill, tickerAdd, tickerRemove } from '../../../app/application'
 import { playerLevel, playerSaves, playerScore } from '../../state'
 import { HELP_DURATION, HELP_IN_OUT } from './constants'
+import Popup, { POPUP_TYPE } from '../../popup/Popup'
 
 const musics = [ 
     music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4,
@@ -61,7 +62,11 @@ export default class LevelScene extends Container {
         this.UI = new UI(this.gameContainer)
         this.addChild(this.UI)
 
+        this.popup = new Popup()
+        this.addChild(this.popup)
+
         EventHub.on( events.removePlyerSave, this.showRedScreen, this )
+        EventHub.on( events.pauseGameplay, this.pauseGameplay, this )
         
         setMusicList( getMusic() )
     }
@@ -88,6 +93,8 @@ export default class LevelScene extends Container {
         }
         
         this.shaker.screenResize(screenData)
+
+        this.popup.screenResize(screenData)
     }
 
     redrawTapArea() {
@@ -101,6 +108,10 @@ export default class LevelScene extends Container {
 
     getFlyClick() {
         this.gameContainer.getFlyClick()
+    }
+
+    pauseGameplay() {
+        this.popup.show( POPUP_TYPE.PAUSE )
     }
 
     showRedScreen() {
@@ -158,6 +169,7 @@ export default class LevelScene extends Container {
 
         EventHub.off( events.updateLanguage, this.updateLanguage, this )
         EventHub.off( events.removePlyerSave, this.showRedScreen, this )
+        EventHub.off( events.pauseGameplay, this.pauseGameplay, this )
         this.tapArea.off('pointerdown', this.getFlyClick, this)
     }
 }

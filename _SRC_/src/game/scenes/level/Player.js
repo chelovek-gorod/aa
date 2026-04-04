@@ -21,8 +21,9 @@ export const AVATARS = {
 export const PLAYER_X = -300
 export const PLAYER_WIDTH = 200
 
-const GRAVITY = 0.0006
-const FLY_POWER = 0.3
+const GRAVITY = 0.0009
+const FLY_POWER = 0.36
+const FLY_POWER_MAX = 0.48
 
 const ANGLE_FACTOR = 0.5
 const ANGLE_SMOOTH = 0.009
@@ -102,8 +103,17 @@ export default class Player extends Container {
     }
 
     fly() {
-        this.flyPower += FLY_POWER
-        this.shakePower = 0
+        console.log(this.flyPower.toFixed(3))
+        if (this.flyPower < -FLY_POWER) {
+            this.flyPower = FLY_POWER
+            console.log('FLY_POWER')
+        } else {
+            this.flyPower = Math.min(FLY_POWER_MAX, this.flyPower + FLY_POWER * 2)
+            console.log('FLY_POWER_ADD')
+        }
+        
+        //this.flyPower += FLY_POWER
+        //this.shakePower = 0
 
         addSparks({x: this.x - 100, y: this.y, isExplosion: false, count: 12})
 

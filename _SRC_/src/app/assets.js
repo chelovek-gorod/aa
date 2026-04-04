@@ -25,7 +25,7 @@ export const images = {
 
     bg_main: 'bg_main.png',
 
-    button: 'button_hover.png',
+    button: 'button.png',
     button_hover: 'button_hover.png',
 
     bg_ground_top: 'bg_ground_top.png',
@@ -109,6 +109,8 @@ export const images = {
     asteroid_stone_7: 'asteroid_stone_7.png',
     asteroid_stone_8: 'asteroid_stone_8.png',
     asteroid_stone_9: 'asteroid_stone_9.png',
+
+    popup_bg: 'popup.png',
 }
 export const atlases = {
     smoke: 'smoke.json',
