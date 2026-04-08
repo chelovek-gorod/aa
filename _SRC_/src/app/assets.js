@@ -34,8 +34,9 @@ export const images = {
     bg_water_bottom: 'bg_water_bottom.png',
     bg_snow_top: 'bg_snow_top.png',
     bg_snow_bottom: 'bg_snow_bottom.png',
+    bg_moon_top: 'bg_moon_top.png',
+    bg_moon_bottom: 'bg_moon_bottom.png',
 
-    progress: 'progress.png',
     coin: 'coin.png',
     cup: 'cup.png',
     save: 'save.png',
@@ -43,6 +44,17 @@ export const images = {
     pause: 'pause.png',
 
     help: 'help.png',
+
+    music_0: 'music_0.png',
+    music_1: 'music_1.png',
+    music_2: 'music_2.png',
+    music_3: 'music_3.png',
+    sound_0: 'sound_0.png',
+    sound_1: 'sound_1.png',
+    sound_2: 'sound_2.png',
+    sound_3: 'sound_3.png',
+    left: 'left.png',
+    right: 'right.png',
 
     player_1: 'player_1.png',
     player_2: 'player_2.png',
@@ -81,6 +93,10 @@ export const images = {
     base: 'base.png',
     track: 'track.png',
     wagon: 'wagon.png',
+    rover: 'rover.png',
+    launcher: 'launcher.png',
+    module: 'module.png',
+    satellite: 'satellite.png',
 
     plane_black: 'plane_black.png',
     aerostat_black: 'aerostat_black.png',
@@ -96,6 +112,10 @@ export const images = {
     base_black: 'base_black.png',
     track_black: 'track_black.png',
     wagon_black: 'wagon_black.png',
+    rover_black: 'rover_black.png',
+    launcher_black: 'launcher_black.png',
+    module_black: 'module_black.png',
+    satellite_black: 'satellite_black.png',
 
     spark: 'spark.png',
     snowflake: 'snowflake.png',
@@ -115,6 +135,7 @@ export const images = {
 export const atlases = {
     smoke: 'smoke.json',
     explosion: 'explosion.json',
+    Earth: 'Earth.json',
 }
 export const sounds = {
     se_hover: 'se_hover.mp3',

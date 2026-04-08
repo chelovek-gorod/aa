@@ -73,13 +73,13 @@ export default class Popup extends Container {
         this.content = new Container()
         this.box.addChild(this.content)
 
-        this.title = new Text({text: 'Пауза', style: styles.popupTitle})
+        this.title = new Text({text: '', style: styles.popupTitle})
         this.title.anchor.set(0.5)
-        this.title.position.set(0, -240)
+        this.title.position.set(0, -280)
         this.box.addChild(this.title)
         
         this.closeButton = new Button(null, 'Продолжить', () => this.close())
-        this.closeButton.position.set(0, 285)
+        this.closeButton.position.set(0, 265)
         this.closeButton.scale.set(0.75)
         this.box.addChild(this.closeButton)
 
@@ -108,7 +108,7 @@ export default class Popup extends Container {
         if (this.visible) return dataQueue.push(data)
 
         this.type = type
-        if (type === POPUP_TYPE.PAUSE) this.fillPause()
+        if (type === POPUP_TYPE.PAUSE) this.fillSettings()
         /*
         else if (data.type === POPUP_TYPE.HELP) this.fillHelp(data.data)
         else if (data.type === POPUP_TYPE.INFO) this.fillInfo(data.data)
@@ -157,14 +157,69 @@ export default class Popup extends Container {
         if ( dataQueue.length ) this.show( dataQueue.shift() )
     }
 
-    fillPause() {
+    fillSettings() {
         this.title.text = 'ПАУЗА'
 
-        const description = 'Пример окна паузы в игре'
+        /*
+        const description = ''
         const descriptionText = new Text({text: description, style: styles.popupDescription})
         descriptionText.anchor.set(0.5, 0)
         descriptionText.position.set(0, 50)
         this.content.addChild(descriptionText)
+        */
+
+        this.settingsUI = {}
+        // music
+        const musicLabelText = 'Фоновая музыка'
+        this.settingsUI.musicLabel = new Text({text: musicLabelText, style: styles.popupDescription})
+        this.settingsUI.musicLabel.anchor.set(0.5)
+        this.settingsUI.musicLabel.position.set(-200, -170)
+        this.content.addChild( this.settingsUI.musicLabel )
+
+        const musicTexture = images[ 'music_' + findSoundMusic(true) ]
+        this.settingsUI.musicBtn = new TapIcon( musicTexture, this.changeMusic.bind(this) )
+        this.settingsUI.musicBtn.anchor.set(0.5)
+        this.settingsUI.musicBtn.position.set(-200, -80)
+        this.content.addChild( this.settingsUI.musicBtn )
+
+        // sound
+        const soundLabelText = 'Звуковые эффекты'
+        this.settingsUI.soundLabel = new Text({text: soundLabelText, style: styles.popupDescription})
+        this.settingsUI.soundLabel.anchor.set(0.5)
+        this.settingsUI.soundLabel.position.set(200, -170)
+        this.content.addChild( this.settingsUI.soundLabel )
+
+        const soundTexture = images[ 'sound_' + findSoundMusic(false) ]
+        this.settingsUI.soundBtn = new TapIcon( soundTexture, this.changeSound.bind(this) )
+        this.settingsUI.soundBtn.anchor.set(0.5)
+        this.settingsUI.soundBtn.position.set(200, -80)
+        this.content.addChild( this.settingsUI.soundBtn )
+
+        // language
+        this.settingsUI.langСodes = getAvailableLanguages().map(item => item.code)
+        this.settingsUI.langIndex = this.settingsUI.langСodes.indexOf(this.currentLanguage)
+
+        const langLabelText = getLanguageName()
+        this.settingsUI.langLabel = new Text({text: langLabelText, style: styles.popupDescription})
+        this.settingsUI.langLabel.anchor.set(0.5)
+        this.settingsUI.langLabel.position.set(0, 20)
+        this.content.addChild( this.settingsUI.langLabel )
+
+        this.settingsUI.leftBtn = new TapIcon(images.left, this.prevLang.bind(this))  
+        this.settingsUI.leftBtn.anchor.set(0.5)
+        this.settingsUI.leftBtn.position.set(-120, 100)
+        this.content.addChild( this.settingsUI.leftBtn )
+
+        const langCodeText = this.currentLanguage.toUpperCase()
+        this.settingsUI.langCode = new Text({text: langCodeText, style: styles.popupTitle})
+        this.settingsUI.langCode.anchor.set(0.5)
+        this.settingsUI.langCode.position.set(0, 100)
+        this.content.addChild( this.settingsUI.langCode )
+
+        this.settingsUI.rightBtn = new TapIcon( images.right, this.nextLang.bind(this))
+        this.settingsUI.rightBtn.anchor.set(0.5)
+        this.settingsUI.rightBtn.position.set(120, 100)
+        this.content.addChild( this.settingsUI.rightBtn )
 
         // this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
     }
@@ -260,7 +315,7 @@ export default class Popup extends Container {
             musicOn()
             iconIndex = 1
         }
-        const musicTexture = atlases.ui.textures[ 'music_' + iconIndex ]
+        const musicTexture = images[ 'music_' + iconIndex ]
         this.settingsUI.musicBtn.setIcon( musicTexture )
     }
 
@@ -281,7 +336,7 @@ export default class Popup extends Container {
             soundOn()
             iconIndex = 1
         }
-        const soundTexture = atlases.ui.textures[ 'sound_' + iconIndex ]
+        const soundTexture = images[ 'sound_' + iconIndex ]
         this.settingsUI.soundBtn.setIcon( soundTexture )
     }
 
@@ -308,7 +363,7 @@ export default class Popup extends Container {
     }
 
     updateSettingsLabels() {
-        this.title.text = TEXT_SETTINGS[TEXT_SETTING_TYPE.TITLE][this.currentLanguage]
+        this.title.text = '' // TEXT_SETTINGS[TEXT_SETTING_TYPE.TITLE][this.currentLanguage]
 
         const musicLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.MUSIC][this.currentLanguage]
         this.settingsUI.musicLabel.text = musicLabelText

@@ -152,7 +152,7 @@ export function initFontStyles() {
         },
 
         dropShadow: true,
-        dropShadowColor: '#ff0000',
+        dropShadowColor: '#770077',
         dropShadowBlur: 6,
         dropShadowAngle: Math.PI * 0.5,
         dropShadowDistance: 6,
@@ -200,7 +200,7 @@ export function initFontStyles() {
     styles.popupTitle = new TextStyle({
         fontFamily: fonts.P,
         fontSize: 64,
-        fill: 0x000000,
+        fill: levelGradient,
         align: 'center',
         wordWrap: true,
         wordWrapWidth: 700,
@@ -210,7 +210,7 @@ export function initFontStyles() {
     styles.popupDescription = new TextStyle({
         fontFamily: fonts.P,
         fontSize: 32,
-        fill: 0x333333,
+        fill: savesGradient,
         align: 'center',
         wordWrap: true,
         wordWrapWidth: 700,

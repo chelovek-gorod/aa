@@ -3,7 +3,7 @@ import { tickerRemove, tickerAdd, kill } from "../../../app/application";
 import { images, sounds } from "../../../app/assets";
 import { addExplosion, addSmoke, addSparks, resetCombo, shakeScreen, slowDown, removePlyerSave } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
-import { createEnum } from "../../../utils/functions";
+import { createEnum, getRandom } from "../../../utils/functions";
 import { levelType, LEVEL_TYPE, playerLevel, playerSaves, playerUseSave } from "../../state";
 import { HELP_DURATION, HELP_IN_OUT } from "./constants";
 import { timeScale } from "./GameContainer";
@@ -19,10 +19,13 @@ const AIR_MAX_Y = 80
 const COPTER_MIN_Y = -400
 const COPTER_MAX_Y = 0
 const WAGON_Y = 0
+const LAUNCHER_Y = 360
+const SPACE_MIN_Y = -400
+const SPACE_MAX_Y = -120
 
 const OBSTACLE_TYPE = createEnum([
     'BUS', 'BUILDING', 'PLANE', 'AIRSHIP', 'COPTER', 'AEROSTAT', 'SHIP', 'SIGN',
-    'DRONE', 'WAGON', 'BASE', 'TRACK'
+    'DRONE', 'WAGON', 'BASE', 'TRACK', 'SATELLITE', 'ROVER', 'MODULE', 'LAUNCHER'
 ])
 const OBSTACLE_GROUND_LIST = [
     OBSTACLE_TYPE.PLANE, OBSTACLE_TYPE.BUILDING, OBSTACLE_TYPE.AIRSHIP, OBSTACLE_TYPE.BUS,
@@ -38,6 +41,11 @@ const OBSTACLE_SNOW_LIST = [
     OBSTACLE_TYPE.WAGON, OBSTACLE_TYPE.BASE, OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.TRACK,
     OBSTACLE_TYPE.DRONE, OBSTACLE_TYPE.BASE, OBSTACLE_TYPE.WAGON, OBSTACLE_TYPE.BASE,
     OBSTACLE_TYPE.COPTER, OBSTACLE_TYPE.TRACK, OBSTACLE_TYPE.DRONE, OBSTACLE_TYPE.BASE,
+]
+const OBSTACLE_MOON_LIST = [
+    OBSTACLE_TYPE.SATELLITE, OBSTACLE_TYPE.ROVER, OBSTACLE_TYPE.LAUNCHER, OBSTACLE_TYPE.MODULE,
+    OBSTACLE_TYPE.SATELLITE, OBSTACLE_TYPE.SATELLITE, OBSTACLE_TYPE.ROVER, OBSTACLE_TYPE.LAUNCHER,
+    OBSTACLE_TYPE.MODULE, OBSTACLE_TYPE.SATELLITE, OBSTACLE_TYPE.SATELLITE, OBSTACLE_TYPE.ROVER
 ]
 let obstacleIndex = 0
 let buildingIndex = 1
@@ -90,6 +98,25 @@ const TRACK_COLLIDERS = [
 ]
 const WAGON_COLLIDERS = [
     {x: 0, y: 136, r2: Math.pow(110 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+]
+const SATELLITE_COLLIDERS = [
+    {x: 0, y: 89, r2: Math.pow(130 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+]
+const ROVER_COLLIDERS = [
+    {x: -44, y: -172, r2: Math.pow(70 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: -8, y: -92, r2: Math.pow(130 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+]
+const MODULE_COLLIDERS = [
+    {x: -4, y: -128, r2: Math.pow(200 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+]
+const LAUNCHER_COLLIDERS = [
+    {x: -150, y: -96, r2: Math.pow(130 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: 12, y: -136, r2: Math.pow(210 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: 184, y: -162, r2: Math.pow(140 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: 180, y: -278, r2: Math.pow(100 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: 180, y: -374, r2: Math.pow(100 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: 180, y: -474, r2: Math.pow(100 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
+    {x: 180, y: -546, r2: Math.pow(50 * 0.5 + PLAYER_WIDTH * 0.25, 2)},
 ]
 
 class Bus extends Sprite {
@@ -602,7 +629,7 @@ class Track extends Sprite {
 
         this.playerMinX = PLAYER_X - this.halfWidth
         this.playerMaxX = PLAYER_X + this.halfWidth
-        this.colliders = BUS_COLLIDERS
+        this.colliders = TRACK_COLLIDERS
 
         this.smokeTimeout = 128
         this.isSmokeLeft = true
@@ -641,7 +668,7 @@ class Wagon extends Sprite {
 
         this.playerMinX = PLAYER_X - this.halfWidth
         this.playerMaxX = PLAYER_X + this.halfWidth
-        this.colliders = SIGN_COLLIDERS
+        this.colliders = WAGON_COLLIDERS
 
         this.turnTime = 0
         this.turnAngle = Math.PI / 18
@@ -673,6 +700,185 @@ class Wagon extends Sprite {
     }
 }
 
+class Satellite extends Sprite {
+    constructor() {
+        super(images.satellite)
+        this.anchor.set(0.5, 0)
+
+        this.speedRateX = 1.3
+        this.isAlive = true
+
+        this.halfWidth = images.satellite.width * 0.5
+        this.position.set(START_X + this.halfWidth, getRandom(SPACE_MIN_Y, SPACE_MAX_Y))
+
+        this.playerMinX = PLAYER_X - this.halfWidth
+        this.playerMaxX = PLAYER_X + this.halfWidth
+        this.colliders = SATELLITE_COLLIDERS
+
+        this.turnTime = 0
+        this.turnAngle = Math.PI / 12
+        this.turnSpeed = 0.0009
+
+        this.smokeTimeout = 96
+    }
+
+    fly(deltaMs) {
+        this.turnTime += this.turnSpeed * deltaMs
+        this.rotation = Math.sin(this.turnTime) * this.turnAngle
+    }
+
+    setDamage() {
+        this.isAlive = false
+        this.texture = images.satellite_black
+
+        addSparks({x: this.x, y: this.y + 89, isExplosion: true, count: 16})
+        addExplosion({x: this.x, y: this.y + 89})
+        shakeScreen({powerX: 12, powerY: 12})
+    }
+
+    destroyedMove(deltaMs) {
+        this.y += 0.4 * deltaMs
+        this.smokeTimeout -= deltaMs
+        if (this.smokeTimeout <= 0) {
+            this.smokeTimeout += 96
+            addSmoke({x: this.x, y: this.y + 89})
+        }
+    }
+}
+
+class Rover extends Sprite {
+    constructor() {
+        super(images.rover)
+        this.anchor.set(0.5, 1)
+
+        this.speedRateX = 1
+        this.isAlive = true
+
+        this.halfWidth = images.rover.width * 0.5
+        this.position.set(START_X + this.halfWidth, BUS_Y + 40)
+
+        this.playerMinX = PLAYER_X - this.halfWidth
+        this.playerMaxX = PLAYER_X + this.halfWidth
+        this.colliders = ROVER_COLLIDERS
+
+        this.smokeTimeout = 128
+        this.isSmokeLeft = true
+    }
+
+    setDamage() {
+        this.isAlive = false
+        this.texture = images.rover_black
+
+        addSparks({x: this.x - 38, y: this.y - 186, isExplosion: true, count: 12})
+        addSparks({x: this.x - 50, y: this.y - 100, isExplosion: true, count: 16})
+        addSparks({x: this.x + 50, y: this.y - 90, isExplosion: true, count: 20})
+        addExplosion({x: this.x + 20, y: this.y - 70})
+        shakeScreen({powerX: 12, powerY: 12})
+    }
+
+    destroyedMove(deltaMs) {
+        this.smokeTimeout -= deltaMs
+        if (this.smokeTimeout <= 0) {
+            this.smokeTimeout += 128
+            this.isSmokeLeft = !this.isSmokeLeft
+            addSmoke({x: this.isSmokeLeft ? this.x - 50 : this.x + 50, y: this.y - 100})
+        }
+    }
+}
+
+class Module extends Sprite {
+    constructor() {
+        super(images.module)
+        this.anchor.set(0.5, 1)
+
+        this.speedRateX = 0.8
+        this.isAlive = true
+
+        this.isSliding = true
+
+        this.halfWidth = images.module.width * 0.5
+        this.position.set(START_X + this.halfWidth, BUS_Y - 50)
+
+        this.playerMinX = PLAYER_X - this.halfWidth
+        this.playerMaxX = PLAYER_X + this.halfWidth
+        this.colliders = MODULE_COLLIDERS
+
+        this.smokeTimeout = 128
+    }
+
+    setDamage() {
+        this.isAlive = false
+        this.texture = images.module_black
+
+        addSparks({x: this.x - 80, y: this.y - 124, isExplosion: true, count: 12})
+        addSparks({x: this.x , y: this.y - 200, isExplosion: true, count: 12})
+        addSparks({x: this.x + 64, y: this.y - 120, isExplosion: true, count: 12})
+        addExplosion({x: this.x, y: this.y - 150})
+        shakeScreen({powerX: 16, powerY: 16})
+    }
+
+    destroyedMove(deltaMs) {
+        this.smokeTimeout -= deltaMs
+        if (this.smokeTimeout <= 0) {
+            this.smokeTimeout += 64
+            addSmoke({x: this.x, y: this.y - 150})
+        }
+    }
+}
+
+class Launcher extends Sprite {
+    constructor() {
+        super(images.launcher)
+        this.anchor.set(0.5, 1)
+
+        this.speedRateX = 1
+        this.isAlive = true
+
+        this.halfWidth = images.launcher.width * 0.5
+        this.position.set(START_X + this.halfWidth, LAUNCHER_Y)
+
+        this.playerMinX = PLAYER_X - this.halfWidth
+        this.playerMaxX = PLAYER_X + this.halfWidth
+        this.colliders = LAUNCHER_COLLIDERS
+
+        this.smokeTimeout = 64
+        this.smokePoints = [
+            {x: -134, y: -98}, {x: 0, y: -138}, {x: 190, y: -440}, {x: 172, y: -296}, {x: 216, y: -98}
+        ]
+        this.smokeIndex = 0
+    }
+
+    setDamage() {
+        this.isAlive = false
+        this.texture = images.launcher_black
+
+        for (let i = this.smokePoints.length - 1; i >= 0; i--) {
+            addSparks({
+                x: this.x + this.smokePoints[i].x,
+                y: this.y + this.smokePoints[i].y,
+                isExplosion: true, count: 16}
+            )
+        }
+        addExplosion({x: this.x - 130, y: this.y - 94})
+        addExplosion({x: this.x + 34, y: this.y - 192})
+        addExplosion({x: this.x + 188, y: this.y - 376})
+        shakeScreen({powerX: 24, powerY: 24})
+    }
+
+    destroyedMove(deltaMs) {
+        this.smokeTimeout -= deltaMs
+        if (this.smokeTimeout <= 0) {
+            this.smokeTimeout += 64
+            addSmoke({
+                x: this.x + this.smokePoints[this.smokeIndex].x,
+                y: this.y + this.smokePoints[this.smokeIndex].y
+            })
+            this.smokeIndex++
+            if (this.smokeIndex === this.smokePoints.length) this.smokeIndex = 0
+        }
+    }
+}
+
 export default class Obstacles extends Container {
     constructor(scrollSpeed, player) {
         super()
@@ -682,9 +888,10 @@ export default class Obstacles extends Container {
 
         this.player = player
 
-        this.obstacles = levelType === LEVEL_TYPE.GROUND
-            ? OBSTACLE_GROUND_LIST : levelType === LEVEL_TYPE.WATER
-            ? OBSTACLE_WATER_LIST : OBSTACLE_SNOW_LIST
+        if (levelType === LEVEL_TYPE.GROUND) this.obstacles = OBSTACLE_GROUND_LIST
+        else if (levelType === LEVEL_TYPE.WATER) this.obstacles = OBSTACLE_WATER_LIST
+        else if (levelType === LEVEL_TYPE.SNOW) this.obstacles = OBSTACLE_SNOW_LIST
+        else this.obstacles = OBSTACLE_MOON_LIST
 
         this.offset = 0
         this.scrollSpeed = scrollSpeed
@@ -715,9 +922,13 @@ export default class Obstacles extends Container {
             case OBSTACLE_TYPE.COPTER : if (playerLevel > 12) this.addChild( new Copter() ); break;
             case OBSTACLE_TYPE.PLANE : if (playerLevel > 6) this.addChild( new Plane() ); break;
             case OBSTACLE_TYPE.BASE : this.addChild( new Base() ); break;
-            case OBSTACLE_TYPE.DRONE : this.addChild( new Drone() ); break;
+            case OBSTACLE_TYPE.DRONE : if (playerLevel > 9) this.addChild( new Drone() ); break;
             case OBSTACLE_TYPE.TRACK : this.addChild( new Track() ); break;
             case OBSTACLE_TYPE.WAGON : this.addChild( new Wagon() ); break;
+            case OBSTACLE_TYPE.ROVER : this.addChild( new Rover() ); break;
+            case OBSTACLE_TYPE.SATELLITE : this.addChild( new Satellite() ); break;
+            case OBSTACLE_TYPE.MODULE : this.addChild( new Module() ); break;
+            case OBSTACLE_TYPE.LAUNCHER : this.addChild( new Launcher() ); break;
         }
     }
 

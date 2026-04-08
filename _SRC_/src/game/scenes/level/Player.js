@@ -68,6 +68,7 @@ export default class Player extends Container {
         this.position.set(x, minY)
 
         this.squashTimer = 0
+        this.se_fall_rate = levelType === LEVEL_TYPE.GROUND || levelType === LEVEL_TYPE.MOON ? 1 : 0.5
 
         this.body = new Sprite(images[AVA_KEY])
         this.body.anchor.set(0.5)
@@ -158,7 +159,7 @@ export default class Player extends Container {
                 }
 
                 this.shakePower = 0
-                soundPlay(sounds.se_fall.rate(levelType === LEVEL_TYPE.GROUND ? 1 : 0.5))
+                soundPlay(sounds.se_fall.rate(this.se_fall_rate))
             }
         } else if(this.y < this.minY) {
             this.y = this.minY

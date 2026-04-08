@@ -1,6 +1,6 @@
-import { Container, TilingSprite, ColorMatrixFilter } from "pixi.js";
+import { Container, TilingSprite, ColorMatrixFilter, AnimatedSprite } from "pixi.js";
 import { kill, tickerAdd, tickerRemove } from "../../../app/application";
-import { images } from "../../../app/assets";
+import { atlases, images } from "../../../app/assets";
 import { EventHub, events, shakeScreen, startScene } from "../../../app/events";
 import { levelType, LEVEL_TYPE, playerSaves } from "../../state";
 import { SCENE_NAME } from "../SceneManager";
@@ -45,8 +45,21 @@ export default class GameContainer extends Container {
         this.bgTop.position.set(0, -BG_HEIGHT * 0.5)
         this.addChild(this.bgTop)
 
-        this.clouds = new Clouds(this.scrollSpeed)
-        this.addChild(this.clouds)
+        if (levelType === LEVEL_TYPE.MOON) {
+            this.Earth = new AnimatedSprite(atlases.Earth.animations.rotation)
+            this.Earth.anchor.set(0.5)
+            this.Earth.position.set(6400, -40)
+            this.Earth.minX = -6400
+            this.Earth.maxX = 6400
+            this.Earth.speedX = 0.3
+            this.Earth.speedY = 0.012
+            this.Earth.animationSpeed = 0.5
+            this.Earth.play()
+            this.addChild(this.Earth)
+        } else {
+            this.clouds = new Clouds(this.scrollSpeed)
+            this.addChild(this.clouds)
+        }
 
         this.player = new Player(-300, -350, 150)
 
@@ -91,7 +104,13 @@ export default class GameContainer extends Container {
 
         this.scale.set(scale)
 
-        this.clouds.resize(width)
+        if (this.clouds) this.clouds.resize(width)
+        else {
+            this.Earth.minX = -width * 1.2
+            this.Earth.maxX = width * 1.2
+            if (this.Earth.x > this.Earth.maxX) this.Earth.position.set(this.Earth.maxX, -40) 
+        }
+
         this.obstacles.resize(width)
         this.asteroids.resize(width)
         this.stones.resize(width, height)
@@ -144,6 +163,12 @@ export default class GameContainer extends Container {
             }
         } else {
             timeScale += SPEED_UP * deltaMs
+        }
+
+        if (this.Earth) {
+            this.Earth.x -= this.Earth.speedX * deltaMs * timeScale
+            this.Earth.y -= this.Earth.speedY * deltaMs * timeScale
+            if (this.Earth.x < this.Earth.minX) this.Earth.position.set(this.Earth.maxX, -60) 
         }
 
         const scrollStep = this.scrollSpeed * deltaMs * timeScale

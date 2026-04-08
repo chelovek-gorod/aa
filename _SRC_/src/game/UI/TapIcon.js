@@ -42,7 +42,7 @@ export default class TapIcon extends Sprite {
     click() {
         if (!this.isActive) return
 
-        soundPlay(sounds.se_click)
+        setTimeout( () => soundPlay(sounds.se_click), 1 )
         this.callback()
     }
 

@@ -4,15 +4,20 @@ import { createEnum } from "../utils/functions"
 
 export let isAdAvailable = true
 
-export const LEVEL_TYPE = createEnum(['GROUND', 'WATER', 'SNOW'])
+export const LEVEL_TYPE = createEnum(['GROUND', 'WATER', 'SNOW', 'MOON'])
 const levels = [
-    LEVEL_TYPE.GROUND, LEVEL_TYPE.GROUND,
+    LEVEL_TYPE.GROUND,
+    LEVEL_TYPE.GROUND,
     LEVEL_TYPE.WATER, 
     LEVEL_TYPE.GROUND,
-    LEVEL_TYPE.WATER, LEVEL_TYPE.WATER,
+    LEVEL_TYPE.WATER,
+    LEVEL_TYPE.SNOW,
     LEVEL_TYPE.GROUND,
-    LEVEL_TYPE.SNOW, LEVEL_TYPE.SNOW,
+    LEVEL_TYPE.SNOW,
     LEVEL_TYPE.GROUND,
+    LEVEL_TYPE.WATER,
+    LEVEL_TYPE.GROUND,
+    LEVEL_TYPE.MOON,
 ]
 let levelIndex = 0
 export let levelType = levels[levelIndex]
