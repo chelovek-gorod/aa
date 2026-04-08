@@ -18,7 +18,7 @@ const AIR_MIN_Y = -400
 const AIR_MAX_Y = 80
 const COPTER_MIN_Y = -400
 const COPTER_MAX_Y = 0
-const WAGON_Y = 0
+const WAGON_Y = -200
 const LAUNCHER_Y = 360
 const SPACE_MIN_Y = -400
 const SPACE_MAX_Y = -120
@@ -658,7 +658,7 @@ class Track extends Sprite {
 class Wagon extends Sprite {
     constructor() {
         super(images.wagon)
-        this.anchor.set(0.5, 1)
+        this.anchor.set(0.5, 0)
 
         this.speedRateX = 0.9
         this.isAlive = true
@@ -919,10 +919,10 @@ export default class Obstacles extends Container {
             case OBSTACLE_TYPE.SHIP : this.addChild( new Ship() ); break;
             case OBSTACLE_TYPE.SIGN : this.addChild( new Sign() ); break;
             case OBSTACLE_TYPE.BUILDING : this.addChild( new Building() ); break;
-            case OBSTACLE_TYPE.COPTER : if (playerLevel > 12) this.addChild( new Copter() ); break;
-            case OBSTACLE_TYPE.PLANE : if (playerLevel > 6) this.addChild( new Plane() ); break;
+            case OBSTACLE_TYPE.COPTER : if (playerLevel > 11) this.addChild( new Copter() ); break;
+            case OBSTACLE_TYPE.PLANE : if (playerLevel > 5) this.addChild( new Plane() ); break;
             case OBSTACLE_TYPE.BASE : this.addChild( new Base() ); break;
-            case OBSTACLE_TYPE.DRONE : if (playerLevel > 9) this.addChild( new Drone() ); break;
+            case OBSTACLE_TYPE.DRONE : if (playerLevel > 11) this.addChild( new Drone() ); break;
             case OBSTACLE_TYPE.TRACK : this.addChild( new Track() ); break;
             case OBSTACLE_TYPE.WAGON : this.addChild( new Wagon() ); break;
             case OBSTACLE_TYPE.ROVER : this.addChild( new Rover() ); break;

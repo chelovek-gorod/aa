@@ -104,17 +104,10 @@ export default class Player extends Container {
     }
 
     fly() {
-        console.log(this.flyPower.toFixed(3))
-        if (this.flyPower < -FLY_POWER) {
-            this.flyPower = FLY_POWER
-            console.log('FLY_POWER')
-        } else {
-            this.flyPower = Math.min(FLY_POWER_MAX, this.flyPower + FLY_POWER * 2)
-            console.log('FLY_POWER_ADD')
-        }
+        if (this.flyPower < -FLY_POWER) this.flyPower = FLY_POWER
+        else this.flyPower = Math.min(FLY_POWER_MAX, this.flyPower + FLY_POWER * 2)
         
-        //this.flyPower += FLY_POWER
-        //this.shakePower = 0
+        this.shakePower = 0
 
         addSparks({x: this.x - 100, y: this.y, isExplosion: false, count: 12})
 

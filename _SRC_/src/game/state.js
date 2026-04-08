@@ -5,22 +5,9 @@ import { createEnum } from "../utils/functions"
 export let isAdAvailable = true
 
 export const LEVEL_TYPE = createEnum(['GROUND', 'WATER', 'SNOW', 'MOON'])
-const levels = [
-    LEVEL_TYPE.GROUND,
-    LEVEL_TYPE.GROUND,
-    LEVEL_TYPE.WATER, 
-    LEVEL_TYPE.GROUND,
-    LEVEL_TYPE.WATER,
-    LEVEL_TYPE.SNOW,
-    LEVEL_TYPE.GROUND,
-    LEVEL_TYPE.SNOW,
-    LEVEL_TYPE.GROUND,
-    LEVEL_TYPE.WATER,
-    LEVEL_TYPE.GROUND,
-    LEVEL_TYPE.MOON,
-]
-let levelIndex = 0
-export let levelType = levels[levelIndex]
+
+export let levelType = LEVEL_TYPE.GROUND
+let previousLevelTypes = []
 
 export let playerAvatarsShop = {
     player_1: 0, // set 0 if purchased
@@ -93,9 +80,33 @@ export function resetScoreToPrevious() {
     isPlayerScoreX2Apply = false
     if (playerScoreX2 > 0) isPlayerScoreX2Active = true
 
-    levelIndex++
-    if (levelIndex === levels.length) levelIndex = 0
-    levelType = levels[levelIndex]
+    levelType = getLevelType()
+}
+
+function getLevelType() {
+    previousLevelTypes.push(levelType)
+    let sameLevels = null
+    if (previousLevelTypes.length > 1) {
+        let a = previousLevelTypes[previousLevelTypes.length - 1]
+        let b = previousLevelTypes[previousLevelTypes.length - 2]
+        if (a === b) sameLevels = a
+        previousLevelTypes = [a]
+    }
+
+    if (playerLevel < 3 || playerLevel % 2 === 0) {
+        if (sameLevels && sameLevels === LEVEL_TYPE.GROUND) return LEVEL_TYPE.WATER
+        return LEVEL_TYPE.GROUND
+    }
+    if (playerLevel % 5 === 0) {
+        if (sameLevels && sameLevels === LEVEL_TYPE.MOON) return LEVEL_TYPE.GROUND
+        return LEVEL_TYPE.MOON
+    }
+    if (playerLevel % 3 === 0) {
+        if (sameLevels && sameLevels === LEVEL_TYPE.SNOW) return LEVEL_TYPE.GROUND
+        return LEVEL_TYPE.SNOW
+    }
+    if (sameLevels && sameLevels === LEVEL_TYPE.WATER) return LEVEL_TYPE.GROUND
+    return LEVEL_TYPE.WATER
 }
 
 export function getStateData() {

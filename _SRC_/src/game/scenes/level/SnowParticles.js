@@ -167,7 +167,7 @@ export default class SnowParticles {
         }
     }
 
-    resize(appScreen) {console.log(appScreen)
+    resize(appScreen) {
         const margin = SNOW_TYPES.LARGE.scaleMax * 16
         this.minX = (-appScreen.width - margin) * 0.5
         this.maxX = (appScreen.width + margin) * 0.5
