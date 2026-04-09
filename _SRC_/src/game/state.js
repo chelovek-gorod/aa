@@ -10,15 +10,19 @@ export let levelType = LEVEL_TYPE.GROUND
 let previousLevelTypes = []
 
 export let playerAvatarsShop = {
-    player_1: 0, // set 0 if purchased
+    player_0: 0, // set 0 if purchased
+    player_1: 5,
     player_2: 5,
-    player_3: 7,
-    player_4: 10,
-    player_5: 15,
-    player_6: 25,
-    player_7: 35,
-    player_8: 50,
-    player_9: 70,
+    player_3: 5,
+    player_4: 5,
+    player_5: 10,
+    player_6: 10,
+    player_7: 10,
+    player_8: 10,
+    player_9: 20,
+    player_10: 20,
+    player_11: 20,
+    player_12: 20,
 }
 export let playerAvatarKeys = Object.keys(playerAvatarsShop)
 export let playerAvatarIndex = Math.min( 0, playerAvatarKeys.length - 1)
@@ -84,6 +88,8 @@ export function resetScoreToPrevious() {
 }
 
 function getLevelType() {
+    if (playerLevel < 3) return LEVEL_TYPE.GROUND
+
     previousLevelTypes.push(levelType)
     let sameLevels = null
     if (previousLevelTypes.length > 1) {
@@ -93,19 +99,23 @@ function getLevelType() {
         previousLevelTypes = [a]
     }
 
-    if (playerLevel < 3 || playerLevel % 2 === 0) {
-        if (sameLevels && sameLevels === LEVEL_TYPE.GROUND) return LEVEL_TYPE.WATER
-        return LEVEL_TYPE.GROUND
+    switch(sameLevels) {
+        case LEVEL_TYPE.GROUND : return LEVEL_TYPE.WATER
+        case LEVEL_TYPE.WATER : return LEVEL_TYPE.SNOW
+        case LEVEL_TYPE.SNOW : return LEVEL_TYPE.MOON
+        case LEVEL_TYPE.MOON : return LEVEL_TYPE.SNOW
     }
-    if (playerLevel % 5 === 0) {
-        if (sameLevels && sameLevels === LEVEL_TYPE.MOON) return LEVEL_TYPE.GROUND
-        return LEVEL_TYPE.MOON
-    }
-    if (playerLevel % 3 === 0) {
-        if (sameLevels && sameLevels === LEVEL_TYPE.SNOW) return LEVEL_TYPE.GROUND
-        return LEVEL_TYPE.SNOW
-    }
-    if (sameLevels && sameLevels === LEVEL_TYPE.WATER) return LEVEL_TYPE.GROUND
+
+    // (51) от 1 до 100
+    if (playerLevel % 2 === 0) return LEVEL_TYPE.GROUND 
+    
+    // (17) 3, 9, 15, 21, 27, 33, 39, 45, 51, 57, 63, 69, 75, 81, 87, 93, 99
+    if (playerLevel % 3 === 0) return LEVEL_TYPE.SNOW
+
+    // (7) 5, 25, 35, 55, 65, 85, 95
+    if (playerLevel % 5 === 0) return LEVEL_TYPE.MOON 
+
+    // (25) 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 49, 53, 59, 61, 67, 71, 73, 77, 79, 83, 89, 91, 97
     return LEVEL_TYPE.WATER
 }
 

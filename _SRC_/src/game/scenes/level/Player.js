@@ -1,4 +1,4 @@
-import { Container, Sprite, MeshPlane } from "pixi.js";
+import { Container, Sprite, MeshPlane, Texture } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { images, sounds } from "../../../app/assets";
 import { addSmoke, addSparks, shakeScreen } from "../../../app/events";
@@ -7,15 +7,19 @@ import { levelType, LEVEL_TYPE, playerAvatarIndex, playerAvatarKeys } from "../.
 import { timeScale } from "./GameContainer";
 
 export const AVATARS = {
-    player_1: {eye: 'player_eye_c', tongue: 'player_tongue_r'},
-    player_2: {eye: 'player_eye_b', tongue: 'player_tongue_p'},
-    player_3: {eye: 'player_eye_b', tongue: 'player_tongue_r'},
-    player_4: {eye: 'player_eye_c', tongue: 'player_tongue_p'},
-    player_5: {eye: 'player_eye_b', tongue: 'player_tongue_r'},
-    player_6: {eye: 'player_eye_b', tongue: 'player_tongue_r'},
-    player_7: {eye: 'player_eye_b', tongue: 'player_tongue_p'},
-    player_8: {eye: 'player_eye_b', tongue: 'player_tongue_p'},
-    player_9: {eye: 'player_eye_b', tongue: 'player_tongue_r'},
+    player_0: {eye: 'player_eye_g', tongue: 'player_tongue_r'},
+    player_1: {eye: 'player_eye_b', tongue: 'player_tongue_p'}, // индиго
+    player_2: {eye: 'player_eye_b', tongue: 'player_tongue_r'}, // америка
+    player_3: {eye: 'player_eye_b', tongue: 'player_tongue_r'}, // пират
+    player_4: {eye: 'player_eye_b', tongue: 'player_tongue_r'}, // СССР
+    player_5: {eye: 'EMPTY', tongue: 'EMPTY'}, // кулак
+    player_6: {eye: 'player_eye_b', tongue: 'player_tongue_r'}, // блэк
+    player_7: {eye: 'player_eye_b', tongue: 'player_tongue_v'}, // акула
+    player_8: {eye: 'player_eye_y', tongue: 'player_tongue_v'}, // рэд
+    player_9: {eye: 'EMPTY', tongue: 'player_tongue_v'}, // демон
+    player_10: {eye: 'EMPTY', tongue: 'player_tongue_v'}, // панк
+    player_11: {eye: 'player_eye_y', tongue: 'player_tongue_v'}, // крокодил
+    player_12: {eye: 'EMPTY', tongue: 'player_tongue_v'}, // веном
 }
 
 export const PLAYER_X = -300
@@ -29,7 +33,7 @@ const ANGLE_FACTOR = 0.5
 const ANGLE_SMOOTH = 0.009
 const ANGLE_MAX = Math.PI * 0.5
 
-const EYE_MAX_ANGLE = Math.PI * 0.3
+const EYE_MAX_ANGLE = Math.PI * 0.18
 const EYE_SPEED = 0.006
 const EYE_MIN_TIME = 600
 const EYE_MAX_TIME = 1200 
@@ -74,23 +78,27 @@ export default class Player extends Container {
         this.body.anchor.set(0.5)
         this.addChild(this.body)
 
-        this.eye = new Sprite(images[ AVATARS[AVA_KEY].eye ])
-        this.eye.anchor.set(0.5)
-        this.eye.position.set(32, -16)
-        this.addChild(this.eye)
-        this.eyeTargetAngle = 0
-        this.eyeTimeout = EYE_MIN_TIME + EYE_MID_TIME * Math.random()
+        if (AVATARS[AVA_KEY].eye !== 'EMPTY') {
+            this.eye = new Sprite(images[ AVATARS[AVA_KEY].eye ])
+            this.eye.anchor.set(0.5)
+            this.eye.position.set(32, -16)
+            this.addChild(this.eye)
+            this.eyeTargetAngle = 0
+            this.eyeTimeout = EYE_MIN_TIME + EYE_MID_TIME * Math.random()
+        }
 
-        this.tongue = new MeshPlane({
-            texture: images[ AVATARS[AVA_KEY].tongue ],
-            verticesX: 9,
-            verticesY: 3
-        })
-        this.tongue.pivot.set(47, 7)
-        this.tongue.position.set(26, 26)
-        this.addChild(this.tongue)
-        this.tongueOriginalVertices = this.tongue.geometry.getBuffer('aPosition').data.slice()
-        this.tongueTime = 0
+        if (AVATARS[AVA_KEY].tongue !== 'EMPTY') {
+            this.tongue = new MeshPlane({
+                texture: images[ AVATARS[AVA_KEY].tongue ],
+                verticesX: 9,
+                verticesY: 3
+            })
+            this.tongue.pivot.set(47, 7)
+            this.tongue.position.set(26, 26)
+            this.addChild(this.tongue)
+            this.tongueOriginalVertices = this.tongue.geometry.getBuffer('aPosition').data.slice()
+            this.tongueTime = 0
+        }
 
         this.minY = minY
         this.maxY = maxY
@@ -121,6 +129,8 @@ export default class Player extends Container {
 
     addSquash() {
         this.squashTimer = SQUASH_DURATION
+
+        if (!this.eye) return
 
         this.eye.scale.y = 0.18
         this.eye.rotation = 0
@@ -182,44 +192,48 @@ export default class Player extends Container {
         }
 
         // eye
-        if (this.eye.scale.y < 1) {
-            this.eye.scale.y = Math.min(1, this.eye.scale.y + EYE_BLINK_SPEED * scaledDeltaMs)
-        } else if (this.eyeTimeout > 0) {
-            this.eyeTimeout -= scaledDeltaMs
-            if (this.eyeTimeout <= 0) {
-                this.eyeTargetAngle = -EYE_MAX_ANGLE + Math.random() * (EYE_MAX_ANGLE * 2)
-            }
-        } else {
-            const eyeSpeed = EYE_SPEED * scaledDeltaMs
-            if (this.eye.rotation < this.eyeTargetAngle) {
-                this.eye.rotation = Math.min(this.eyeTargetAngle, this.eye.rotation + eyeSpeed)
-            } else if (this.eye.rotation > this.eyeTargetAngle) {
-                this.eye.rotation = Math.max(this.eyeTargetAngle, this.eye.rotation - eyeSpeed)
+        if (this.eye) {
+            if (this.eye.scale.y < 1) {
+                this.eye.scale.y = Math.min(1, this.eye.scale.y + EYE_BLINK_SPEED * scaledDeltaMs)
+            } else if (this.eyeTimeout > 0) {
+                this.eyeTimeout -= scaledDeltaMs
+                if (this.eyeTimeout <= 0) {
+                    this.eyeTargetAngle = -EYE_MAX_ANGLE + Math.random() * (EYE_MAX_ANGLE * 2)
+                }
             } else {
-                this.eyeTimeout = EYE_MIN_TIME + EYE_MID_TIME * Math.random()
+                const eyeSpeed = EYE_SPEED * scaledDeltaMs
+                if (this.eye.rotation < this.eyeTargetAngle) {
+                    this.eye.rotation = Math.min(this.eyeTargetAngle, this.eye.rotation + eyeSpeed)
+                } else if (this.eye.rotation > this.eyeTargetAngle) {
+                    this.eye.rotation = Math.max(this.eyeTargetAngle, this.eye.rotation - eyeSpeed)
+                } else {
+                    this.eyeTimeout = EYE_MIN_TIME + EYE_MID_TIME * Math.random()
+                }
             }
         }
-
-        // tongue
-        this.tongueTime += TONGUE_SPEED * scaledDeltaMs
-    
-        const geometry = this.tongue.geometry
-        const vertices = geometry.getBuffer('aPosition').data
-        const originalVertices = this.tongueOriginalVertices
         
-        // Проходим по сетке вершин и создаем эффект "колыхания"
-        for (let i = 0; i < vertices.length; i += 2) {
-            const ox = originalVertices[i]
-            const oy = originalVertices[i + 1]
+        // tongue
+        if (this.tongue) {
+            this.tongueTime += TONGUE_SPEED * scaledDeltaMs
+        
+            const geometry = this.tongue.geometry
+            const vertices = geometry.getBuffer('aPosition').data
+            const originalVertices = this.tongueOriginalVertices
+            
+            // Проходим по сетке вершин и создаем эффект "колыхания"
+            for (let i = 0; i < vertices.length; i += 2) {
+                const ox = originalVertices[i]
+                const oy = originalVertices[i + 1]
 
-            const angleX = this.tongueTime * 0.2 + (oy * TONGUE_WAVELENGTH)
-            const angleY = this.tongueTime * 0.7 + (ox * TONGUE_WAVELENGTH)
+                const angleX = this.tongueTime * 0.2 + (oy * TONGUE_WAVELENGTH)
+                const angleY = this.tongueTime * 0.7 + (ox * TONGUE_WAVELENGTH)
 
-            // Используем нормализованные смещения
-            vertices[i] = ox + Math.sin(angleX) * TONGUE_AMPLITUDE
-            vertices[i + 1] = oy + Math.cos(angleY) * TONGUE_AMPLITUDE
+                // Используем нормализованные смещения
+                vertices[i] = ox + Math.sin(angleX) * TONGUE_AMPLITUDE
+                vertices[i + 1] = oy + Math.cos(angleY) * TONGUE_AMPLITUDE
+            }
+            geometry.getBuffer('aPosition').update()
         }
-        geometry.getBuffer('aPosition').update()
 
         // smoke
         this.smokeTime -= scaledDeltaMs
