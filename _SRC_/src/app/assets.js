@@ -28,20 +28,40 @@ export const images = {
     button: 'button.png',
     button_hover: 'button_hover.png',
 
+    ui_results: 'ui_results.png',
+    ui_skin_bg: 'ui_skin_bg.png',
+    ui_buy_save: 'ui_buy_save.png',
+    ui_spin_for_ad: 'ui_spin_for_ad.png',
+    ui_skin_shop: 'ui_skin_shop.png',
+    ui_save_for_ad: 'ui_save_for_ad.png',
+    flash_line: 'flash_line.png',
+
+    bg_day_sky: 'bg_day_sky.png',
+    bg_night_sky: 'bg_night_sky.png',
     bg_ground_top: 'bg_ground_top.png',
     bg_ground_bottom: 'bg_ground_bottom.png',
     bg_water_top: 'bg_water_top.png',
     bg_water_bottom: 'bg_water_bottom.png',
     bg_snow_top: 'bg_snow_top.png',
     bg_snow_bottom: 'bg_snow_bottom.png',
-    bg_moon_top: 'bg_moon_top.png',
+    bg_moon_top: 'bg_moon_top2.png',
     bg_moon_bottom: 'bg_moon_bottom.png',
+
+    Moon: 'Moon.png',
+    Earth: 'Earth.png',
+
+    cloud_1: 'cloud_1.png',
+    cloud_2: 'cloud_2.png',
+    cloud_3: 'cloud_3.png',
+    cloud_4: 'cloud_4.png',
 
     coin: 'coin.png',
     cup: 'cup.png',
     save: 'save.png',
-    x2: 'x2.png',
     pause: 'pause.png',
+    settings: 'settings.png',
+
+    done: 'OK.png',
 
     help: 'help.png',
 
@@ -75,11 +95,6 @@ export const images = {
     player_tongue_r: 'player_tongue_r.png',
     player_tongue_p: 'player_tongue_p.png',
     player_tongue_v: 'player_tongue_v.png',
-
-    cloud_1: 'cloud_1.png',
-    cloud_2: 'cloud_2.png',
-    cloud_3: 'cloud_3.png',
-    cloud_4: 'cloud_4.png',
 
     asteroid_1: 'asteroid_1.png',
     asteroid_2: 'asteroid_2.png',
@@ -141,7 +156,6 @@ export const images = {
 export const atlases = {
     smoke: 'smoke.json',
     explosion: 'explosion.json',
-    Earth: 'Earth.json',
 }
 export const sounds = {
     se_hover: 'se_hover.mp3',

@@ -2,7 +2,7 @@ import { AnimatedSprite, Container } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases } from "../../../app/assets";
 import { EventHub, events } from "../../../app/events";
-import { timeScale } from "./GameContainer";
+import { timeScale } from "../../state";
 
 class Part extends AnimatedSprite {
     constructor(x, y, speedX, scale, pull, isPrefab = false) {

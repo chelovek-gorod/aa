@@ -2,6 +2,9 @@ import { EventHub, events, getNextLevel } from "../app/events"
 import { updateStoredData } from "../game/storage"
 import { createEnum } from "../utils/functions"
 
+export let timeScale = 1
+export const setTimeScale = (ts) => timeScale = ts
+
 export let isAdAvailable = true
 
 export const LEVEL_TYPE = createEnum(['GROUND', 'WATER', 'SNOW', 'MOON'])
@@ -11,18 +14,18 @@ let previousLevelTypes = []
 
 export let playerAvatarsShop = {
     player_0: 0, // set 0 if purchased
-    player_1: 5,
+    player_1: 2,
     player_2: 5,
-    player_3: 5,
-    player_4: 5,
-    player_5: 10,
-    player_6: 10,
-    player_7: 10,
-    player_8: 10,
-    player_9: 20,
-    player_10: 20,
-    player_11: 20,
-    player_12: 20,
+    player_3: 10,
+    player_4: 15,
+    player_5: 20,
+    player_6: 30,
+    player_7: 40,
+    player_8: 50,
+    player_9: 60,
+    player_10: 80,
+    player_11: 100,
+    player_12: 120,
 }
 export let playerAvatarKeys = Object.keys(playerAvatarsShop)
 export let playerAvatarIndex = Math.min( 0, playerAvatarKeys.length - 1)
@@ -32,31 +35,27 @@ export function nextAvatar() {
     playerAvatarIndex = index
 }
 
+let addCoins = 1
 export let playerCoins = 0
 export let playerSaves = 0
 export let playerLevel = 1
 export let playerScore = 0
-export let playerScoreX2 = 0 // additionalScoreRate
-export let isPlayerScoreX2Active = false
-export let isPlayerScoreX2Apply = false
+export let playerTopScore = 0
 export let playerTarget = 20 // score for next level
 export let playerPrevious = 0 // score before next level
 export let playerProgress = 0 // score rate for next level
 export function playerAddScore(score) {
-    playerScore += score * (isPlayerScoreX2Active ? 2 : 1)
+    playerScore += score
     if (playerScore >= playerTarget) {
         playerPrevious = playerTarget
         playerLevel++
-        playerCoins++
+        playerCoins += addCoins;
+        addCoins++
         playerTarget += Math.floor(playerLevel * 1.2) * 20
         getNextLevel()
     }           
     playerProgress = (playerScore - playerPrevious) / (playerTarget - playerPrevious)
-
-    if (isPlayerScoreX2Active && !isPlayerScoreX2Apply) {
-        playerScoreX2 = Math.max(0, playerScoreX2 - 1)
-        isPlayerScoreX2Apply = true
-    }
+    playerTopScore = Math.max(playerScore, playerTopScore)
 }
 export function playerUseCoins(count) {
     playerCoins -= count
@@ -65,24 +64,18 @@ export function playerAddCoins(count) {
     playerCoins += count
 }
 export function playerUseSave() {
+    addCoins = 1
     playerSaves--
-    isPlayerScoreX2Active = false
 }
 export function playerAddSave(count) {
     playerSaves += count
 }
-export function playerAddScoreX2(count) {
-    isPlayerScoreX2Active = true
-    playerScoreX2 += count
-}
 
 export function resetScoreToPrevious() {
+    addCoins = 1
     playerSaves = 0
     playerScore = playerPrevious
     playerProgress = (playerScore - playerPrevious) / (playerTarget - playerPrevious)
-
-    isPlayerScoreX2Apply = false
-    if (playerScoreX2 > 0) isPlayerScoreX2Active = true
 
     levelType = getLevelType()
 }

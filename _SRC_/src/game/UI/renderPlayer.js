@@ -1,0 +1,59 @@
+import { Sprite, Container, RenderTexture, Texture } from "pixi.js"
+import { atlases, images } from "../../app/assets"
+import { getAppRenderer } from "../../app/application"
+import { AVATARS } from "../scenes/level/Player"
+import { playerAvatarIndex, playerAvatarKeys } from "../state"
+
+export function renderPlayer(index = null) {
+    const container = new Container()
+    const appRenderer = getAppRenderer()
+
+    if (index) {
+        const bg = new Sprite(images.popup_bg)
+        bg.scale.set(0.3)
+        container.addChild( bg )
+    } else {
+        container.addChild( new Sprite(images.ui_skin_bg) )
+    }
+
+    const playerContainer = new Container()
+    playerContainer.scale.set( 0.85)
+    playerContainer.position.set(index ? 116 : 136, index ? 86 : 118)
+    const AVA_KEY = playerAvatarKeys[index ? index : playerAvatarIndex]
+    const playerBody = new Sprite(images[ AVA_KEY ])
+    playerBody.anchor.set(0.5)
+    playerContainer.addChild(playerBody)
+    const playerEye = new Sprite(
+        AVATARS[AVA_KEY].eye !== 'EMPTY'
+        ? images[ AVATARS[AVA_KEY].eye ]
+        : Texture.EMPTY
+    )
+    playerEye.anchor.set(0.5)
+    playerEye.position.set(32, -16)
+    playerContainer.addChild(playerEye)
+    const playerTongue = new Sprite(
+        AVATARS[AVA_KEY].tongue !== 'EMPTY'
+        ? images[ AVATARS[AVA_KEY].tongue ]
+        : Texture.EMPTY
+    )
+    playerTongue.pivot.set(47, 7)
+    playerTongue.position.set(26, 26)
+    playerContainer.addChild(playerTongue)
+    container.addChild(playerContainer)
+
+    const rt = RenderTexture.create({
+        width: Math.ceil(container.width),
+        height: Math.ceil(container.height),
+        resolution: 1,
+    })
+  
+    appRenderer.render({
+        container: container,
+        target: rt
+    })
+
+    playerContainer.destroy({children:true})
+    container.destroy({children:true})
+  
+    return rt
+}

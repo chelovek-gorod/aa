@@ -3,8 +3,7 @@ import { tickerAdd, tickerRemove } from "../../../app/application";
 import { images, sounds } from "../../../app/assets";
 import { addSmoke, addSparks, shakeScreen } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
-import { levelType, LEVEL_TYPE, playerAvatarIndex, playerAvatarKeys } from "../../state";
-import { timeScale } from "./GameContainer";
+import { levelType, LEVEL_TYPE, playerAvatarIndex, playerAvatarKeys, timeScale } from "../../state";
 
 export const AVATARS = {
     player_0: {eye: 'player_eye_g', tongue: 'player_tongue_r'},

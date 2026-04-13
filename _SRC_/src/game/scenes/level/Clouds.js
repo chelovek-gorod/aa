@@ -1,7 +1,7 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerAdd } from "../../../app/application";
 import { images } from "../../../app/assets";
-import { timeScale } from "./GameContainer";
+import { timeScale } from "../../state";
 
 const CLOUD_WIDTH = 326
 const SPEED_RATE_MIN = 0.7

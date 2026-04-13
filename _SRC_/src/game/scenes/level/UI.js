@@ -3,13 +3,13 @@ import { getSafeAreaOffsets, kill, tickerAdd, tickerRemove } from "../../../app/
 import { images } from "../../../app/assets";
 import { EventHub, events, pauseGameplay } from "../../../app/events";
 import { styles } from "../../../app/styles";
-import { isPlayerScoreX2Active, playerAddScore, playerCoins, playerLevel, playerProgress, playerSaves, playerScore, playerTarget } from "../../state";
+import { playerAddScore, playerCoins, playerLevel, playerProgress, playerSaves, playerScore, playerTarget } from "../../state";
 import FlyText from "./FlyText"
 import TapIcon from "../../UI/TapIcon"
 
 const PROGRESS_WIDTH = 110
 
-function formatNumber(n, isRoundUp = false) {
+export function formatNumber(n, isRoundUp = false) {
     if (n < 1_000_000) return n.toLocaleString('ru-RU')
 
     const millions = n / 1_000_000
@@ -70,13 +70,6 @@ export default class UI extends Container {
         this.coinsText.anchor.set(0, 1)
         this.addChild(this.coinsText)
 
-        if (isPlayerScoreX2Active) {
-            this.x2Icon = new Sprite(images.x2)
-            this.x2Icon.anchor.set(0.5, 1)
-            this.x2Icon.scale.set(0.5)
-            this.addChild(this.x2Icon)
-        }
-
         this.saveAnimations = 0
         this.saveIcon = new Sprite(images.save)
         this.saveIcon.anchor.set(1, 1)
@@ -113,8 +106,6 @@ export default class UI extends Container {
 
         this.coinIcon.position.set(-screenData.centerX + 10, screenData.centerY - 10 - safeArea.bottom)
         this.coinsText.position.set(-screenData.centerX + 80, screenData.centerY - 20 - safeArea.bottom)
-
-        if (this.x2Icon) this.x2Icon.position.set(0, screenData.centerY - 10 - safeArea.bottom)
 
         this.saveIcon.position.set(screenData.centerX - 10, screenData.centerY - 10 - safeArea.bottom)
         this.savesText.position.set(screenData.centerX - 80, screenData.centerY - 15 - safeArea.bottom)
@@ -187,21 +178,11 @@ export default class UI extends Container {
             this.saveIcon.scale.set( this.saveIcon.scale.x + 0.0012 * deltaMs )
             this.saveIcon.alpha = Math.max(0, this.saveIcon.alpha - 0.0012 * deltaMs)
 
-            if (this.x2Icon) {
-                this.x2Icon.scale.set( this.saveIcon.scale.x )
-                this.x2Icon.alpha = this.saveIcon.alpha
-            }
-
             if (this.saveIcon.alpha === 0) {
                 this.saveAnimations--
                 this.saveIcon.scale.set(0.5)
                 this.saveIcon.alpha = 1
                 if (this.saveAnimations === 0 && this.coinAnimations === 0) tickerRemove(this)
-
-                if (this.x2Icon) {
-                    kill(this.x2Icon)
-                    this.x2Icon = null
-                }
             }
         }
 

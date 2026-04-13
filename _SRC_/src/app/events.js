@@ -88,6 +88,5 @@ export function pauseGameplay() {
     EventHub.emit( events.pauseGameplay )
 }
 export function resumeGameplay() {
-    console.log('resume gameplay')
     EventHub.emit( events.resumeGameplay )
 }

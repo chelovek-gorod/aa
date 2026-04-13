@@ -3,17 +3,19 @@ import { getAppScreen, kill, sceneAdd, sceneRemove, tickerAdd, tickerRemove } fr
 import { createEnum } from "../../utils/functions"
 import { EventHub, events } from "../../app/events"
 
-import LevelScene from "./level/LevelScene"
 import LoadScene from "./load/LoadScene"
 import MenuScene from "./menu/MenuScene"
+import ShopScene from "./shop/ShopScene"
+import LevelScene from "./level/LevelScene"
 
 export const SCENE_NAME = createEnum(
-    ['Menu', 'Level', 'Load']
+    ['Load', 'Menu', 'Shop', 'Level']
 )
 
 const SCENES = {
     [SCENE_NAME.Load] : LoadScene,
     [SCENE_NAME.Menu] : MenuScene,
+    [SCENE_NAME.Shop] : ShopScene,
     [SCENE_NAME.Level] : LevelScene,
 }
 

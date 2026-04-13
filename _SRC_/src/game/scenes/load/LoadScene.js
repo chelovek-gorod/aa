@@ -175,7 +175,7 @@ export default class LoadScene extends Container {
         getFirstUserAction()
         soundPlay(sounds.se_click)
 
-        startScene(SCENE_NAME.Level)
+        startScene(SCENE_NAME.Menu)
     }
 
     tick(delta) {

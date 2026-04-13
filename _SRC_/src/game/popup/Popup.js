@@ -14,7 +14,7 @@ import Overlay from "./Overlay"
 import { showRewardAdSDK } from "../storage"
 
 export const POPUP_TYPE =  createEnum([
-    'PAUSE',
+    'PAUSE', 'SETTINGS'
 ])
 
 const BG_SIDE_SIZE = 780
@@ -102,13 +102,15 @@ export default class Popup extends Container {
         const fullScale = (this.scaleMax - this.scaleNormal) * 2 + this.scaleNormal
         this.scaleSpeedMax = (fullScale * 2) / SCALE_TIME
         this.scaleAcceleration = (fullScale * 2) / (SCALE_TIME * SCALE_TIME)
+
+        if (this.visible) this.box.scale.set(this.scaleNormal)
     }
 
     show(type) { 
         if (this.visible) return dataQueue.push(data)
 
         this.type = type
-        if (type === POPUP_TYPE.PAUSE) this.fillSettings()
+        if (type === POPUP_TYPE.PAUSE || type === POPUP_TYPE.SETTINGS) this.fillSettings()
         /*
         else if (data.type === POPUP_TYPE.HELP) this.fillHelp(data.data)
         else if (data.type === POPUP_TYPE.INFO) this.fillInfo(data.data)

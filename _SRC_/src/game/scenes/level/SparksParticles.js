@@ -2,7 +2,7 @@ import { Particle, ParticleContainer } from "pixi.js"
 import { tickerAdd, tickerRemove } from "../../../app/application"
 import { images } from "../../../app/assets"
 import { EventHub, events } from "../../../app/events"
-import { timeScale } from "./GameContainer"
+import { timeScale } from "../../state"
 import { NOISE_BUFFER, NOISE_BUFFER_SIZE, NOISE_MASK, _2PI } from "./constants"
 
 const SMALL_SCALE_MIN = 0.2

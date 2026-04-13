@@ -1,9 +1,9 @@
 import { Particle, ParticleContainer } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
 import { images } from "../../../app/assets";
-import { timeScale } from "./GameContainer";
 import { NOISE_BUFFER, NOISE_BUFFER_SIZE, NOISE_MASK, _2PI } from "./constants";
 import { createEnum } from "../../../utils/functions";
+import { timeScale } from "../../state";
 
 // Таблица синусов для ветра (1024 точки)
 const SINE_TABLE_SIZE = 1024

@@ -4,9 +4,8 @@ import { images, sounds } from "../../../app/assets";
 import { addExplosion, addSmoke, addSparks, resetCombo, shakeScreen, slowDown, removePlyerSave } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { createEnum, getRandom } from "../../../utils/functions";
-import { levelType, LEVEL_TYPE, playerLevel, playerSaves, playerUseSave } from "../../state";
+import { levelType, LEVEL_TYPE, playerLevel, playerSaves, playerUseSave, timeScale } from "../../state";
 import { HELP_DURATION, HELP_IN_OUT } from "./constants";
-import { timeScale } from "./GameContainer";
 import { PLAYER_X, PLAYER_WIDTH } from "./Player";
 
 const ADD_TIME = 1769
@@ -20,6 +19,7 @@ const COPTER_MIN_Y = -400
 const COPTER_MAX_Y = 0
 const WAGON_Y = -200
 const LAUNCHER_Y = 360
+const MODULE_Y = 180
 const SPACE_MIN_Y = -400
 const SPACE_MAX_Y = -120
 
@@ -797,7 +797,7 @@ class Module extends Sprite {
         this.isSliding = true
 
         this.halfWidth = images.module.width * 0.5
-        this.position.set(START_X + this.halfWidth, BUS_Y - 50)
+        this.position.set(START_X + this.halfWidth, MODULE_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
         this.playerMaxX = PLAYER_X + this.halfWidth

@@ -1,8 +1,8 @@
-import { Container, TilingSprite, ColorMatrixFilter, AnimatedSprite } from "pixi.js";
+import { Container, TilingSprite, ColorMatrixFilter, AnimatedSprite, Sprite } from "pixi.js";
 import { kill, tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases, images } from "../../../app/assets";
 import { EventHub, events, shakeScreen, startScene } from "../../../app/events";
-import { levelType, LEVEL_TYPE, playerSaves } from "../../state";
+import { levelType, LEVEL_TYPE, playerSaves, setTimeScale, timeScale } from "../../state";
 import { SCENE_NAME } from "../SceneManager";
 import Asteroids from "./Asteroids";
 import Clouds from "./Clouds";
@@ -17,8 +17,8 @@ const BG_WIDTH = 900
 const BG_HEIGHT = 980
 const BG_SIZE = 900 // эталонный размер для отличной отрисовки и ширины и высоты
 const BG_TOP_SPEED_RATE = 0.66
+const BG_SKY_SPEED_RATE = 0.33
 
-export let timeScale = 1
 let previousTimeScale = 1
 const SLOW_DOWN_STEP = 0.0003
 const SPEED_UP = 0.000006
@@ -27,13 +27,28 @@ export default class GameContainer extends Container {
     constructor(shaker) {
         super()
 
-        timeScale = 1
+        setTimeScale(1)
 
         this.scrollSpeed = 0.66
 
         this.shaker = shaker
 
         this.isGamePaused = false
+
+        this.bgSky = new TilingSprite(levelType === LEVEL_TYPE.MOON ? images.bg_night_sky : images.bg_day_sky)
+        this.bgSky.anchor.set(0.5, 0)
+        this.bgSky.position.set(0, -BG_HEIGHT * 0.5)
+        this.addChild(this.bgSky)
+
+        this.planet = new Sprite(levelType === LEVEL_TYPE.MOON ? images.Earth : images.Moon)
+        this.planet.anchor.set(0.5)
+        this.planet.minX = -4000
+        this.planet.maxX = 4000
+        this.planet.startY = 120
+        this.planet.position.set(this.planet.maxX, this.planet.startY)
+        this.planet.speedX = 0.3
+        this.planet.speedY = 0.03
+        this.addChild(this.planet)
 
         this.bgBottom = new TilingSprite(images['bg_' + levelType.toLowerCase() + '_bottom'])
         this.bgBottom.anchor.set(0.5, 1)
@@ -45,18 +60,7 @@ export default class GameContainer extends Container {
         this.bgTop.position.set(0, -BG_HEIGHT * 0.5)
         this.addChild(this.bgTop)
 
-        if (levelType === LEVEL_TYPE.MOON) {
-            this.Earth = new AnimatedSprite(atlases.Earth.animations.rotation)
-            this.Earth.anchor.set(0.5)
-            this.Earth.position.set(6400, -40)
-            this.Earth.minX = -6400
-            this.Earth.maxX = 6400
-            this.Earth.speedX = 0.3
-            this.Earth.speedY = 0.012
-            this.Earth.animationSpeed = 0.5
-            this.Earth.play()
-            this.addChild(this.Earth)
-        } else {
+        if (levelType !== LEVEL_TYPE.MOON) {
             this.clouds = new Clouds(this.scrollSpeed)
             this.addChild(this.clouds)
         }
@@ -99,17 +103,13 @@ export default class GameContainer extends Container {
         const width = screenData.width / scale
         const height = screenData.height / scale
 
+        this.bgSky.width = width
         this.bgTop.width = width
         this.bgBottom.width = width
 
         this.scale.set(scale)
 
-        if (this.clouds) this.clouds.resize(width)
-        else {
-            this.Earth.minX = -width * 1.2
-            this.Earth.maxX = width * 1.2
-            if (this.Earth.x > this.Earth.maxX) this.Earth.position.set(this.Earth.maxX, -40) 
-        }
+        if (this.clouds) this.clouds.resize(width) 
 
         this.obstacles.resize(width)
         this.asteroids.resize(width)
@@ -125,7 +125,7 @@ export default class GameContainer extends Container {
     slowDown() {
         if (timeScale < 1) return
 
-        timeScale = 0.999
+        setTimeScale( 0.999 )
 
         const sepiaFilter = new ColorMatrixFilter()
         sepiaFilter.sepia(true)
@@ -136,7 +136,7 @@ export default class GameContainer extends Container {
     pause() {
         this.isGamePaused = true
         previousTimeScale = timeScale
-        timeScale = 0
+        setTimeScale(0)
         tickerRemove(this)
 
         const sepiaFilter = new ColorMatrixFilter()
@@ -147,14 +147,13 @@ export default class GameContainer extends Container {
         this.isGamePaused = false
         if (previousTimeScale >= 1) this.filters = []
 
-        timeScale = previousTimeScale
+        setTimeScale( previousTimeScale )
         tickerAdd(this)
     }
 
     tick(deltaMs) {
         if (timeScale < 1 && !this.isGamePaused) {
-            timeScale = Math.max(0, timeScale - SLOW_DOWN_STEP * deltaMs)
-            //timeScale = Math.max(0, timeScale - Math.sin(SLOW_DOWN_STEP * deltaMs))
+            setTimeScale( Math.max(0, timeScale - SLOW_DOWN_STEP * deltaMs) )
             if (timeScale === 0) {
                 //timeScale = 1
                 tickerRemove(this)
@@ -162,16 +161,19 @@ export default class GameContainer extends Container {
                 startScene(SCENE_NAME.Menu)
             }
         } else {
-            timeScale += SPEED_UP * deltaMs
+            setTimeScale( timeScale + SPEED_UP * deltaMs )
         }
 
-        if (this.Earth) {
-            this.Earth.x -= this.Earth.speedX * deltaMs * timeScale
-            this.Earth.y -= this.Earth.speedY * deltaMs * timeScale
-            if (this.Earth.x < this.Earth.minX) this.Earth.position.set(this.Earth.maxX, -60) 
+        this.planet.x -= this.planet.speedX * deltaMs * timeScale
+        this.planet.y -= this.planet.speedY * deltaMs * timeScale
+        if (this.planet.x < this.planet.minX) {
+            this.planet.position.set(this.planet.maxX, this.planet.startY)
         }
 
         const scrollStep = this.scrollSpeed * deltaMs * timeScale
+
+        this.bgSky.tilePosition.x -= Math.round(scrollStep * BG_SKY_SPEED_RATE)
+        if (this.bgSky.tilePosition.x < -BG_WIDTH) this.bgSky.tilePosition.x += BG_WIDTH
 
         this.bgTop.tilePosition.x -= Math.round(scrollStep * BG_TOP_SPEED_RATE)
         if (this.bgTop.tilePosition.x < -BG_WIDTH) this.bgTop.tilePosition.x += BG_WIDTH

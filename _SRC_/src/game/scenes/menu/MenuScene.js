@@ -1,16 +1,16 @@
-import { Container, Sprite, Text } from 'pixi.js'
+import { Container, Sprite, Text, Texture } from 'pixi.js'
 import { kill } from '../../../app/application'
 import { atlases, images, music } from '../../../app/assets'
-import { startScene } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
-import { SCENE_NAME } from '../SceneManager'
 import BackgroundImage from '../../BG/BackgroundImage'
-import Button from '../../UI/Button'
-import { nextAvatar, playerAddSave, playerAddScoreX2, playerAvatarIndex, playerAvatarKeys, playerSaves, playerScoreX2, resetScoreToPrevious } from '../../state'
+import FlashButton, { FLASH_TYPE } from '../../UI/FlashButton'
+import { nextAvatar, playerAddSave, playerAvatarIndex, playerAvatarKeys, playerCoins, playerSaves, resetScoreToPrevious } from '../../state'
 import { AVATARS } from '../level/Player'
 import { styles } from '../../../app/styles'
-//import { TEXT_BUTTON_TYPE } from '../../localText'
-//import Title from './Title'
+import MenuUI from '../../UI/MenuUI'
+import Popup from '../../popup/Popup'
+import { startScene } from '../../../app/events'
+import { SCENE_NAME } from '../SceneManager'
 
 const musics = [ music.bgm_menu_1, music.bgm_menu_2, music.bgm_menu_3, music.bgm_menu_4 ]
 let currentMusicIndex = Math.floor( Math.random() * musics.length )
@@ -21,6 +21,9 @@ function getMusic() {
     return music
 }
 
+const OFFSET_Y = 120
+const OFFSET_X = 10
+
 export default class Menu extends Container {
     constructor() {
         super()
@@ -28,88 +31,45 @@ export default class Menu extends Container {
 
         resetScoreToPrevious()
 
-        this.bg = new BackgroundImage( images.bg_main, 0x777777 )
+        this.bg = new BackgroundImage( images.bg_main, 0x333333 )
         this.addChild(this.bg)
 
-        this.playerContainer = new Container()
-        const AVA_KEY = playerAvatarKeys[playerAvatarIndex]
-        this.playerBody = new Sprite(images[ AVA_KEY ])
-        this.playerBody.anchor.set(0.5)
-        this.playerBody.eventMode = 'static'
-        this.playerBody.on('pointerdown', this.changeAvatar, this)
-        this.playerContainer.addChild(this.playerBody)
-        this.playerEye = new Sprite(images[ AVATARS[AVA_KEY].eye ])
-        this.playerEye.anchor.set(0.5)
-        this.playerEye.position.set(32, -16)
-        this.playerContainer.addChild(this.playerEye)
-        this.playerTongue = new Sprite(images[ AVATARS[AVA_KEY].tongue ])
-        this.playerTongue.pivot.set(47, 7)
-        this.playerTongue.position.set(26, 26)
-        this.playerContainer.addChild(this.playerTongue)
-        this.addChild(this.playerContainer)
+        this.mainContainer = new Container()
+        this.addChild(this.mainContainer)
 
-        this.save = new Sprite(images.save)
-        this.save.scale.set(0.5)
-        this.save.anchor.set(0.5)
-        this.addChild(this.save)
-        this.save.eventMode = 'static'
-        this.save.on('pointerdown', this.addSave, this)
-        this.saveText = new Text({text: playerSaves, style: styles.saves})
-        this.addChild(this.saveText)
+        this.popup = new Popup()
 
-        this.x2 = new Sprite(images.x2)
-        this.x2.scale.set(0.5)
-        this.x2.anchor.set(0.5)
-        this.addChild(this.x2)
-        this.x2.eventMode = 'static'
-        this.x2.on('pointerdown', this.addX2, this)
-        this.x2Text = new Text({text: playerScoreX2, style: styles.score})
-        this.x2Text.scale.set(0.75)
-        this.addChild(this.x2Text)
+        this.ui = new MenuUI(this, SCENE_NAME.Level)
+        this.addChild(this.ui)
 
-        this.logo = new Sprite(images.logo)
-        this.logo.scale.set(0.75)
-        this.logo.anchor.set(1)
-        this.addChild(this.logo)
+        this.results = new FlashButton(FLASH_TYPE.RESULTS, this.showResults.bind(this), 0.45)
+        this.results.position.set(-320, -130)
 
-        
-        /*
-        this.title = new Title()
-        this.titleStartWidth = this.title.width
-        this.titleStartHeight = this.title.height
-        this.addChild(this.title)
-        */
+        this.player = new FlashButton(FLASH_TYPE.SKIN, this.changeAvatar.bind(this), 0.6)
+        this.player.position.set(0, -130)
 
-        this.startButton = new Button(
-            null, 'START' /* TEXT_BUTTON_TYPE.START*/, () => {
-                if (!this.isMenuActive) return
+        this.buySave = new FlashButton(FLASH_TYPE.BUY_SAVE, this.addSaveForCoins.bind(this), 0.75)
+        this.buySave.position.set(320, -130)
 
-                this.isMenuActive = false
-                startScene(SCENE_NAME.Level)
-            }, true
-        )
-        // this.startButton.scale.set(0.75)
-        this.addChild(this.startButton)
+        this.mainContainer.addChild(this.results, this.player, this.buySave)
+
+        this.wheel = new FlashButton(FLASH_TYPE.WHEEL, this.rotateWheel.bind(this), 0.05)
+        this.wheel.position.set(-320, 130)
+
+        this.shop = new FlashButton(FLASH_TYPE.SHOP, this.openShop.bind(this), 0.2)
+        this.shop.position.set(0, 130)
+
+        this.adSave = new FlashButton(FLASH_TYPE.AD_SAVE, this.addSaveForAd.bind(this), 0.35)
+        this.adSave.position.set(320, 130)
+
+        this.mainContainer.addChild(this.wheel, this.shop, this.adSave)
+
+        this.mainContainerWidth = 960 // this.mainContainer.width
+        this.mainContainerHeight = 390 // this.mainContainer.height
+
+        this.addChild(this.popup)
 
         setMusicList( getMusic() )
-    }
-
-    addSave() {
-        playerAddSave(1)
-        this.saveText.text = playerSaves
-    }
-
-    addX2() {
-        playerAddScoreX2(1)
-        this.x2Text.text = playerScoreX2
-    }
-
-    changeAvatar() {
-        nextAvatar()
-        const AVA_KEY = playerAvatarKeys[playerAvatarIndex]
-        this.playerBody.texture = images[ AVA_KEY ]
-        this.playerEye.texture = images[ AVATARS[AVA_KEY].eye ]
-        this.playerTongue.texture = images[ AVATARS[AVA_KEY].tongue ]
     }
 
     screenResize(screenData) {
@@ -117,28 +77,56 @@ export default class Menu extends Container {
         this.position.set( screenData.centerX, screenData.centerY )
 
         this.bg.screenResize(screenData)
+        this.ui.screenResize(screenData)
+        this.popup.screenResize(screenData)
 
-        this.logo.position.set(screenData.centerX - 12, screenData.centerY - 12)
-
-        this.playerContainer.position.set(-120, screenData.centerY * -0.25)
-        this.save.position.set(60, screenData.centerY * -0.25)
-        this.saveText.position.set(60, screenData.centerY * -0.25)
-        this.x2.position.set(160, screenData.centerY * -0.25)
-        this.x2Text.position.set(160, screenData.centerY * -0.25)
-
-        /*
-        const titleScaleX = Math.min(1, screenData.width / (this.titleStartWidth + 120))
-        const titleScaleY = Math.min(1, screenData.centerY / (this.titleStartHeight + 60))
-        const pointY = screenData.centerY * 0.3
-        this.title.scale.set( Math.min(titleScaleX, titleScaleY) )
-        this.title.position.set(0, -pointY)
-        */
-
-        this.startButton.position.set(0, screenData.centerY * 0.25)
+        if (screenData.isLandscape) {
+            const maxScale = 0.75
+            const width = screenData.width - OFFSET_X * 2
+            const height = screenData.height - OFFSET_Y * 2
+            const scaleX = Math.min(maxScale, width / this.mainContainerWidth)
+            const scaleY = Math.min(maxScale, height / this.mainContainerHeight)
+            this.mainContainer.scale.set(Math.min(scaleX, scaleY))
+            this.mainContainer.position.set(0, 0)
+        } else {
+            const maxScale = 1
+            const width = screenData.width - OFFSET_X * 2
+            const height = screenData.height - OFFSET_Y * 2
+            const scaleX = Math.min(maxScale, width / this.mainContainerWidth)
+            const scaleY = Math.min(maxScale, height / this.mainContainerHeight)
+            this.mainContainer.scale.set(Math.min(scaleX, scaleY))
+            this.mainContainer.position.set(0, 20)
+        }
     }
 
-    kill() {
-        this.logo.off('touchstart', this.addSave, this)
-        this.playerBody.off('pointerdown', this.changeAvatar, this)
+    changeAvatar() {
+        nextAvatar()
+        const AVA_KEY = playerAvatarKeys[playerAvatarIndex]
+        this.playerBody.texture = images[ AVA_KEY ]
+        this.playerEye.texture = AVATARS[AVA_KEY].eye !== 'EMPTY'
+            ? images[ AVATARS[AVA_KEY].eye ] : Texture.EMPTY
+        this.playerTongue.texture = AVATARS[AVA_KEY].tongue !== 'EMPTY'
+            ? images[ AVATARS[AVA_KEY].tongue ] : Texture.EMPTY
+    }
+
+    showResults() {
+
+    }
+
+    addSaveForCoins() {
+        playerAddSave(1)
+        this.saveText.text = playerSaves
+    }
+
+    addSaveForAd() {
+
+    }
+
+    rotateWheel() {
+
+    }
+
+    openShop() {
+        startScene( SCENE_NAME.Shop )
     }
 }

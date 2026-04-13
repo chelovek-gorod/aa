@@ -4,10 +4,9 @@ import { images, sounds } from "../../../app/assets";
 import { addExplosion, addScore, addSmoke, addSparks, addStones, shakeScreen, resetCombo } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { createEnum } from "../../../utils/functions";
-import { playerLevel } from "../../state";
+import { timeScale, playerLevel } from "../../state";
 import { HELP_DURATION, HELP_IN_OUT } from "./constants";
-import { timeScale } from "./GameContainer";
-import { PLAYER_X, PLAYER_WIDTH } from "./Player";
+import { PLAYER_X , PLAYER_WIDTH } from "./Player";
 
 const ASTEROID_TIME = 2400
 
