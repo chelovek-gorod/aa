@@ -1,7 +1,7 @@
 import { Graphics } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../app/application";
 
-const maxAlpha = 0.5
+const maxAlpha = 0.75
 const showTime = 300
 const alphaSpeed = maxAlpha / showTime
 
@@ -37,8 +37,8 @@ export default class Overlay extends Graphics {
         tickerAdd(this)
     }
 
-    tick(time) {
-        const alphaStep = alphaSpeed * time.deltaMS
+    tick(deltaMS) {
+        const alphaStep = alphaSpeed * deltaMS
 
         if (this.isShown) {
             this.alpha = Math.min(maxAlpha, this.alpha + alphaStep)

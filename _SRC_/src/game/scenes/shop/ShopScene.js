@@ -15,7 +15,7 @@ const OFFSET_X = 30
 
 const STEP = 250
 
-export default class ShopMenu extends Container {
+export default class ShopScene extends Container {
     constructor() {
         super()
         this.isMenuActive = true
@@ -49,10 +49,11 @@ export default class ShopMenu extends Container {
         this.ui.screenResize(screenData)
         this.popup.screenResize(screenData)
 
-        const width = screenData.width - OFFSET_X * 2
-        const height = screenData.height - OFFSET_Y * 2
-
         const widthRate = screenData.width / screenData.height
+
+        const width = screenData.width - OFFSET_X * 2
+        const height = screenData.height - (widthRate > 2 ? OFFSET_Y * 1.5 : OFFSET_Y * 2)
+
         if (widthRate > 2) {
             // 6 + 6
             const startX = -2.5 * STEP

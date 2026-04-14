@@ -13,12 +13,15 @@ export function renderPlayer(index = null) {
         bg.scale.set(0.3)
         container.addChild( bg )
     } else {
-        container.addChild( new Sprite(images.ui_skin_bg) )
+        const bg = new Sprite(images.ui_skin_bg)
+        bg.scale.set(0.9) //
+        container.addChild( bg )
     }
 
     const playerContainer = new Container()
     playerContainer.scale.set( 0.85)
-    playerContainer.position.set(index ? 116 : 136, index ? 86 : 118)
+    // playerContainer.position.set(index ? 116 : 136, index ? 86 : 118)
+    playerContainer.position.set(index ? 116 : 122, index ? 86 : 106)
     const AVA_KEY = playerAvatarKeys[index ? index : playerAvatarIndex]
     const playerBody = new Sprite(images[ AVA_KEY ])
     playerBody.anchor.set(0.5)

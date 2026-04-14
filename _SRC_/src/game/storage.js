@@ -1,5 +1,6 @@
 import { EventHub, events, gamePause, gameResume } from '../app/events'
 import { getSoundData, setStoredSoundData } from '../app/sound'
+import CrazyGamesSDK from '../sdk/CrazyGamesSDK'
 import LocalMockSDK from '../sdk/LocalMock'
 import YaGamesSDK from '../sdk/YaGamesSDK'
 import { setLanguage, getLanguage } from './localization'
@@ -9,6 +10,7 @@ export let isReadySDK = false
 
 // let SDK = new LocalMockSDK(SDKReadyCallback, SDKgetStateForSave, SDKsetSavedState)
 // let SDK = new YaGamesSDK(SDKReadyCallback, SDKgetStateForSave, SDKsetSavedState)
+// let SDK = new CrazyGamesSDK(SDKReadyCallback, SDKgetStateForSave, SDKsetSavedState)
 
 EventHub.on( events.updateMoney, () => updateStoredData() )
 

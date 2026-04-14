@@ -15,8 +15,8 @@ let previousLevelTypes = []
 export let playerAvatarsShop = {
     player_0: 0, // set 0 if purchased
     player_1: 2,
-    player_2: 5,
-    player_3: 10,
+    player_2: 0,
+    player_3: 0,
     player_4: 15,
     player_5: 20,
     player_6: 30,
@@ -35,7 +35,7 @@ export function nextAvatar() {
     playerAvatarIndex = index
 }
 
-let addCoins = 1
+export let addCoins = 1
 export let playerCoins = 0
 export let playerSaves = 0
 export let playerLevel = 1

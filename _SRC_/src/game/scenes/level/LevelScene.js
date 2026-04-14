@@ -69,10 +69,17 @@ export default class LevelScene extends Container {
         EventHub.on( events.pauseGameplay, this.pauseGameplay, this )
 
         if ( getDeviceType().indexOf('desktop') > -1 ) {
+            this.isPausePressed = false
             this.handlerKeyboard = (e) => {
+                if (e.code === 'Escape' && !this.isPausePressed) {
+                    this.isPausePressed = true
+                    pauseGameplay()
+                }
                 if (e.code === 'Space') this.getFlyClick()
             }
             document.addEventListener('keydown', this.handlerKeyboard)
+
+            EventHub.on( events.resumeGameplay, this.resumeGameplay, this )
         }
         
         setMusicList( getMusic() )
@@ -119,6 +126,9 @@ export default class LevelScene extends Container {
 
     pauseGameplay() {
         this.popup.show( POPUP_TYPE.PAUSE )
+    }
+    resumeGameplay() {
+        if (this?.isPausePressed) this.isPausePressed = false
     }
 
     showRedScreen() {
@@ -175,6 +185,7 @@ export default class LevelScene extends Container {
         tickerRemove(this)
 
         if (this.handlerKeyboard) {
+            EventHub.off( events.resumeGameplay, this.resumeGameplay, this )
             document.removeEventListener('keydown', this.handlerKeyboard)
             this.handlerKeyboard = null
         }

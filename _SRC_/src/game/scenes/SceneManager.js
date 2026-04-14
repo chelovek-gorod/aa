@@ -7,15 +7,17 @@ import LoadScene from "./load/LoadScene"
 import MenuScene from "./menu/MenuScene"
 import ShopScene from "./shop/ShopScene"
 import LevelScene from "./level/LevelScene"
+import WheelScene from "./wheel.js/WheelScene"
 
 export const SCENE_NAME = createEnum(
-    ['Load', 'Menu', 'Shop', 'Level']
+    ['Load', 'Menu', 'Shop', 'Wheel', 'Level']
 )
 
 const SCENES = {
     [SCENE_NAME.Load] : LoadScene,
     [SCENE_NAME.Menu] : MenuScene,
     [SCENE_NAME.Shop] : ShopScene,
+    [SCENE_NAME.Wheel] : WheelScene,
     [SCENE_NAME.Level] : LevelScene,
 }
 

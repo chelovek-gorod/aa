@@ -20,7 +20,8 @@ const BG_TOP_SPEED_RATE = 0.66
 const BG_SKY_SPEED_RATE = 0.33
 
 let previousTimeScale = 1
-const SLOW_DOWN_STEP = 0.0003
+const SLOW_DOWN_START = 0.6
+const SLOW_DOWN_STEP = 0.00018
 const SPEED_UP = 0.000006
 
 export default class GameContainer extends Container {
@@ -125,7 +126,7 @@ export default class GameContainer extends Container {
     slowDown() {
         if (timeScale < 1) return
 
-        setTimeScale( 0.999 )
+        setTimeScale( SLOW_DOWN_START )
 
         const sepiaFilter = new ColorMatrixFilter()
         sepiaFilter.sepia(true)

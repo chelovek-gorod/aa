@@ -46,6 +46,14 @@ export default class LocalMockSDK {
         // Пустышка
     }
 
+    gameplayStart() {
+        // Пустышка
+    }
+
+    gameplayStop() {
+         // Пустышка
+    }
+
     getLanguageCode() {
         return MOCK_LANGUAGE
     }

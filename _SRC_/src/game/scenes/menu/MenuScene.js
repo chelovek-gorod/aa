@@ -151,7 +151,7 @@ export default class Menu extends Container {
     }
 
     rotateWheel() {
-
+        startScene( SCENE_NAME.Wheel )
     }
 
     openShop() {

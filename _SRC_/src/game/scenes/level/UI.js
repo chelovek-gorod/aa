@@ -6,6 +6,7 @@ import { styles } from "../../../app/styles";
 import { playerAddScore, playerCoins, playerLevel, playerProgress, playerSaves, playerScore, playerTarget } from "../../state";
 import FlyText from "./FlyText"
 import TapIcon from "../../UI/TapIcon"
+import FlyNewLevel from "./FlyNewLevel";
 
 const PROGRESS_WIDTH = 110
 
@@ -168,7 +169,8 @@ export default class UI extends Container {
         this.levelText.text = 'x' + playerLevel
         this.targetText.text = formatNumber(playerTarget - playerScore, true)
         this.coinsText.text = 'x' + playerCoins
-        this.gameContainer.addChild( new FlyText(null, 0, this.flyTextNextLevelY) )
+        // this.gameContainer.addChild( new FlyText(null, 0, this.flyTextNextLevelY) )
+        this.gameContainer.addChild( new FlyNewLevel() )
         this.coinAnimations += 2
         tickerAdd(this)
     }

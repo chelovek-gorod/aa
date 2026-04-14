@@ -15,18 +15,18 @@ const ALPHA_STEP = 0.003
 
 const PROGRESS_BAR = {
     x: -135,
-    offsetY: 48,
+    offsetY: 64,
     width: 270,
     height: 36,
     borderLineWidth: 6,
     progressOffset: 10,
-    color: 0x4000ff,
+    color: 0xffffff,
     borderRadius: 18,
     progressRadius: 8,
 }
 
 const PROGRESS_TEXT = {
-    offsetY: PROGRESS_BAR.offsetY + PROGRESS_BAR.height + PROGRESS_BAR.borderLineWidth * 2,
+    offsetY: PROGRESS_BAR.offsetY + PROGRESS_BAR.height + PROGRESS_BAR.borderLineWidth * 2 - 16,
 }
 
 const TITLE_W = 760

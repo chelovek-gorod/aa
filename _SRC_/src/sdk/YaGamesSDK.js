@@ -261,6 +261,18 @@ export default class YaGamesSDK {
         }
     }
 
+    gameplayStart() {
+        if (!this._SDK) return
+
+        this._SDK?.features?.GameplayAPI?.start()
+    }
+
+    gameplayStop() {
+        if (!this._SDK) return
+
+        this._SDK?.features?.GameplayAPI?.stop()
+    }
+
     getLanguageCode() {
         try {
             return this?._SDK?.environment?.i18n?.lang ?? null

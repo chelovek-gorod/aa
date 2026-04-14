@@ -359,6 +359,18 @@ export default class CrazyGamesSDK {
         }
     }
 
+    gameplayStart() {
+        if (!this._SDK) return
+
+        this._SDK?.gameplayStart()
+    }
+
+    gameplayStop() {
+        if (!this._SDK) return
+
+        this._SDK?.gameplayStop()
+    }
+
     showFullScreenAd( callback = null ) {
         if (!this._SDK) {
             if (callback) callback()

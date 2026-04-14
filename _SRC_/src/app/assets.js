@@ -62,6 +62,9 @@ export const images = {
     pause: 'pause.png',
     settings: 'settings.png',
 
+    wheel_disc: 'wheel_disc.png',
+    wheel_border: 'wheel_border.png',
+
     done: 'OK.png',
 
     help: 'help.png',

@@ -26,7 +26,7 @@ export default class SkinItem extends Container {
         this.priceContainer = new Container()
         this.addChild(this.priceContainer)
 
-        if (skinIndex > 1) {
+        if (this.price > 0) {
             this.priceCoin = new Sprite(images.coin)
             this.priceCoin.scale.set(0.35)
             this.priceContainer.addChild(this.priceCoin)
