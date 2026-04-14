@@ -11,7 +11,7 @@ import SkinItem from './SkinItem'
 import { SCENE_NAME } from '../SceneManager'
 
 const OFFSET_Y = 120
-const OFFSET_X = 10
+const OFFSET_X = 30
 
 const STEP = 250
 
@@ -33,16 +33,10 @@ export default class ShopMenu extends Container {
         this.ui = new MenuUI(this, SCENE_NAME.Menu)
         this.addChild(this.ui)
 
-        for(let i = 12; i > 0; i--) {
-            const y = (i > 8) ? STEP : (i > 4) ? 0 : -STEP
-            const x = ((i - 1) % 4) * STEP - STEP * 2
+        for(let i = 1; i < 13; i++) {
             const skin = new SkinItem(i, this.tryToBuy.bind(this))
-            skin.position.set(x + STEP * 0.5, y)
             this.mainContainer.addChild(skin)
         }
-
-        this.mainContainerWidth = 1000 // this.mainContainer.width
-        this.mainContainerHeight = 750 // this.mainContainer.height
 
         this.addChild(this.popup)
     }
@@ -55,22 +49,56 @@ export default class ShopMenu extends Container {
         this.ui.screenResize(screenData)
         this.popup.screenResize(screenData)
 
-        if (screenData.isLandscape) {
-            const maxScale = 0.75
-            const width = screenData.width - OFFSET_X * 2
-            const height = screenData.height - OFFSET_Y * 2
-            const scaleX = Math.min(maxScale, width / this.mainContainerWidth)
-            const scaleY = Math.min(maxScale, height / this.mainContainerHeight)
+        const width = screenData.width - OFFSET_X * 2
+        const height = screenData.height - OFFSET_Y * 2
+
+        const widthRate = screenData.width / screenData.height
+        if (widthRate > 2) {
+            // 6 + 6
+            const startX = -2.5 * STEP
+            for(let i = this.mainContainer.children.length - 1; i >= 0; i--) {
+                const skin = this.mainContainer.children[i]
+                const index = i % 6
+                const x = startX + index * STEP
+                const y = i > 5 ? STEP * 0.5 : -STEP * 0.5
+                skin.position.set(x, y)
+            }
+
+            const scaleX = Math.min(1, width / (STEP * 6))
+            const scaleY = Math.min(1, height / (STEP * 2))
+            this.mainContainer.scale.set(Math.min(scaleX, scaleY))
+            this.mainContainer.position.set(0, -30)
+        } else if (widthRate > 0.6) {
+            // 4 + 4 + 4
+            const startX = -1.5 * STEP
+            for(let i = this.mainContainer.children.length - 1; i >= 0; i--) {
+                const skin = this.mainContainer.children[i]
+                const index = i % 4
+                const x = startX + index * STEP
+                const y = i > 7 ? STEP: i > 3 ? 0 : -STEP
+                skin.position.set(x, y)
+            }
+
+            const minScale = widthRate > 1 ? 1 : 0.75
+            const scaleX = Math.min(minScale, width / (STEP * 4))
+            const scaleY = Math.min(minScale, height / (STEP * 3))
+            this.mainContainer.scale.set(Math.min(scaleX, scaleY))
+            this.mainContainer.position.set(0, widthRate > 1 ? -30 : 10)
+        } else {
+            // 3 + 3 + 3 + 3
+            const startX = -STEP
+            for(let i = this.mainContainer.children.length - 1; i >= 0; i--) {
+                const skin = this.mainContainer.children[i]
+                const index = i % 3
+                const x = startX + index * STEP
+                const y = i > 8 ? STEP * 1.5 : i > 5 ? STEP * 0.5 : i > 2 ? -STEP * 0.5 : -STEP * 1.5
+                skin.position.set(x, y)
+            }
+
+            const scaleX = Math.min(1.2, width / (STEP * 3))
+            const scaleY = Math.min(1.2, height / (STEP * 4))
             this.mainContainer.scale.set(Math.min(scaleX, scaleY))
             this.mainContainer.position.set(0, 0)
-        } else {
-            const maxScale = 0.5
-            const width = screenData.width - OFFSET_X * 2
-            const height = screenData.height - OFFSET_Y * 2
-            const scaleX = Math.min(maxScale, width / this.mainContainerWidth)
-            const scaleY = Math.min(maxScale, height / this.mainContainerHeight)
-            this.mainContainer.scale.set(Math.min(scaleX, scaleY))
-            this.mainContainer.position.set(0, 20)
         }
     }
 

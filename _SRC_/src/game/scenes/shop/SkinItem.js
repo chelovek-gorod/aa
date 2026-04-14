@@ -44,8 +44,6 @@ export default class SkinItem extends Container {
             this.priceContainer.position.set( -this.priceContainer.width * 0.5, 0)
         }
 
-        
-
         this.isOnHover = false
         
         setCursorPointer(this)

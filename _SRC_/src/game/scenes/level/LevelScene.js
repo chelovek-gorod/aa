@@ -1,12 +1,12 @@
 import { Container, Graphics, Sprite } from 'pixi.js'
 import { images, music } from '../../../app/assets'
-import { EventHub, events } from '../../../app/events'
+import { EventHub, events, pauseGameplay } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import { getLanguage } from '../../localization'
 import Shaker from './Shaker'
 import GameContainer from './GameContainer'
 import UI from './UI'
-import { kill, tickerAdd, tickerRemove } from '../../../app/application'
+import { getDeviceType, kill, tickerAdd, tickerRemove } from '../../../app/application'
 import { playerLevel, playerSaves, playerScore } from '../../state'
 import { HELP_DURATION, HELP_IN_OUT } from './constants'
 import Popup, { POPUP_TYPE } from '../../popup/Popup'
@@ -67,6 +67,13 @@ export default class LevelScene extends Container {
 
         EventHub.on( events.removePlyerSave, this.showRedScreen, this )
         EventHub.on( events.pauseGameplay, this.pauseGameplay, this )
+
+        if ( getDeviceType().indexOf('desktop') > -1 ) {
+            this.handlerKeyboard = (e) => {
+                if (e.code === 'Space') this.getFlyClick()
+            }
+            document.addEventListener('keydown', this.handlerKeyboard)
+        }
         
         setMusicList( getMusic() )
     }
@@ -166,6 +173,11 @@ export default class LevelScene extends Container {
 
     kill() {
         tickerRemove(this)
+
+        if (this.handlerKeyboard) {
+            document.removeEventListener('keydown', this.handlerKeyboard)
+            this.handlerKeyboard = null
+        }
 
         EventHub.off( events.updateLanguage, this.updateLanguage, this )
         EventHub.off( events.removePlyerSave, this.showRedScreen, this )

@@ -14,7 +14,7 @@ import Overlay from "./Overlay"
 import { showRewardAdSDK } from "../storage"
 
 export const POPUP_TYPE =  createEnum([
-    'PAUSE', 'SETTINGS'
+    'PAUSE', 'SETTINGS', 'RESULTS', 'WHEEL', 'ERROR'
 ])
 
 const BG_SIDE_SIZE = 780

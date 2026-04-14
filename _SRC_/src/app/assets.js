@@ -22,6 +22,7 @@ export const fonts = {
 
 export const images = {
     logo: 'logo.png',
+    title: 'title2.png',
 
     bg_main: 'bg_main.png',
 

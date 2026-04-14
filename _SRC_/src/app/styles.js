@@ -67,7 +67,7 @@ export function initFontStyles() {
         fill: '#ffffff',
     
         dropShadow: true,
-        dropShadowColor: '#4000ff',
+        dropShadowColor: '#000000',
         dropShadowBlur: 6,
         dropShadowAngle: 0,
         dropShadowDistance: 0,

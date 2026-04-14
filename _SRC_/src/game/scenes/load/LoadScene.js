@@ -11,16 +11,11 @@ import { getFirstUserAction, soundPlay } from '../../../app/sound'
 import { getLanguage } from '../../localization'
 import { TEXT_GET_FIRST_CLICK } from '../../localText'
 
-export const ALPHA_STEP = 0.003
+const ALPHA_STEP = 0.003
 
-export const PROGRESS_TEXT = {
-    y: -18,
-    anchor: 0.5,
-}
-
-export const PROGRESS_BAR = {
+const PROGRESS_BAR = {
     x: -135,
-    y: 18,
+    offsetY: 48,
     width: 270,
     height: 36,
     borderLineWidth: 6,
@@ -29,6 +24,13 @@ export const PROGRESS_BAR = {
     borderRadius: 18,
     progressRadius: 8,
 }
+
+const PROGRESS_TEXT = {
+    offsetY: PROGRESS_BAR.offsetY + PROGRESS_BAR.height + PROGRESS_BAR.borderLineWidth * 2,
+}
+
+const TITLE_W = 760
+const TITLE_H = 480
 
 let isFirstLoading = true
 
@@ -41,9 +43,11 @@ export default class LoadScene extends Container {
 
         this.bg = null
         this.logo = null
+        this.title = null
 
+        this.progressRange = 0
         this.progressBar = new Graphics()
-        this.drawProgress(0)
+        this.drawProgress(this.progressRange)
         this.addChild(this.progressBar)
 
         this.progressText = null
@@ -58,20 +62,30 @@ export default class LoadScene extends Container {
     setText() {
         if (!this.progressText) {
             this.progressText = new Text({ text:'0%', style: styles.loading })
-            this.progressText.anchor.set(PROGRESS_TEXT.anchor)
-            this.progressText.position.y = PROGRESS_TEXT.y
+            this.progressText.anchor.set(0.5)
+            this.progressText.position.y = this.screenFreeSide - PROGRESS_TEXT.offsetY
             this.addChild(this.progressText)
         }
 
-        this.setBg()
+        this.preloadBg()
+    }
+
+    preloadBg() {
+        if (!this.bg) {
+            preloadAsset(assetType.images, 'bg_main', this.setBg.bind(this))
+        }
+
+        tickerAdd(this)
     }
 
     setBg() {
-        this.bg = new BackgroundGradient( [ 0xff0000, 0x000000, 0x000000 ] )
-        this.bg.screenResize( getAppScreen() )
+        this.bg = new Sprite(assets.images.bg_main)
+        this.bg.tint = 0x999999
+        this.bg.alpha = 0
+        this.bg.anchor.set(0.5)
+        this.bg.position.set(0, 0)
+        this.bg.scale.set( Math.max(this.screenData.width / 1920, this.screenData.height / 1920) )
         this.addChildAt(this.bg, 0)
-
-        tickerAdd(this)
 
         this.preloadLogo()
     }
@@ -84,11 +98,28 @@ export default class LoadScene extends Container {
 
     setLogo() {
         this.logo = new Sprite(assets.images.logo)
-        this.logo.scale.set(0.75)
+        this.logo.scale.set(0.5)
+        this.logo.alpha = 0
         this.logo.anchor.set(1)
-        const screenData = getAppScreen()
-        this.logo.position.set(screenData.centerX - 12, screenData.centerY - 12)
+        this.logo.position.set(this.screenData.centerX - 12, this.screenData.centerY - 12)
         this.addChild(this.logo)
+
+        this.preloadTitle()
+    }
+
+    preloadTitle() {
+        if (!this.title) {
+            preloadAsset(assetType.images, 'title', this.setTitle.bind(this))
+        }
+    }
+
+    setTitle() {
+        this.title = new Sprite(assets.images.title)
+        this.title.anchor.set(0.5)
+        this.title.alpha = 0
+        this.title.scale.set( Math.min(1, this.screenFreeSide / (TITLE_W * 0.5)) )
+        this.title.position.set(0, 0)
+        this.addChildAt(this.title, 1)
 
         this.startLoading()
     }
@@ -110,6 +141,7 @@ export default class LoadScene extends Container {
         })
         this.doneText.alpha = 0
         this.doneText.anchor.set(0.5)
+        this.doneText.position.set(0, this.screenFreeSide - PROGRESS_TEXT.offsetY)
         const screenData = getAppScreen()
         this.resizeDoneText( screenData.width )
         this.addChild(this.doneText)
@@ -131,13 +163,23 @@ export default class LoadScene extends Container {
         this.doneText.scale.set(1)
         const scale = Math.min(1, screenWidth / (this.doneText.width + 24))
         this.doneText.scale.set(scale)
+        this.doneText.position.set(0, this.screenFreeSide - PROGRESS_TEXT.offsetY)
     }
 
     screenResize(screenData) {
-        this.position.set(screenData.centerX, screenData.centerY)
-        if (this.bg) this.bg.screenResize(screenData)
+        this.screenData = screenData
+        this.screenFreeSide = this.screenData.isLandscape
+            ? this.screenData.centerY
+            : this.screenData.centerX
+
+        this.position.set(this.screenData.centerX, this.screenData.centerY)
+        if (this.progressText) this.progressText.position.y = this.screenFreeSide - PROGRESS_TEXT.offsetY
+        if (this.bg) this.bg.scale.set( Math.max(screenData.width / 1920, screenData.height / 1920) )
         if (this.logo) this.logo.position.set(screenData.centerX - 12, screenData.centerY - 12)
+        if (this.title) this.title.scale.set( Math.min(1, this.screenFreeSide / (TITLE_W * 0.5)) )
         if (this.doneText) this.resizeDoneText(screenData.width)
+
+        this.drawProgress(this.progressRange)
     }
 
     update(progress, loadedAssetsCount, assetsCount) {
@@ -147,10 +189,12 @@ export default class LoadScene extends Container {
     }
 
     drawProgress(range) {
+        this.progressRange = range
         this.progressBar.clear()
 
+        const progressBarY = this.screenFreeSide - PROGRESS_BAR.offsetY
         this.progressBar.roundRect(
-            PROGRESS_BAR.x, PROGRESS_BAR.y,
+            PROGRESS_BAR.x, progressBarY,
             PROGRESS_BAR.width, PROGRESS_BAR.height,
             PROGRESS_BAR.borderRadius
         )
@@ -161,7 +205,7 @@ export default class LoadScene extends Container {
         
         this.progressBar.roundRect(
             PROGRESS_BAR.x + PROGRESS_BAR.progressOffset,
-            PROGRESS_BAR.y + PROGRESS_BAR.progressOffset,
+            progressBarY + PROGRESS_BAR.progressOffset,
             width,
             PROGRESS_BAR.height - PROGRESS_BAR.progressOffset * 2,
             PROGRESS_BAR.progressRadius
@@ -182,6 +226,7 @@ export default class LoadScene extends Container {
         const alphaStep = delta * ALPHA_STEP
         if (this.bg && this.bg.alpha < 1) this.bg.alpha += alphaStep
         if (this.logo && this.logo.alpha < 1) this.logo.alpha += alphaStep
+        if (this.title && this.title.alpha < 1) this.title.alpha += alphaStep
         
         if (this.isLoadingDone) {
             this.progressBar.alpha -= alphaStep

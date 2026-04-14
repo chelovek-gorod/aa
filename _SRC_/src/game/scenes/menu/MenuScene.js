@@ -24,6 +24,9 @@ function getMusic() {
 const OFFSET_Y = 120
 const OFFSET_X = 10
 
+const ICON_W = 300
+const ICON_H = 260
+
 export default class Menu extends Container {
     constructor() {
         super()
@@ -64,9 +67,6 @@ export default class Menu extends Container {
 
         this.mainContainer.addChild(this.wheel, this.shop, this.adSave)
 
-        this.mainContainerWidth = 960 // this.mainContainer.width
-        this.mainContainerHeight = 390 // this.mainContainer.height
-
         this.addChild(this.popup)
 
         setMusicList( getMusic() )
@@ -80,22 +80,50 @@ export default class Menu extends Container {
         this.ui.screenResize(screenData)
         this.popup.screenResize(screenData)
 
-        if (screenData.isLandscape) {
-            const maxScale = 0.75
-            const width = screenData.width - OFFSET_X * 2
-            const height = screenData.height - OFFSET_Y * 2
-            const scaleX = Math.min(maxScale, width / this.mainContainerWidth)
-            const scaleY = Math.min(maxScale, height / this.mainContainerHeight)
+        const maxScale = 0.75
+
+        const width = screenData.width - OFFSET_X * 2
+        const height = screenData.height - OFFSET_Y * 2
+
+        const widthRate = screenData.width / screenData.height
+        if (widthRate > 2) {
+            this.results.position.set(-ICON_W * 2.5, 0)
+            this.player.position.set( -ICON_W * 1.5, 0)
+            this.shop.position.set(   -ICON_W * 0.5, 0)
+            this.wheel.position.set(   ICON_W * 0.5, 0)
+            this.adSave.position.set(  ICON_W * 1.5, 0)
+            this.buySave.position.set( ICON_W * 2.5, 0)
+
+            const scaleX = Math.min(maxScale, width / (ICON_W * 6))
+            const scaleY = Math.min(maxScale, height / ICON_H)
             this.mainContainer.scale.set(Math.min(scaleX, scaleY))
             this.mainContainer.position.set(0, 0)
-        } else {
-            const maxScale = 1
-            const width = screenData.width - OFFSET_X * 2
-            const height = screenData.height - OFFSET_Y * 2
-            const scaleX = Math.min(maxScale, width / this.mainContainerWidth)
-            const scaleY = Math.min(maxScale, height / this.mainContainerHeight)
+        } else if (widthRate > 0.6) {
+            const y = ICON_H * 0.5
+            this.results.position.set(-ICON_W, -y)
+            this.player.position.set(       0, -y)
+            this.shop.position.set(    ICON_W, -y)
+            this.wheel.position.set(  -ICON_W,  y)
+            this.adSave.position.set(       0,  y)
+            this.buySave.position.set( ICON_W,  y)
+
+            const scaleX = Math.min(maxScale, width / (ICON_W * 3))
+            const scaleY = Math.min(maxScale, height / (ICON_H * 2))
             this.mainContainer.scale.set(Math.min(scaleX, scaleY))
-            this.mainContainer.position.set(0, 20)
+            this.mainContainer.position.set(0, -20)
+        } else {
+            const x = ICON_W * 0.5
+            this.results.position.set(-x, -ICON_H)
+            this.player.position.set(  x, -ICON_H)
+            this.wheel.position.set(  -x, 0)
+            this.shop.position.set(    x, 0)
+            this.adSave.position.set( -x, ICON_H)
+            this.buySave.position.set( x, ICON_H)
+
+            const scaleX = Math.min(maxScale, width / (ICON_W * 2))
+            const scaleY = Math.min(maxScale, height / (ICON_H * 3))
+            this.mainContainer.scale.set(Math.min(scaleX, scaleY))
+            this.mainContainer.position.set(0, 0)
         }
     }
 
