@@ -21,7 +21,7 @@ export const TEXT_GET_FIRST_CLICK = {
     vi: isMobile ? 'Chạm để bắt đầu' : 'Nhấp để bắt đầu',
 }
 
-export const BUTTON_TYPE = createEnum(['START', 'BACK', 'CANCEL', 'STOP', 'LOGIN'])
+export const BUTTON_TYPE = createEnum(['START', 'BACK', 'CANCEL', 'STOP', 'LOGIN', 'SPIN'])
 
 export const TEXT_BUTTON = {
     [BUTTON_TYPE.START] : {
@@ -104,6 +104,22 @@ export const TEXT_BUTTON = {
         th: 'เข้าสู่ระบบ',
         vi: 'ĐĂNG NHẬP',
     },
+    [BUTTON_TYPE.SPIN] : {
+        en: 'SPIN',
+        ru: 'КРУТИТЬ',
+        tr: 'ÇEVİR',
+        es: 'GIRAR',
+        de: 'DREHEN',
+        pt: 'GIRAR',
+        fr: 'TOURNER',
+        pl: 'KRĘĆ',
+        it: 'GIRA',
+        nl: 'DRAAIEN',
+        cs: 'ZATOČIT',
+        id: 'PUTAR',
+        th: 'หมุน',
+        vi: 'QUAY',
+    },
 }
 
 export const TEXT_POPUP_TITLE = {
@@ -154,22 +170,6 @@ export const TEXT_POPUP_TITLE = {
         id: 'PAPAN SKOR',
         th: 'กระดานผู้นำ',
         vi: 'BẢNG XẾP HẠNG',
-    },
-    [POPUP_TYPE.WHEEL] : {
-        en: 'WHEEL OF FORTUNE',
-        ru: 'КОЛЕСО ФОРТУНЫ',
-        tr: 'ÇARKIFELEK',
-        es: 'RUEDA DE LA FORTUNA',
-        de: 'GLÜCKSRAD',
-        pt: 'RODA DA FORTUNA',
-        fr: 'ROUE DE LA FORTUNE',
-        pl: 'KOŁO FORTUNY',
-        it: 'RUOTA DELLA FORTUNA',
-        nl: 'RAD VAN FORTUIN',
-        cs: 'KOLO ŠTĚSTÍ',
-        id: 'RODA KEBERUNTUNGAN',
-        th: 'วงล้อโชคดี',
-        vi: 'VÒNG QUAY MAY MẮN',
     },
     [POPUP_TYPE.ERROR] : {
         en: 'OOPS...',
@@ -345,6 +345,40 @@ export const TEXT_NO_SKINS = {
     id: 'Tidak ada skin yang dibeli',
     th: 'ไม่มีสกินที่ซื้อ',
     vi: 'Không có skin đã mua',
+}
+
+export const TEXT_FREE_WHEEL_TITLE = {
+    en: 'Thanks for playing!',
+    ru: 'Спасибо, что играешь!',
+    tr: 'Oynadığın için teşekkürler!',
+    es: '¡Gracias por jugar!',
+    de: 'Danke fürs Spielen!',
+    pt: 'Obrigado por jogar!',
+    fr: 'Merci de jouer !',
+    pl: 'Dzięki za grę!',
+    it: 'Grazie per giocare!',
+    nl: 'Bedankt voor het spelen!',
+    cs: 'Děkujeme, že hrajete!',
+    id: 'Terima kasih sudah bermain!',
+    th: 'ขอบคุณที่เล่น!',
+    vi: 'Cảm ơn bạn đã chơi!',
+}
+
+export const TEXT_FREE_WHEEL_SUBTITLE = {
+    en: 'Spin the wheel of fortune — free every hour!',
+    ru: 'Крути колесо удачи без рекламы каждый час!',
+    tr: 'Çarkıfeleği reklamsız çevir, her saat ücretsiz!',
+    es: '¡Gira la ruleta sin anuncios cada hora!',
+    de: 'Drehe das Glücksrad stündlich ohne Werbung!',
+    pt: 'Gire a roda da fortuna sem anúncios a cada hora!',
+    fr: 'Tournez la roue sans pub toutes les heures !',
+    pl: 'Kręć kołem fortuny bez reklam co godzinę!',
+    it: 'Gira la ruota senza pubblicità ogni ora!',
+    nl: 'Draai elk uur gratis het rad van fortuin zonder reclame!',
+    cs: 'Zatočte kolem štěstí bez reklam každou hodinu!',
+    id: 'Putar roda keberuntungan gratis setiap jam!',
+    th: 'หมุนวงล้อโชคดีฟรีทุกชั่วโมง!',
+    vi: 'Quay vòng quay may mắn miễn phí mỗi giờ!',
 }
 
 export const TEXT_EMPTY = {

@@ -1,6 +1,6 @@
 import { Container, Sprite } from 'pixi.js'
 import { kill, tickerAdd } from '../../../app/application'
-import { atlases, images } from '../../../app/assets'
+import { atlases, images, sounds } from '../../../app/assets'
 import BackgroundImage from '../../BG/BackgroundImage'
 import MenuUI from '../../UI/MenuUI'
 import { SCENE_NAME } from '../SceneManager'
@@ -8,8 +8,10 @@ import { BUTTON_TYPE, FLY_MESSAGE_TYPE, TEXT_FLY_MESSAGE } from '../../localText
 import FlashButton, { FLASH_TYPE } from '../../UI/FlashButton'
 import FlyText from '../level/FlyText'
 import { getLanguage } from '../../localization'
-import { playerAddCoins, playerAddSave } from '../../state'
+import { freeSpinTime, playerAddCoins, playerAddSave, setFreeSpinTime } from '../../state'
 import { showRewardAdSDK } from '../../storage'
+import Popup, { POPUP_TYPE } from '../../popup/Popup'
+import { soundPlay } from '../../../app/sound'
 
 const OFFSET_Y = 120
 const OFFSET_X = 30
@@ -17,8 +19,8 @@ const OFFSET_X = 30
 const SIZE = 620
 
 const WHEEL_SPEED = 0.012
-const FRICTION = 0.987        // коэффициент замедления
-const MIN_SPEED = 0.0018       // порог, ниже которого проверяем сектор
+const FRICTION = 0.976        // коэффициент замедления
+const MIN_SPEED = 0.0018      // порог, ниже которого проверяем сектор
 
 const ALLOWED_SECTORS = new Set([0, 3, 4, 7, 8, 11, 12, 15, 16, 19])
 const SECTOR_ANGLE = (Math.PI * 2) / 20
@@ -53,6 +55,14 @@ export default class WheelScene extends Container {
         this.ui = new MenuUI(this, SCENE_NAME.Menu, BUTTON_TYPE.STOP, this.stopWheel.bind(this))
         this.addChild(this.ui)
 
+        if (freeSpinTime === 0) {
+            this.popup = new Popup()
+            this.addChild(this.popup)
+            this.popup.show(POPUP_TYPE.FREE_SPIN)
+            soundPlay(sounds.se_free_spin)
+            setFreeSpinTime()
+        }
+
         tickerAdd(this)
     }
 
@@ -62,6 +72,7 @@ export default class WheelScene extends Container {
 
         this.bg.screenResize(screenData)
         this.ui.screenResize(screenData)
+        if (this.popup) this.popup.screenResize(screenData)
 
         const widthRate = screenData.width / screenData.height
 
@@ -84,9 +95,7 @@ export default class WheelScene extends Container {
             if (isOk) {
                 this.adButton.setStartScale(0)
                 this.wheelDisc.tint = null
-                this.wheelDisc.alpha = 1
                 this.wheelBorder.tint = null
-                this.wheelBorder.alpha = 1
 
                 this.ui.resetButton(BUTTON_TYPE.STOP, SCENE_NAME.Menu, this.stopWheel.bind(this))
 
@@ -126,18 +135,18 @@ export default class WheelScene extends Container {
             this.addChild( new FlyText(message, 0, 0, false) )
             playerAddSave()
             this.ui.updateSaves()
+            soundPlay(sounds.se_save)
         } else {
             const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.GET_COINS][getLanguage()](coins)
             this.addChild( new FlyText(message, 0, 0, false) )
             playerAddCoins(coins)
             this.ui.updateCoins()
+            soundPlay(sounds.se_coins)
         }
 
         this.adButton.setStartScale(1)
-        this.wheelDisc.tint = 0x999999
-        this.wheelDisc.alpha = 0.5
-        this.wheelBorder.tint = 0x999999
-        this.wheelBorder.alpha = 0.5
+        this.wheelDisc.tint = 0x333333
+        this.wheelBorder.tint = 0x333333
     }
 
     getCurrentSector() {

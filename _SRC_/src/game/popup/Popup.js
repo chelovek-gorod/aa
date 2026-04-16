@@ -12,10 +12,10 @@ import { musicGetState, musicGetVolume, musicOff, musicOn, musicSetVolume,
 import { createEnum } from "../../utils/functions"
 import Overlay from "./Overlay"
 import { showRewardAdSDK } from "../storage"
-import { BUTTON_TYPE, TEXT_MUSIC, TEXT_POPUP_TITLE, TEXT_SOUND } from "../localText"
+import { BUTTON_TYPE, TEXT_FREE_WHEEL_SUBTITLE, TEXT_FREE_WHEEL_TITLE, TEXT_MUSIC, TEXT_POPUP_TITLE, TEXT_SOUND } from "../localText"
 
 export const POPUP_TYPE =  createEnum([
-    'PAUSE', 'SETTINGS', 'RESULTS', 'WHEEL', 'ERROR'
+    'PAUSE', 'SETTINGS', 'RESULTS', 'FREE_SPIN', 'ERROR'
 ])
 
 const BG_SIDE_SIZE = 780
@@ -76,7 +76,7 @@ export default class Popup extends Container {
 
         this.title = new Text({text: '', style: styles.popupTitle})
         this.title.anchor.set(0.5)
-        this.title.position.set(0, -280)
+        this.title.position.set(0, -260)
         this.box.addChild(this.title)
         
         this.closeButton = new Button(null, BUTTON_TYPE.BACK, () => this.close())
@@ -112,16 +112,7 @@ export default class Popup extends Container {
 
         this.type = type
         if (type === POPUP_TYPE.PAUSE || type === POPUP_TYPE.SETTINGS) this.fillSettings()
-        /*
-        else if (data.type === POPUP_TYPE.HELP) this.fillHelp(data.data)
-        else if (data.type === POPUP_TYPE.INFO) this.fillInfo(data.data)
-        else if (data.type === POPUP_TYPE.RESULT) this.fillResult(data.data)
-        else if (data.type === POPUP_TYPE.NEW) this.fillNew(data.data)
-        else if (data.type === POPUP_TYPE.SETTINGS) this.fillSettings()
-        else if (data.type === POPUP_TYPE.AD) this.fillAd(data.data)
-        else if (data.type === POPUP_TYPE.ALL_PETS) this.fillAllPets()
-        else this.fillError()
-        */
+        if (type === POPUP_TYPE.FREE_SPIN) this.fillFreeSpin()
 
         this.visible = true
         this.shell.show()
@@ -160,42 +151,51 @@ export default class Popup extends Container {
         if ( dataQueue.length ) this.show( dataQueue.shift() )
     }
 
-    fillSettings() {
-        this.title.text = TEXT_POPUP_TITLE[this.type][this.currentLanguage]
+    fillFreeSpin() {
+        this.title.text = TEXT_FREE_WHEEL_TITLE[this.currentLanguage]
 
-        /*
-        const description = ''
+        const description = TEXT_FREE_WHEEL_SUBTITLE[this.currentLanguage]
         const descriptionText = new Text({text: description, style: styles.popupDescription})
         descriptionText.anchor.set(0.5, 0)
-        descriptionText.position.set(0, 50)
+        descriptionText.position.set(0, 140)
         this.content.addChild(descriptionText)
-        */
+
+        const image = new Sprite(images.free_spin)
+        image.anchor.set(0.5)
+        image.position.set(0, -20)
+        this.content.addChild(image)
+
+        this.closeButton.setTextKey( BUTTON_TYPE.SPIN )
+    }
+
+    fillSettings() {
+        this.title.text = TEXT_POPUP_TITLE[this.type][this.currentLanguage]
 
         this.settingsUI = {}
         // music
         const musicLabelText = TEXT_MUSIC[this.currentLanguage]
         this.settingsUI.musicLabel = new Text({text: musicLabelText, style: styles.popupLabel})
         this.settingsUI.musicLabel.anchor.set(0.5)
-        this.settingsUI.musicLabel.position.set(-200, -170)
+        this.settingsUI.musicLabel.position.set(-200, -160)
         this.content.addChild( this.settingsUI.musicLabel )
 
         const musicTexture = images[ 'music_' + findSoundMusic(true) ]
         this.settingsUI.musicBtn = new TapIcon( musicTexture, this.changeMusic.bind(this) )
         this.settingsUI.musicBtn.anchor.set(0.5)
-        this.settingsUI.musicBtn.position.set(-200, -80)
+        this.settingsUI.musicBtn.position.set(-200, -70)
         this.content.addChild( this.settingsUI.musicBtn )
 
         // sound
         const soundLabelText = TEXT_SOUND[this.currentLanguage]
         this.settingsUI.soundLabel = new Text({text: soundLabelText, style: styles.popupLabel})
         this.settingsUI.soundLabel.anchor.set(0.5)
-        this.settingsUI.soundLabel.position.set(200, -170)
+        this.settingsUI.soundLabel.position.set(200, -160)
         this.content.addChild( this.settingsUI.soundLabel )
 
         const soundTexture = images[ 'sound_' + findSoundMusic(false) ]
         this.settingsUI.soundBtn = new TapIcon( soundTexture, this.changeSound.bind(this) )
         this.settingsUI.soundBtn.anchor.set(0.5)
-        this.settingsUI.soundBtn.position.set(200, -80)
+        this.settingsUI.soundBtn.position.set(200, -70)
         this.content.addChild( this.settingsUI.soundBtn )
 
         // language
@@ -204,26 +204,26 @@ export default class Popup extends Container {
 
         this.settingsUI.langLabel = new Text({text: getLanguageName(), style: styles.popupLabel})
         this.settingsUI.langLabel.anchor.set(0.5)
-        this.settingsUI.langLabel.position.set(0, 20)
+        this.settingsUI.langLabel.position.set(0, 10)
         this.content.addChild( this.settingsUI.langLabel )
 
         this.settingsUI.leftBtn = new TapIcon(images.left, this.prevLang.bind(this))  
         this.settingsUI.leftBtn.anchor.set(0.5)
-        this.settingsUI.leftBtn.position.set(-120, 100)
+        this.settingsUI.leftBtn.position.set(-120, 90)
         this.content.addChild( this.settingsUI.leftBtn )
 
         const langCodeText = this.currentLanguage.toUpperCase()
         this.settingsUI.langCode = new Text({text: langCodeText, style: styles.popupTitle})
         this.settingsUI.langCode.anchor.set(0.5)
-        this.settingsUI.langCode.position.set(0, 100)
+        this.settingsUI.langCode.position.set(0, 90)
         this.content.addChild( this.settingsUI.langCode )
 
         this.settingsUI.rightBtn = new TapIcon( images.right, this.nextLang.bind(this))
         this.settingsUI.rightBtn.anchor.set(0.5)
-        this.settingsUI.rightBtn.position.set(120, 100)
+        this.settingsUI.rightBtn.position.set(120, 90)
         this.content.addChild( this.settingsUI.rightBtn )
 
-        // this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
+        this.closeButton.setTextKey( BUTTON_TYPE.BACK )
     }
 
     changeMusic() {

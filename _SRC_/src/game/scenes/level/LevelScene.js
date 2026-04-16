@@ -7,7 +7,7 @@ import Shaker from './Shaker'
 import GameContainer from './GameContainer'
 import UI from './UI'
 import { getDeviceType, kill, tickerAdd, tickerRemove } from '../../../app/application'
-import { playerLevel, playerSaves, playerScore } from '../../state'
+import { playerLevel } from '../../state'
 import { HELP_DURATION, HELP_IN_OUT } from './constants'
 import Popup, { POPUP_TYPE } from '../../popup/Popup'
 

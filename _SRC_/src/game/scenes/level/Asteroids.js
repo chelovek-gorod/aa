@@ -143,7 +143,11 @@ export default class Asteroids extends Container {
 
                     this.player.addSquash()
 
-                    addScore({score: asteroid.score, x: asteroid.x, y: asteroid.y, parent: this.parent})
+                    if (timeScale >= 1) {
+                        addScore({
+                            score: asteroid.score, x: asteroid.x, y: asteroid.y, parent: this.parent
+                        })
+                    }
 
                     soundPlay(sounds.se_asteroid_explosion.rate(0.7 + Math.random() * 0.6))
                 }

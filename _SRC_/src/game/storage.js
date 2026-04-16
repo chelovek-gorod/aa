@@ -52,7 +52,8 @@ function SDKgetStateForSave() {
         playerTarget: gameState.playerTarget,
         playerPrevious: gameState.playerPrevious,
         isSaveCoinsAvailable: gameState.isSaveCoinsAvailable,
-        isSaveAdAvailable: gameState.isSaveAdAvailable
+        isSaveAdAvailable: gameState.isSaveAdAvailable,
+        freeSpinTime: gameState.freeSpinTime
     }
 
     return currentState

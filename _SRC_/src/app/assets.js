@@ -26,6 +26,8 @@ export const images = {
     button: 'button.png',
     button_hover: 'button_hover.png',
 
+    free_spin: 'free_spin.png',
+
     ui_results: 'ui_results.png',
     ui_skin_bg: 'ui_skin_bg.png',
     ui_buy_save: 'ui_buy_save5.png',
@@ -165,6 +167,10 @@ export const sounds = {
     se_asteroid_explosion: 'se_asteroid.mp3',
     se_obstacle_explosion: 'se_obstacle_explosion.mp3',
     se_player_up: 'se_player_up.mp3',
+    se_coins: 'se_coins.mp3',
+    se_save: 'se_save.mp3',
+    se_new_skin: 'se_new_skin.mp3',
+    se_free_spin: 'se_free_spin.mp3',
 }
 export const music = {
     bgm_menu_1: 'bgm_menu_1.mp3',

@@ -1,7 +1,7 @@
 import { Container, Sprite, Text, Texture } from 'pixi.js'
 import { kill } from '../../../app/application'
-import { atlases, images, music } from '../../../app/assets'
-import { setMusicList } from '../../../app/sound'
+import { atlases, images, music, sounds } from '../../../app/assets'
+import { setMusicList, soundPlay } from '../../../app/sound'
 import BackgroundImage from '../../BG/BackgroundImage'
 import FlashButton, { FLASH_TYPE } from '../../UI/FlashButton'
 import { countAvailableAvatars, isSaveAdAvailable, isSaveCoinsAvailable, playerAddSave, playerCoins, playerSaves, setAvatar, setSaveAdDisable, setSaveCoinsDisable } from '../../state'
@@ -158,6 +158,7 @@ export default class Menu extends Container {
             this.buySave.deactivate()
             const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.GET_SAVE][getLanguage()]
             this.addChild( new FlyText(message, 0, 0, false) )
+            soundPlay(sounds.se_save)
         }
     }
 
@@ -176,6 +177,8 @@ export default class Menu extends Container {
                 
                     const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.GET_SAVE][getLanguage()]
                     this.addChild( new FlyText(message, 0, 0, false) )
+
+                    soundPlay(sounds.se_save)
                 } else {
                     const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.ERROR][getLanguage()]
                     this.addChild( new FlyText(message, 0, 0, false) )

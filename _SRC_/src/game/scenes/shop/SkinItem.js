@@ -76,6 +76,8 @@ export default class SkinItem extends Container {
         this.priceContainer.addChild(this.done)
         this.priceContainer.position.set( -this.priceContainer.width * 0.5, 0)
 
+        soundPlay(sounds.se_new_skin)
+
         this.callbackUpdateCoins()
     }
 

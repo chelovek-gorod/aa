@@ -7,6 +7,12 @@ export const setTimeScale = (ts) => timeScale = ts
 
 export let isAdAvailable = true
 
+// controlled by SceneManager.js
+const FREE_SPIN_HOURS = 1 / 60
+export let freeSpinTime = 0
+export const resetFreeSpinTime = () => freeSpinTime = 0
+export const setFreeSpinTime = () => freeSpinTime = Date.now() + 1000 * 60 * 60 * FREE_SPIN_HOURS 
+
 export const LEVEL_TYPE = createEnum(['GROUND', 'WATER', 'SNOW', 'MOON'])
 
 export let levelType = LEVEL_TYPE.GROUND
@@ -155,7 +161,8 @@ export function getStateData() {
         playerAvatarsShop, playerAvatarIndex,
         playerCoins, playerSaves, playerLevel,
         playerTopScore, playerTarget, playerPrevious,
-        isSaveCoinsAvailable, isSaveAdAvailable
+        isSaveCoinsAvailable, isSaveAdAvailable,
+        freeSpinTime
     }
     return gameState
 }
@@ -176,6 +183,7 @@ export function setStoredState(savedState) {
     }
     if ('isSaveCoinsAvailable' in savedState) isSaveCoinsAvailable = savedState.isSaveCoinsAvailable
     if ('isSaveAdAvailable' in savedState) isSaveAdAvailable = savedState.isSaveAdAvailable
+    if ('freeSpinTime' in savedState) freeSpinTime = savedState.freeSpinTime
     
     // После обновления пересчитываем прогресс
     playerProgress = 0

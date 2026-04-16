@@ -197,7 +197,7 @@ export function initFontStyles() {
         fill: levelGradient,
         align: 'center',
         wordWrap: true,
-        wordWrapWidth: 700,
+        wordWrapWidth: 600,
         lineHeight: 64,
     })
     styles.popupDescription = new TextStyle({
@@ -206,7 +206,7 @@ export function initFontStyles() {
         fill: savesGradient,
         align: 'center',
         wordWrap: true,
-        wordWrapWidth: 700,
+        wordWrapWidth: 600,
         lineHeight: 32,
     })
     styles.popupLabel = new TextStyle({

@@ -9,6 +9,7 @@ import ResultsScene from "./results/ResultsScene"
 import ShopScene from "./shop/ShopScene"
 import LevelScene from "./level/LevelScene"
 import WheelScene from "./wheel/WheelScene"
+import { freeSpinTime, resetFreeSpinTime } from "../state"
 
 export const SCENE_NAME = createEnum(
     ['Load', 'Menu', 'Results', 'Shop', 'Wheel', 'Level']
@@ -29,6 +30,7 @@ const SCENE_ALPHA_MAX = 1
 const BLOCKER_COLOR = 0x000000
 
 let sceneManager = null
+let lastSceneName = ''
 
 export default class SceneManager {
     constructor() {
@@ -46,8 +48,23 @@ export default class SceneManager {
     }
 
     startNewScene(sceneName) {
-        if (sceneName in SCENES) this.add( new SCENES[sceneName]() )
-        else console.error('WRONG SCENE NAME:', sceneName)
+        if (sceneName in SCENES) {
+            
+            if (sceneName === SCENE_NAME.Menu
+            && Date.now() > freeSpinTime
+            && (lastSceneName === SCENE_NAME.Level || lastSceneName === SCENE_NAME.Load)
+            ) {
+                resetFreeSpinTime()
+                this.add( new SCENES[SCENE_NAME.Wheel]() )
+                lastSceneName = SCENE_NAME.Wheel
+            } else {
+                this.add( new SCENES[sceneName]() )
+                lastSceneName = sceneName
+            }
+            
+        } else {
+            console.error('WRONG SCENE NAME:', sceneName)
+        }
     }
 
     screenResize(screenData) {
