@@ -11,7 +11,7 @@ import Button from "./Button";
 import { SCENE_NAME } from "../scenes/SceneManager";
 
 export default class MenuUI extends Container {
-    constructor(menu, targetScene) {
+    constructor(menu, targetScene, buttonType, buttonCallback = null) {
         super()
 
         this.menu = menu
@@ -68,13 +68,16 @@ export default class MenuUI extends Container {
         this.addChild(this.saveContainer)
 
         this.buttonContainer = new Container()
-        this.startButton = new Button(
-            null, 'BAŞLAT' /* TEXT_BUTTON_TYPE.START*/, () => {
+        this.buttonCallback = buttonCallback
+            ? buttonCallback
+            : () => {
                 if (!this.menu.isMenuActive) return
 
                 this.menu.isMenuActive = false
                 startScene(targetScene)
-            }, true
+            }
+        this.startButton = new Button(
+            null, buttonType, this.buttonCallback.bind(this), true
         )
         this.startButton.scale.set(0.75)
         this.buttonContainer.addChild(this.startButton)
@@ -113,31 +116,41 @@ export default class MenuUI extends Container {
         this.menu.popup.show(POPUP_TYPE.SETTINGS)
     }
 
-    removeSave() {
-        this.savesText.text = 'x' + Math.max(0, playerSaves)
-        this.saveAnimations++
+    updateCoins() {
+        this.coinsText.text = 'x' + playerCoins
+        this.coinAnimations = 2
         tickerAdd(this)
+    }
+
+    updateSaves() {
+        this.savesText.text = 'x' + Math.max(0, playerSaves)
+        this.saveAnimations = 2
+        tickerAdd(this)
+    }
+
+    resetButton(buttonType, targetScene, buttonCallback = null) {
+        this.buttonCallback = buttonCallback
+            ? buttonCallback
+            : () => {
+                if (!this.menu.isMenuActive) return
+
+                this.menu.isMenuActive = false
+                startScene(targetScene)
+            }
+        this.startButton.setCallback(this.buttonCallback.bind(this))
+        if (buttonType) this.startButton.setTextKey( buttonType )
     }
 
     tick(deltaMs) {
         if (this.saveAnimations > 0) {
-            this.saveIcon.scale.set( this.saveIcon.scale.x + 0.0012 * deltaMs )
-            this.saveIcon.alpha = Math.max(0, this.saveIcon.alpha - 0.0012 * deltaMs)
-
-            if (this.x2Icon) {
-                this.x2Icon.scale.set( this.saveIcon.scale.x )
-                this.x2Icon.alpha = this.saveIcon.alpha
-            }
-
-            if (this.saveIcon.alpha === 0) {
-                this.saveAnimations--
-                this.saveIcon.scale.set(0.5)
-                this.saveIcon.alpha = 1
-                if (this.saveAnimations === 0 && this.coinAnimations === 0) tickerRemove(this)
-
-                if (this.x2Icon) {
-                    kill(this.x2Icon)
-                    this.x2Icon = null
+            if (this.saveAnimations % 2 === 0) {
+                this.saveIcon.scale.set( Math.min(0.6, this.saveIcon.scale.x + 0.0006 * deltaMs) )
+                if (this.saveIcon.scale.x === 0.6) this.saveAnimations--
+            } else {
+                this.saveIcon.scale.set( Math.max(0.5, this.saveIcon.scale.x - 0.0006 * deltaMs) )
+                if (this.saveIcon.scale.x === 0.5) {
+                    this.saveAnimations--
+                    if (this.saveAnimations === 0 && this.coinAnimations === 0) tickerRemove(this)
                 }
             }
         }

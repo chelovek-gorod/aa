@@ -19,7 +19,7 @@ export function renderPlayer(index = null) {
     }
 
     const playerContainer = new Container()
-    playerContainer.scale.set( 0.85)
+    playerContainer.scale.set(0.85)
     // playerContainer.position.set(index ? 116 : 136, index ? 86 : 118)
     playerContainer.position.set(index ? 116 : 122, index ? 86 : 106)
     const AVA_KEY = playerAvatarKeys[index ? index : playerAvatarIndex]

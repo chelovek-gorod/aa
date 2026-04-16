@@ -4,6 +4,7 @@ import { createEnum, removeCursorPointer, setCursorPointer } from "../../utils/f
 import { soundPlay } from "../../app/sound"
 import { tickerAdd, tickerRemove } from "../../app/application"
 import { renderPlayer } from "./renderPlayer"
+import { isSaveAdAvailable, isSaveCoinsAvailable } from "../state"
 
 export const FLASH_TYPE = createEnum([
     'RESULTS', 'SKIN', 'BUY_SAVE', 'WHEEL', 'SHOP', 'AD_SAVE'
@@ -54,13 +55,29 @@ export default class FlashButton extends Container {
         this.scaleMin = 1
         this.scaleMax = SCALE_UP_RATE
 
-        tickerAdd(this)
+        if (type === FLASH_TYPE.BUY_SAVE && !isSaveCoinsAvailable) this.deactivate()
+        else if (type === FLASH_TYPE.AD_SAVE && !isSaveAdAvailable) this.deactivate()
+        else tickerAdd(this)
     }
 
     setStartScale(scale) {
         this.scaleMin = scale
         this.scaleMax = scale * SCALE_UP_RATE
         this.scale.set(scale)
+    }
+
+    updateTexture() {
+        this.icon.texture = renderPlayer()
+    }
+
+    deactivate() {
+        tickerRemove(this)
+        this.scale.set(this.scaleMin)
+        this.icon.tint = 0x999999
+        this.flash.mask = []
+        this.removeChild(this.flash)
+        this.flash.destroy()
+        this.flash = null
     }
 
     click() {
@@ -81,6 +98,8 @@ export default class FlashButton extends Container {
     }
 
     tick(deltaMs) {
+        if (!this.flash) return tickerRemove(this)
+
         this.flash.x += this.flashSpeed * deltaMs
         if (this.flash.x >= MAX_X) this.flash.x -= MAX_X * 2
 

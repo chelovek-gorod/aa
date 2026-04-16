@@ -1,5 +1,6 @@
 import { getDeviceType } from "../app/application"
 import { createEnum } from "../utils/functions"
+import { POPUP_TYPE } from "./popup/Popup"
 
 const isMobile = getDeviceType() !== 'desktop'
 
@@ -20,21 +21,330 @@ export const TEXT_GET_FIRST_CLICK = {
     vi: isMobile ? 'Chạm để bắt đầu' : 'Nhấp để bắt đầu',
 }
 
-export const TEXT_LEVEL = {
-    en: 'Level',
-    ru: 'Уровень',
-    tr: 'Seviye',
-    es: 'Nivel',
-    de: 'Level',
-    pt: 'Nível',
-    fr: 'Niveau',
-    pl: 'Poziom',
-    it: 'Livello',
-    nl: 'Niveau',
-    cs: 'Úroveň',
-    id: 'Level',
-    th: 'ระดับ',
-    vi: 'Cấp độ',
+export const BUTTON_TYPE = createEnum(['START', 'BACK', 'CANCEL', 'STOP', 'LOGIN'])
+
+export const TEXT_BUTTON = {
+    [BUTTON_TYPE.START] : {
+        en: 'START',
+        ru: 'СТАРТ',
+        tr: 'BAŞLAT',
+        es: 'INICIAR',
+        de: 'START',
+        pt: 'INICIAR',
+        fr: 'DÉMARRER',
+        pl: 'START',
+        it: 'AVVIA',
+        nl: 'START',
+        cs: 'START',
+        id: 'MULAI',
+        th: 'เริ่ม',
+        vi: 'BẮT ĐẦU',
+    },
+    [BUTTON_TYPE.BACK] : {
+        en: 'BACK',
+        ru: 'НАЗАД',
+        tr: 'GERİ',
+        es: 'ATRÁS',
+        de: 'ZURÜCK',
+        pt: 'VOLTAR',
+        fr: 'RETOUR',
+        pl: 'WSTECZ',
+        it: 'INDIETRO',
+        nl: 'TERUG',
+        cs: 'ZPĚT',
+        id: 'KEMBALI',
+        th: 'ย้อนกลับ',
+        vi: 'QUAY LẠI',
+    },
+    [BUTTON_TYPE.CANCEL] : {
+        en: 'CANCEL',
+        ru: 'ОТМЕНА',
+        tr: 'İPTAL',
+        es: 'CANCELAR',
+        de: 'ABBRECHEN',
+        pt: 'CANCELAR',
+        fr: 'ANNULER',
+        pl: 'ANULUJ',
+        it: 'ANNULLA',
+        nl: 'ANNULEREN',
+        cs: 'ZRUŠIT',
+        id: 'BATAL',
+        th: 'ยกเลิก',
+        vi: 'HỦY',
+    },
+    [BUTTON_TYPE.STOP] : {
+        en: 'STOP',
+        ru: 'СТОП',
+        tr: 'DUR',
+        es: 'PARAR',
+        de: 'STOPP',
+        pt: 'PARAR',
+        fr: 'STOP',
+        pl: 'STOP',
+        it: 'FERMA',
+        nl: 'STOP',
+        cs: 'STOP',
+        id: 'BERHENTI',
+        th: 'หยุด',
+        vi: 'DỪNG',
+    },
+    [BUTTON_TYPE.LOGIN] : {
+        en: 'LOG IN',
+        ru: 'ВОЙТИ',
+        tr: 'GİRİŞ YAP',
+        es: 'INICIAR SESIÓN',
+        de: 'ANMELDEN',
+        pt: 'ENTRAR',
+        fr: 'SE CONNECTER',
+        pl: 'ZALOGUJ',
+        it: 'ACCEDI',
+        nl: 'INLOGGEN',
+        cs: 'PŘIHLÁSIT',
+        id: 'MASUK',
+        th: 'เข้าสู่ระบบ',
+        vi: 'ĐĂNG NHẬP',
+    },
+}
+
+export const TEXT_POPUP_TITLE = {
+    [POPUP_TYPE.PAUSE] : {
+        en: 'PAUSE',
+        ru: 'ПАУЗА',
+        tr: 'DURAKLAT',
+        es: 'PAUSA',
+        de: 'PAUSE',
+        pt: 'PAUSA',
+        fr: 'PAUSE',
+        pl: 'PAUZA',
+        it: 'PAUSA',
+        nl: 'PAUZE',
+        cs: 'PAUZA',
+        id: 'JEDA',
+        th: 'หยุดชั่วคราว',
+        vi: 'TẠM DỪNG',
+    },
+    [POPUP_TYPE.SETTINGS] : {
+        en: 'SETTINGS',
+        ru: 'НАСТРОЙКИ',
+        tr: 'AYARLAR',
+        es: 'AJUSTES',
+        de: 'EINSTELLUNGEN',
+        pt: 'CONFIGURAÇÕES',
+        fr: 'PARAMÈTRES',
+        pl: 'USTAWIENIA',
+        it: 'IMPOSTAZIONI',
+        nl: 'INSTELLINGEN',
+        cs: 'NASTAVENÍ',
+        id: 'PENGATURAN',
+        th: 'การตั้งค่า',
+        vi: 'CÀI ĐẶT',
+    },
+    [POPUP_TYPE.RESULTS] : {
+        en: 'LEADERBOARD',
+        ru: 'РЕКОРДЫ',
+        tr: 'LİDERLİK TABLOSU',
+        es: 'CLASIFICACIÓN',
+        de: 'BESTENLISTE',
+        pt: 'CLASSIFICAÇÃO',
+        fr: 'CLASSEMENT',
+        pl: 'TABLICA WYNIKÓW',
+        it: 'CLASSIFICA',
+        nl: 'RANGLIJST',
+        cs: 'ŽEBŘÍČEK',
+        id: 'PAPAN SKOR',
+        th: 'กระดานผู้นำ',
+        vi: 'BẢNG XẾP HẠNG',
+    },
+    [POPUP_TYPE.WHEEL] : {
+        en: 'WHEEL OF FORTUNE',
+        ru: 'КОЛЕСО ФОРТУНЫ',
+        tr: 'ÇARKIFELEK',
+        es: 'RUEDA DE LA FORTUNA',
+        de: 'GLÜCKSRAD',
+        pt: 'RODA DA FORTUNA',
+        fr: 'ROUE DE LA FORTUNE',
+        pl: 'KOŁO FORTUNY',
+        it: 'RUOTA DELLA FORTUNA',
+        nl: 'RAD VAN FORTUIN',
+        cs: 'KOLO ŠTĚSTÍ',
+        id: 'RODA KEBERUNTUNGAN',
+        th: 'วงล้อโชคดี',
+        vi: 'VÒNG QUAY MAY MẮN',
+    },
+    [POPUP_TYPE.ERROR] : {
+        en: 'OOPS...',
+        ru: 'УПС...',
+        tr: 'HATA...',
+        es: 'VAYA...',
+        de: 'HOPPLA...',
+        pt: 'OPA...',
+        fr: 'OUPS...',
+        pl: 'UPS...',
+        it: 'OPS...',
+        nl: 'OEPS...',
+        cs: 'JÉJE...',
+        id: 'ADUH...',
+        th: 'อุ๊ปส์...',
+        vi: 'ỐI...',
+    },
+}
+
+export const FLY_MESSAGE_TYPE = createEnum([
+    'LOW_COINS', 'LIMIT', 'GET_COINS', 'GET_SAVE', 'ERROR'
+])
+
+export const TEXT_FLY_MESSAGE = {
+    [FLY_MESSAGE_TYPE.LOW_COINS]: {
+        en: 'Not enough coins',
+        ru: 'Недостаточно монет',
+        tr: 'Yetersiz jeton',
+        es: 'Monedas insuficientes',
+        de: 'Nicht genug Münzen',
+        pt: 'Moedas insuficientes',
+        fr: 'Pas assez de pièces',
+        pl: 'Za mało monet',
+        it: 'Monete insufficienti',
+        nl: 'Niet genoeg munten',
+        cs: 'Nedostatek mincí',
+        id: 'Koin tidak cukup',
+        th: 'เหรียญไม่เพียงพอ',
+        vi: 'Không đủ xu',
+    },
+    [FLY_MESSAGE_TYPE.LIMIT]: {
+        en: 'You already bought this',
+        ru: 'Вы уже это купили',
+        tr: 'Bunu zaten satın aldınız',
+        es: 'Ya has comprado esto',
+        de: 'Bereits gekauft',
+        pt: 'Você já comprou isso',
+        fr: 'Vous l\'avez déjà acheté',
+        pl: 'Już to kupiłeś',
+        it: 'Hai già acquistato questo',
+        nl: 'Je hebt dit al gekocht',
+        cs: 'Toto jste již zakoupili',
+        id: 'Kamu sudah membeli ini',
+        th: 'คุณซื้อสิ่งนี้ไปแล้ว',
+        vi: 'Bạn đã mua món này rồi',
+    },
+    [FLY_MESSAGE_TYPE.GET_COINS]: {
+        en: (coins) => `+${coins} Coin${coins === 1 ? '' : 's'}!`,
+        ru: (coins) => {
+            const lastDigit = Math.abs(coins) % 10
+            const lastTwo = Math.abs(coins) % 100
+            if (lastTwo >= 11 && lastTwo <= 19) return `+${coins} Монет!`
+            if (lastDigit === 1) return `+${coins} Монета!`
+            if (lastDigit >= 2 && lastDigit <= 4) return `+${coins} Монеты!`
+            return `+${coins} Монет!`
+        },
+        tr: (coins) => `+${coins} Jeton!`,
+        es: (coins) => `+${coins} Moneda${coins === 1 ? '' : 's'}!`,
+        de: (coins) => `+${coins} Münze${coins === 1 ? '' : 'n'}!`,
+        pt: (coins) => `+${coins} Moeda${coins === 1 ? '' : 's'}!`,
+        fr: (coins) => `+${coins} Pièce${coins === 1 ? '' : 's'}!`,
+        pl: (coins) => {
+            const lastDigit = Math.abs(coins) % 10
+            const lastTwo = Math.abs(coins) % 100
+            if (coins === 1) return `+${coins} Moneta!`
+            if (lastTwo >= 12 && lastTwo <= 14) return `+${coins} Monet!`
+            if (lastDigit >= 2 && lastDigit <= 4) return `+${coins} Monety!`
+            return `+${coins} Monet!`
+        },
+        it: (coins) => `+${coins} Moneta${coins === 1 ? '' : 'e'}!`,
+        nl: (coins) => `+${coins} Munt${coins === 1 ? '' : 'en'}!`,
+        cs: (coins) => {
+            const lastDigit = Math.abs(coins) % 10
+            const lastTwo = Math.abs(coins) % 100
+            if (coins === 1) return `+${coins} Mince!`
+            if (lastDigit >= 2 && lastDigit <= 4 && !(lastTwo >= 12 && lastTwo <= 14)) return `+${coins} Mince!`
+            return `+${coins} Mincí!`
+        },
+        id: (coins) => `+${coins} Koin!`,
+        th: (coins) => `+${coins} เหรียญ!`,
+        vi: (coins) => `+${coins} Xu!`,
+    },
+    [FLY_MESSAGE_TYPE.GET_SAVE]: {
+        en: '+1 Insurance!',
+        ru: '+1 Страховка!',
+        tr: '+1 Sigorta!',
+        es: '¡+1 Seguro!',
+        de: '+1 Versicherung!',
+        pt: '+1 Seguro!',
+        fr: '+1 Assurance!',
+        pl: '+1 Ubezpieczenie!',
+        it: '+1 Assicurazione!',
+        nl: '+1 Verzekering!',
+        cs: '+1 Pojištění!',
+        id: '+1 Asuransi!',
+        th: '+1 ประกัน!',
+        vi: '+1 Bảo hiểm!',
+    },
+    [FLY_MESSAGE_TYPE.ERROR] : {
+        en: 'OOPS...',
+        ru: 'УПС...',
+        tr: 'HATA...',
+        es: 'VAYA...',
+        de: 'HOPPLA...',
+        pt: 'OPA...',
+        fr: 'OUPS...',
+        pl: 'UPS...',
+        it: 'OPS...',
+        nl: 'OEPS...',
+        cs: 'JÉJE...',
+        id: 'ADUH...',
+        th: 'อุ๊ปส์...',
+        vi: 'ỐI...',
+    },
+}
+
+export const TEXT_MUSIC = {
+    en: 'Music',
+    ru: 'Музыка',
+    tr: 'Müzik',
+    es: 'Música',
+    de: 'Musik',
+    pt: 'Música',
+    fr: 'Musique',
+    pl: 'Muzyka',
+    it: 'Musica',
+    nl: 'Muziek',
+    cs: 'Hudba',
+    id: 'Musik',
+    th: 'เพลง',
+    vi: 'Nhạc',
+}
+
+export const TEXT_SOUND = {
+    en: 'Sound effects',
+    ru: 'Звуковые эффекты',
+    tr: 'Ses efektleri',
+    es: 'Efectos de sonido',
+    de: 'Soundeffekte',
+    pt: 'Efeitos sonoros',
+    fr: 'Effets sonores',
+    pl: 'Efekty dźwiękowe',
+    it: 'Effetti sonori',
+    nl: 'Geluidseffecten',
+    cs: 'Zvukové efekty',
+    id: 'Efek suara',
+    th: 'เสียงประกอบ',
+    vi: 'Hiệu ứng âm thanh',
+}
+
+export const TEXT_NO_SKINS = {
+    en: 'No purchased skins',
+    ru: 'Нет купленных скинов',
+    tr: 'Satın alınan skin yok',
+    es: 'No hay skins comprados',
+    de: 'Keine gekauften Skins',
+    pt: 'Nenhuma skin comprada',
+    fr: 'Aucun skin acheté',
+    pl: 'Brak zakupionych skinów',
+    it: 'Nessuna skin acquistata',
+    nl: 'Geen gekochte skins',
+    cs: 'Žádné zakoupené skiny',
+    id: 'Tidak ada skin yang dibeli',
+    th: 'ไม่มีสกินที่ซื้อ',
+    vi: 'Không có skin đã mua',
 }
 
 export const TEXT_EMPTY = {

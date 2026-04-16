@@ -1,18 +1,20 @@
 import { EventHub, events, gamePause, gameResume } from '../app/events'
 import { getSoundData, setStoredSoundData } from '../app/sound'
-import CrazyGamesSDK from '../sdk/CrazyGamesSDK'
 import LocalMockSDK from '../sdk/LocalMock'
 import YaGamesSDK from '../sdk/YaGamesSDK'
+import CrazyGamesSDK from '../sdk/CrazyGamesSDK'
 import { setLanguage, getLanguage } from './localization'
 import { getStateData, setStoredState } from './state'
 
 export let isReadySDK = false
 
-// let SDK = new LocalMockSDK(SDKReadyCallback, SDKgetStateForSave, SDKsetSavedState)
+const LEADERBOARD_NAME = 'crashDashLB'
+
+// localStorage.clear()
+
+let SDK = new LocalMockSDK(SDKReadyCallback, SDKgetStateForSave, SDKsetSavedState, [LEADERBOARD_NAME])
 // let SDK = new YaGamesSDK(SDKReadyCallback, SDKgetStateForSave, SDKsetSavedState)
 // let SDK = new CrazyGamesSDK(SDKReadyCallback, SDKgetStateForSave, SDKsetSavedState)
-
-EventHub.on( events.updateMoney, () => updateStoredData() )
 
 export function updateStoredData() {
     if (!isReadySDK) return
@@ -41,9 +43,16 @@ function SDKgetStateForSave() {
         musicVolume: soundState.musicVolume,
 
         // game
-        availablePetLevel: gameState.availablePetLevel,
-        dragonPointIndex: gameState.dragonPointIndex,
-        world: gameState.world,
+        playerAvatarsShop: gameState.playerAvatarsShop,
+        playerAvatarIndex: gameState.playerAvatarIndex,
+        playerCoins: gameState.playerCoins,
+        playerSaves: gameState.playerSaves,
+        playerLevel: gameState.playerLevel,
+        playerTopScore: gameState.playerTopScore, 
+        playerTarget: gameState.playerTarget,
+        playerPrevious: gameState.playerPrevious,
+        isSaveCoinsAvailable: gameState.isSaveCoinsAvailable,
+        isSaveAdAvailable: gameState.isSaveAdAvailable
     }
 
     return currentState
@@ -51,7 +60,7 @@ function SDKgetStateForSave() {
 
 function SDKsetSavedState( savedState ) {
     isReadySDK = true
-    
+
     if ( !savedState || Object.keys( savedState ).length === 0 ) return
 
     setLanguage( savedState.language, false)

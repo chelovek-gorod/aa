@@ -170,6 +170,13 @@ export default class YaGamesSDK {
         })
         */
 
+        // Кэш лидербордов
+        this._leaderboardCache = {
+            entries: {},      // leaderboardName -> { data: LeaderboardData, timestamp: number }
+            pendingScores: {} // leaderboardName -> { score: number, extraData: string, timer: number | null }
+        }
+        this._fetchTimers = {}; // leaderboardName -> timeoutID
+
         this._saveTimerData = {
             timeout: null,
             isLoad: this._isSaveUsed,
@@ -198,6 +205,20 @@ export default class YaGamesSDK {
         if (this._isFlushSavingEmit || !this._player) return
 
         this._handleSave( true )
+
+        // Принудительно отправляем счета в лидерборды (если есть)
+        if (this._leaderboardNames.length && this.isAuthorized() && this._SDK?.leaderboards) {
+            const pending = this._leaderboardCache.pendingScores;
+            Object.entries(pending).forEach(([name, item]) => {
+                if (item.timer) {
+                    clearTimeout(item.timer);
+                    item.timer = null;
+                }
+                this._SDK.leaderboards.setScore(name, item.score, item.extraData)
+                    .catch(err => console.warn(`Flush score failed for ${name}:`, err));
+                delete pending[name];
+            });
+        }
     }
 
     /**
@@ -281,6 +302,40 @@ export default class YaGamesSDK {
         }
     }
 
+    /**
+     * Проверяет, авторизован ли игрок
+     * @returns {boolean}
+     */
+    isAuthorized() {
+        return !!(this._player && typeof this._player.isAuthorized === 'function' && this._player.isAuthorized());
+    }
+
+    /**
+     * Запрашивает авторизацию игрока
+     * @param {function(boolean)} callback - вызывается с результатом авторизации
+     */
+    requestAuth(callback) {
+        if (!this._SDK) {
+            callback(false);
+            return;
+        }
+
+        this._SDK.auth.openAuthDialog()
+            .then(() => {
+                // После успешной авторизации переинициализируем player
+                const parameterPlayer = this._leaderboardNames.length === 0 ? {} : { signed: true };
+                return this._SDK.getPlayer(parameterPlayer);
+            })
+            .then(player => {
+                this._player = player;
+                callback(true);
+            })
+            .catch(error => {
+                console.warn('Auth failed or cancelled:', error);
+                callback(false);
+            });
+    }
+
     getSavedData() {
         if (!this._setSavedStateCallback) return
 
@@ -300,7 +355,6 @@ export default class YaGamesSDK {
     }
 
     /**
-     * инициализируем игрока
      * @private
      */
     _handleSave( isFlush = false ) {
@@ -348,6 +402,166 @@ export default class YaGamesSDK {
                     () => this._handleSave(), SAVE_DELAY_DATA
                 )
             })
+        }
+    }
+
+    /**
+     * Отправляет счёт в лидерборд (с троттлингом и повторными попытками при ошибках)
+     * @param {string} leaderboardName - имя лидерборда
+     * @param {number} score - количество очков
+     * @param {string} [extraData] - дополнительные данные
+     */
+    setLeaderboardScore(leaderboardName, score, extraData = '') {
+        if (!this.isAuthorized()) return;
+
+        if (!this._leaderboardCache.pendingScores[leaderboardName]) {
+            this._leaderboardCache.pendingScores[leaderboardName] = {
+                score: score,
+                extraData: extraData,
+                timer: null
+            };
+        } else {
+            const pending = this._leaderboardCache.pendingScores[leaderboardName];
+            pending.score = score;
+            pending.extraData = extraData;
+            // Если таймер уже запущен, просто обновляем данные
+            if (pending.timer !== null) return;
+        }
+
+        const pending = this._leaderboardCache.pendingScores[leaderboardName];
+        
+        const sendScore = () => {
+            if (!this.isAuthorized()) return;
+            if (!this._SDK || !this._SDK.leaderboards) {
+                // SDK ещё не готов — пробуем позже
+                pending.timer = setTimeout(sendScore, SAVE_DELAY_LB_DATA);
+                return;
+            }
+
+            const currentScore = pending.score;
+            const currentExtra = pending.extraData;
+
+            this._SDK.leaderboards.setScore(leaderboardName, currentScore, currentExtra)
+                .then(() => {
+                    console.log(`Score ${currentScore} sent to ${leaderboardName}`);
+                    pending.timer = null;
+                    // Если за время отправки появился новый счёт — сразу запускаем его отправку
+                    if (pending.score !== currentScore || pending.extraData !== currentExtra) {
+                        pending.timer = setTimeout(sendScore, SAVE_DELAY_LB_DATA)
+                    }
+                })
+                .catch(err => {
+                    console.warn(`Failed to set score for ${leaderboardName}, retrying:`, err);
+                    // Повторная попытка через таймаут
+                    pending.timer = setTimeout(sendScore, SAVE_DELAY_LB_DATA);
+                });
+        };
+
+        pending.timer = setTimeout(sendScore, SAVE_DELAY_LB_DATA);
+    }
+
+    /**
+     * Загружает данные лидерборда (топ и позицию игрока, если авторизован)
+     * @param {string} leaderboardName - имя лидерборда
+     * @param {number} topQuantity - сколько записей из топа вернуть (1-20)
+     * @param {number} aroundQuantity - сколько соседей вокруг игрока (1-10)
+     * @param {function(object)} callback - вызывается с объектом LeaderboardData
+     */
+    fetchLeaderboard(leaderboardName, topQuantity, aroundQuantity, callback) {
+        const cached = this._leaderboardCache.entries[leaderboardName];
+        const now = Date.now();
+
+        // Если кэш свежий — сразу отдаём
+        if (cached && (now - cached.timestamp) < GET_DELAY_LB_DATA) {
+            callback(cached.data);
+            return;
+        }
+
+        // Если кэш устарел, но есть — отдаём устаревшие данные сразу
+        if (cached) {
+            callback(cached.data);
+        }
+
+        // Функция выполнения запроса с повторными попытками
+        const doFetch = () => {
+            if (!this._SDK || !this._SDK.leaderboards) {
+                // SDK не готов — пробуем позже
+                this._fetchTimers[leaderboardName] = setTimeout(doFetch, GET_DELAY_LB_DATA);
+                return;
+            }
+
+            const isAuth = this.isAuthorized();
+            
+            let requestPromise;
+            if (!isAuth) {
+                requestPromise = this._SDK.leaderboards.getEntries(leaderboardName, {
+                    includeUser: false,
+                    quantityTop: topQuantity
+                });
+            } else {
+                requestPromise = this._SDK.leaderboards.getEntries(leaderboardName, {
+                    includeUser: true,
+                    quantityTop: topQuantity,
+                    quantityAround: aroundQuantity
+                });
+            }
+
+            requestPromise
+                .then(res => {
+                    // Преобразуем ответ SDK в LeaderboardData
+                    const topEntries = res.entries.slice(0, topQuantity).map(entry => ({
+                        rank: entry.rank,
+                        playerName: entry.player.publicName,
+                        score: entry.score,
+                        formattedScore: entry.formattedScore,
+                        avatarSrc: entry.player.getAvatarSrc('medium'),
+                        isCurrentUser: false
+                    }));
+
+                    let userRank = res.userRank;
+                    let aroundEntries = [];
+
+                    if (isAuth && res.userRank) {
+                        // Выделяем соседей (ранги вокруг userRank)
+                        aroundEntries = res.entries
+                            .filter(entry => entry.rank !== undefined)
+                            .map(entry => ({
+                                rank: entry.rank,
+                                playerName: entry.player.publicName,
+                                score: entry.score,
+                                formattedScore: entry.formattedScore,
+                                avatarSrc: entry.player.getAvatarSrc('medium'),
+                                isCurrentUser: entry.rank === res.userRank
+                            }));
+                    }
+
+                    const data = {
+                        isAuthorized: isAuth,
+                        topEntries: topEntries,
+                        userRank: userRank,
+                        aroundEntries: aroundEntries
+                    };
+
+                    // Сохраняем в кэш
+                    this._leaderboardCache.entries[leaderboardName] = {
+                        data: data,
+                        timestamp: Date.now()
+                    };
+
+                    // Вызываем callback, если это первая загрузка или обновление после устаревшего кэша
+                    callback(data);
+                    delete this._fetchTimers[leaderboardName];
+                })
+                .catch(err => {
+                    console.warn(`Failed to fetch leaderboard ${leaderboardName}, retrying:`, err);
+                    // Повторная попытка через таймаут
+                    this._fetchTimers[leaderboardName] = setTimeout(doFetch, GET_DELAY_LB_DATA);
+                });
+        };
+
+        // Запускаем запрос (если ещё не запущен)
+        if (!this._fetchTimers[leaderboardName]) {
+            doFetch();
         }
     }
 

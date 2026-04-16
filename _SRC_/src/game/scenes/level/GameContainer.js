@@ -2,7 +2,7 @@ import { Container, TilingSprite, ColorMatrixFilter, AnimatedSprite, Sprite } fr
 import { kill, tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases, images } from "../../../app/assets";
 import { EventHub, events, shakeScreen, startScene } from "../../../app/events";
-import { levelType, LEVEL_TYPE, playerSaves, setTimeScale, timeScale } from "../../state";
+import { levelType, LEVEL_TYPE, playerSaves, playerUseSave, setTimeScale, timeScale } from "../../state";
 import { SCENE_NAME } from "../SceneManager";
 import Asteroids from "./Asteroids";
 import Clouds from "./Clouds";
@@ -126,6 +126,7 @@ export default class GameContainer extends Container {
     slowDown() {
         if (timeScale < 1) return
 
+        playerUseSave()
         setTimeScale( SLOW_DOWN_START )
 
         const sepiaFilter = new ColorMatrixFilter()

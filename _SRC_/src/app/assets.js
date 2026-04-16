@@ -14,9 +14,6 @@ export const path = {
     fonts : './fonts/',
 }
 export const fonts = {
-    H1: 'RubikDistressed-Regular.ttf',
-    H2: 'RubikStorm-Regular.ttf',
-
     P: 'Nunito-Black.ttf',
 }
 
@@ -31,7 +28,7 @@ export const images = {
 
     ui_results: 'ui_results.png',
     ui_skin_bg: 'ui_skin_bg.png',
-    ui_buy_save: 'ui_buy_save.png',
+    ui_buy_save: 'ui_buy_save5.png',
     ui_spin_for_ad: 'ui_spin_for_ad.png',
     ui_skin_shop: 'ui_skin_shop.png',
     ui_save_for_ad: 'ui_save_for_ad.png',

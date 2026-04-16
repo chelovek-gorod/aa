@@ -10,6 +10,8 @@ import { SCENE_NAME } from '../SceneManager'
 import { getFirstUserAction, soundPlay } from '../../../app/sound'
 import { getLanguage } from '../../localization'
 import { TEXT_GET_FIRST_CLICK } from '../../localText'
+import { isReadySDK } from '../../storage'
+import { playerScore } from '../../state'
 
 const ALPHA_STEP = 0.003
 
@@ -219,7 +221,7 @@ export default class LoadScene extends Container {
         getFirstUserAction()
         soundPlay(sounds.se_click)
 
-        startScene(SCENE_NAME.Menu)
+        startScene(playerScore > 0 ? SCENE_NAME.Menu : SCENE_NAME.Level)
     }
 
     tick(delta) {
@@ -228,7 +230,7 @@ export default class LoadScene extends Container {
         if (this.logo && this.logo.alpha < 1) this.logo.alpha += alphaStep
         if (this.title && this.title.alpha < 1) this.title.alpha += alphaStep
         
-        if (this.isLoadingDone) {
+        if (this.isLoadingDone && isReadySDK) {
             this.progressBar.alpha -= alphaStep
             this.progressText.alpha -= alphaStep
             this.doneText.alpha += alphaStep

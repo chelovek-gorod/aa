@@ -4,7 +4,7 @@ import { removeCursorPointer, setCursorPointer } from "../../utils/functions"
 import { styles } from "../../app/styles"
 import { soundPlay } from "../../app/sound"
 import { tickerAdd, tickerRemove } from "../../app/application"
-// import { TEXT_BUTTON_START } from "../localText"
+import { TEXT_BUTTON } from "../localText"
 import { getLanguage } from "../localization"
 import { EventHub, events } from "../../app/events"
 
@@ -39,7 +39,7 @@ export default class Button extends Container {
 
         this.value = icon
             ? new Sprite(icon)
-            : new Text({ text: textKey /* TEXT_BUTTON[ textKey ][ getLanguage() ]*/, style: styles.button })
+            : new Text({ text: TEXT_BUTTON[ textKey ][ getLanguage() ], style: styles.button })
         this.value.anchor.set(0.5, icon ? 0.52 : 0.6)
         
         this.addChild(this.backImage, this.frontImage, this.value)
@@ -55,9 +55,6 @@ export default class Button extends Container {
 
     setTextKey( textKey ) {
         if (!this.isText) return
-
-        // temp while non used text keys
-        return this.value.text = textKey
         
         this.textKey = textKey
         this.updateLanguage( getLanguage() )
@@ -67,6 +64,10 @@ export default class Button extends Container {
         if (this.isText) return
 
         this.value.texture = icon
+    }
+
+    setCallback(callback) {
+        this.callback = callback
     }
 
     setActive(isActive = true) {
@@ -125,7 +126,7 @@ export default class Button extends Container {
     }
 
     updateLanguage(lang) {
-       // this.value.text = TEXT_BUTTON[ this.textKey ][ lang ]
+       this.value.text = TEXT_BUTTON[ this.textKey ][ lang ]
     }
 
     kill() {

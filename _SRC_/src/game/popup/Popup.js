@@ -12,6 +12,7 @@ import { musicGetState, musicGetVolume, musicOff, musicOn, musicSetVolume,
 import { createEnum } from "../../utils/functions"
 import Overlay from "./Overlay"
 import { showRewardAdSDK } from "../storage"
+import { BUTTON_TYPE, TEXT_MUSIC, TEXT_POPUP_TITLE, TEXT_SOUND } from "../localText"
 
 export const POPUP_TYPE =  createEnum([
     'PAUSE', 'SETTINGS', 'RESULTS', 'WHEEL', 'ERROR'
@@ -78,7 +79,7 @@ export default class Popup extends Container {
         this.title.position.set(0, -280)
         this.box.addChild(this.title)
         
-        this.closeButton = new Button(null, 'Продолжить', () => this.close())
+        this.closeButton = new Button(null, BUTTON_TYPE.BACK, () => this.close())
         this.closeButton.position.set(0, 265)
         this.closeButton.scale.set(0.75)
         this.box.addChild(this.closeButton)
@@ -160,7 +161,7 @@ export default class Popup extends Container {
     }
 
     fillSettings() {
-        this.title.text = 'ПАУЗА'
+        this.title.text = TEXT_POPUP_TITLE[this.type][this.currentLanguage]
 
         /*
         const description = ''
@@ -172,8 +173,8 @@ export default class Popup extends Container {
 
         this.settingsUI = {}
         // music
-        const musicLabelText = 'Фоновая музыка'
-        this.settingsUI.musicLabel = new Text({text: musicLabelText, style: styles.popupDescription})
+        const musicLabelText = TEXT_MUSIC[this.currentLanguage]
+        this.settingsUI.musicLabel = new Text({text: musicLabelText, style: styles.popupLabel})
         this.settingsUI.musicLabel.anchor.set(0.5)
         this.settingsUI.musicLabel.position.set(-200, -170)
         this.content.addChild( this.settingsUI.musicLabel )
@@ -185,8 +186,8 @@ export default class Popup extends Container {
         this.content.addChild( this.settingsUI.musicBtn )
 
         // sound
-        const soundLabelText = 'Звуковые эффекты'
-        this.settingsUI.soundLabel = new Text({text: soundLabelText, style: styles.popupDescription})
+        const soundLabelText = TEXT_SOUND[this.currentLanguage]
+        this.settingsUI.soundLabel = new Text({text: soundLabelText, style: styles.popupLabel})
         this.settingsUI.soundLabel.anchor.set(0.5)
         this.settingsUI.soundLabel.position.set(200, -170)
         this.content.addChild( this.settingsUI.soundLabel )
@@ -201,8 +202,7 @@ export default class Popup extends Container {
         this.settingsUI.langСodes = getAvailableLanguages().map(item => item.code)
         this.settingsUI.langIndex = this.settingsUI.langСodes.indexOf(this.currentLanguage)
 
-        const langLabelText = getLanguageName()
-        this.settingsUI.langLabel = new Text({text: langLabelText, style: styles.popupDescription})
+        this.settingsUI.langLabel = new Text({text: getLanguageName(), style: styles.popupLabel})
         this.settingsUI.langLabel.anchor.set(0.5)
         this.settingsUI.langLabel.position.set(0, 20)
         this.content.addChild( this.settingsUI.langLabel )
@@ -225,80 +225,6 @@ export default class Popup extends Container {
 
         // this.closeButton.setTextKey( TEXT_BUTTON_TYPE.OK )
     }
-
-    /*
-    fillSettings() {
-        this.title.text = TEXT_SETTINGS[TEXT_SETTING_TYPE.TITLE][this.currentLanguage]
-
-        this.settingsUI = {}
-        // music
-        const musicLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.MUSIC][this.currentLanguage]
-        this.settingsUI.musicLabel = new Text({text: musicLabelText, style: styles.popupDescription})
-        this.settingsUI.musicLabel.anchor.set(0.5)
-        this.settingsUI.musicLabel.position.set(-200, -170)
-        this.content.addChild( this.settingsUI.musicLabel )
-
-        const musicTexture = atlases.ui.textures[ 'music_' + findSoundMusic(true) ]
-        this.settingsUI.musicBtn = new TapIcon( musicTexture, this.changeMusic.bind(this) )
-        this.settingsUI.musicBtn.anchor.set(0.5)
-        this.settingsUI.musicBtn.position.set(-200, -80)
-        this.content.addChild( this.settingsUI.musicBtn )
-
-        // sound
-        const soundLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.SOUND][this.currentLanguage]
-        this.settingsUI.soundLabel = new Text({text: soundLabelText, style: styles.popupDescription})
-        this.settingsUI.soundLabel.anchor.set(0.5)
-        this.settingsUI.soundLabel.position.set(200, -170)
-        this.content.addChild( this.settingsUI.soundLabel )
-
-        const soundTexture = atlases.ui.textures[ 'sound_' + findSoundMusic(false) ]
-        this.settingsUI.soundBtn = new TapIcon( soundTexture, this.changeSound.bind(this) )
-        this.settingsUI.soundBtn.anchor.set(0.5)
-        this.settingsUI.soundBtn.position.set(200, -80)
-        this.content.addChild( this.settingsUI.soundBtn )
-
-        // language
-        this.settingsUI.langСodes = getAvailableLanguages().map(item => item.code)
-        this.settingsUI.langIndex = this.settingsUI.langСodes.indexOf(this.currentLanguage)
-
-        const langLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.LANGUAGE][this.currentLanguage]
-            + ' ' + getLanguageName()
-        this.settingsUI.langLabel = new Text({text: langLabelText, style: styles.popupDescription})
-        this.settingsUI.langLabel.anchor.set(0.5)
-        this.settingsUI.langLabel.position.set(0, 20)
-        this.content.addChild( this.settingsUI.langLabel )
-
-        this.settingsUI.leftBtn = new Button( atlases.ui.textures.button_icon_left, null, this.prevLang.bind(this) )
-        this.settingsUI.leftBtn.scale.set(0.75)
-        this.settingsUI.leftBtn.position.set(-120, 100)
-        this.content.addChild( this.settingsUI.leftBtn )
-
-        const langCodeText = this.currentLanguage.toUpperCase()
-        this.settingsUI.langCode = new Text({text: langCodeText, style: styles.popupTitle})
-        this.settingsUI.langCode.anchor.set(0.5)
-        this.settingsUI.langCode.position.set(0, 100)
-        this.content.addChild( this.settingsUI.langCode )
-
-        this.settingsUI.rightBtn = new Button( atlases.ui.textures.button_icon_right, null, this.nextLang.bind(this) )
-        this.settingsUI.rightBtn.scale.set(0.75)
-        this.settingsUI.rightBtn.position.set(120, 100)
-        this.content.addChild( this.settingsUI.rightBtn )
-
-        // restart
-        this.settingsUI.resetCount = 5
-
-        const resetDescription = TEXT_SETTINGS[TEXT_SETTING_TYPE.RESET][this.currentLanguage](this.settingsUI.resetCount)
-        this.settingsUI.resetText = new Text({text: resetDescription, style: styles.settingsReset})
-        this.settingsUI.resetText.anchor.set(1, 0)
-        this.settingsUI.resetText.position.set(280, 170)
-        this.content.addChild(this.settingsUI.resetText)
-
-        this.settingsUI.resetBtn = new Button( atlases.ui.textures.button_icon_close, null, this.resetGame.bind(this) )
-        this.settingsUI.resetBtn.scale.set(0.4)
-        this.settingsUI.resetBtn.position.set(320, 200)
-        this.content.addChild(this.settingsUI.resetBtn)
-    }
-    */
 
     changeMusic() {
         const volume = musicGetVolume()
@@ -365,22 +291,16 @@ export default class Popup extends Container {
     }
 
     updateSettingsLabels() {
-        this.title.text = '' // TEXT_SETTINGS[TEXT_SETTING_TYPE.TITLE][this.currentLanguage]
+        this.title.text = TEXT_POPUP_TITLE[this.type][this.currentLanguage]
 
-        const musicLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.MUSIC][this.currentLanguage]
+        const musicLabelText = TEXT_MUSIC[this.currentLanguage]
         this.settingsUI.musicLabel.text = musicLabelText
 
-        const soundLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.SOUND][this.currentLanguage]
+        const soundLabelText = TEXT_SOUND[this.currentLanguage]
         this.settingsUI.soundLabel.text = soundLabelText
 
-        const langLabelText = TEXT_SETTINGS[TEXT_SETTING_TYPE.LANGUAGE][this.currentLanguage]
-            + ' ' + getLanguageName()
-        this.settingsUI.langLabel.text = langLabelText
-
+        this.settingsUI.langLabel.text = getLanguageName()
         this.settingsUI.langCode.text = this.currentLanguage.toUpperCase()
-
-        const resetDescription = TEXT_SETTINGS[TEXT_SETTING_TYPE.RESET][this.currentLanguage](this.settingsUI.resetCount)
-        this.settingsUI.resetText.text = resetDescription
     }
 
     tick(deltaMs) {

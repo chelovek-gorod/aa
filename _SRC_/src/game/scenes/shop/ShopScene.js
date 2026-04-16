@@ -1,14 +1,14 @@
-import { Container, Sprite, Text, Texture } from 'pixi.js'
+import { Container } from 'pixi.js'
 import { kill } from '../../../app/application'
 import { atlases, images } from '../../../app/assets'
 import BackgroundImage from '../../BG/BackgroundImage'
-import { nextAvatar, playerAvatarIndex, playerAvatarKeys, playerCoins, resetScoreToPrevious } from '../../state'
-import { AVATARS } from '../level/Player'
-import { styles } from '../../../app/styles'
 import MenuUI from '../../UI/MenuUI'
 import Popup from '../../popup/Popup'
 import SkinItem from './SkinItem'
 import { SCENE_NAME } from '../SceneManager'
+import { BUTTON_TYPE, FLY_MESSAGE_TYPE, TEXT_FLY_MESSAGE } from '../../localText'
+import FlyText from '../level/FlyText'
+import { getLanguage } from '../../localization'
 
 const OFFSET_Y = 120
 const OFFSET_X = 30
@@ -20,8 +20,6 @@ export default class ShopScene extends Container {
         super()
         this.isMenuActive = true
 
-        resetScoreToPrevious()
-
         this.bg = new BackgroundImage( images.bg_main, 0x333333 )
         this.addChild(this.bg)
 
@@ -30,11 +28,11 @@ export default class ShopScene extends Container {
 
         this.popup = new Popup()
 
-        this.ui = new MenuUI(this, SCENE_NAME.Menu)
+        this.ui = new MenuUI(this, SCENE_NAME.Menu, BUTTON_TYPE.BACK)
         this.addChild(this.ui)
 
         for(let i = 1; i < 13; i++) {
-            const skin = new SkinItem(i, this.tryToBuy.bind(this))
+            const skin = new SkinItem(i, this.lowCoins.bind(this), this.updateCoins.bind(this))
             this.mainContainer.addChild(skin)
         }
 
@@ -103,7 +101,12 @@ export default class ShopScene extends Container {
         }
     }
 
-    tryToBuy() {
+    updateCoins() {
+        this.ui.updateCoins()
+    }
 
+    lowCoins() {
+        const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.LOW_COINS][getLanguage()]
+        this.addChild(new FlyText(message, 0, 0, false))
     }
 }

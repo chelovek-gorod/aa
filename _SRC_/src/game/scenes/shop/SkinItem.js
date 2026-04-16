@@ -4,7 +4,7 @@ import { images, sounds } from "../../../app/assets";
 import { soundPlay } from "../../../app/sound";
 import { styles } from "../../../app/styles";
 import { removeCursorPointer, setCursorPointer } from "../../../utils/functions";
-import { playerAvatarsShop } from "../../state";
+import { buyAvatar, playerAvatarsShop } from "../../state";
 import { renderPlayer } from "../../UI/renderPlayer";
 
 const SCALE_UP_RATE = 1.06
@@ -12,12 +12,12 @@ const SCALE_DURATION = 120
 const SCALE_STEP = (SCALE_UP_RATE - 1) / SCALE_DURATION
 
 export default class SkinItem extends Container {
-    constructor(skinIndex, callback) {
+    constructor(skinIndex, callbackLowCoins, callbackUpdateCoins) {
         super()
 
-        this.price = playerAvatarsShop['player_' + skinIndex]
         this.skinIndex = skinIndex
-        this.callback = callback
+        this.callbackLowCoins = callbackLowCoins
+        this.callbackUpdateCoins = callbackUpdateCoins
 
         this.skin = new Sprite( renderPlayer(skinIndex) )
         this.skin.anchor.set(0.5)
@@ -26,12 +26,13 @@ export default class SkinItem extends Container {
         this.priceContainer = new Container()
         this.addChild(this.priceContainer)
 
-        if (this.price > 0) {
+        const price = playerAvatarsShop['player_' + skinIndex]
+        if (price > 0) {
             this.priceCoin = new Sprite(images.coin)
             this.priceCoin.scale.set(0.35)
             this.priceContainer.addChild(this.priceCoin)
     
-            this.priceTex = new Text({text: this.price, style: styles.coins})
+            this.priceTex = new Text({text: price, style: styles.coins})
             this.priceTex.position.set(50, -5)
             this.priceTex.scale.set(1.2)
             this.priceContainer.addChild(this.priceTex)
@@ -61,20 +62,38 @@ export default class SkinItem extends Container {
         this.scale.set(scale)
     }
 
+    sold() {
+        this.priceContainer.removeChild(this.priceCoin)
+        this.priceCoin.destroy()
+        this.priceCoin = null
+
+        this.priceContainer.removeChild(this.priceTex)
+        this.priceTex.destroy()
+        this.priceTex = null
+
+        this.done = new Sprite(images.done)
+        this.done.scale.set(0.35)
+        this.priceContainer.addChild(this.done)
+        this.priceContainer.position.set( -this.priceContainer.width * 0.5, 0)
+
+        this.callbackUpdateCoins()
+    }
+
     click() {
         setTimeout( () => soundPlay(sounds.se_click), 1 )
-        this.callback()
+        if ( buyAvatar(this.skinIndex) ) this.sold()
+        else this.callbackLowCoins()
     }
 
     onHover() {
-        if (this.price === 0 || this.isOnHover) return
+        if (this.done || this.isOnHover) return
 
         this.isOnHover = true
         soundPlay(sounds.se_hover)
         tickerAdd(this)
     }
     onOut() {
-        if (this.price === 0 || !this.isOnHover) return
+        if (this.done || !this.isOnHover) return
 
         this.isOnHover = false
         tickerAdd(this)

@@ -4,13 +4,16 @@ import { atlases, images, music } from '../../../app/assets'
 import { setMusicList } from '../../../app/sound'
 import BackgroundImage from '../../BG/BackgroundImage'
 import FlashButton, { FLASH_TYPE } from '../../UI/FlashButton'
-import { nextAvatar, playerAddSave, playerAvatarIndex, playerAvatarKeys, playerCoins, playerSaves, resetScoreToPrevious } from '../../state'
-import { AVATARS } from '../level/Player'
+import { countAvailableAvatars, isSaveAdAvailable, isSaveCoinsAvailable, playerAddSave, playerCoins, playerSaves, setAvatar, setSaveAdDisable, setSaveCoinsDisable } from '../../state'
 import { styles } from '../../../app/styles'
 import MenuUI from '../../UI/MenuUI'
 import Popup from '../../popup/Popup'
 import { startScene } from '../../../app/events'
 import { SCENE_NAME } from '../SceneManager'
+import { BUTTON_TYPE, FLY_MESSAGE_TYPE, TEXT_FLY_MESSAGE, TEXT_NO_SKINS } from '../../localText'
+import FlyText from '../level/FlyText'
+import { getLanguage } from '../../localization'
+import { showRewardAdSDK } from '../../storage'
 
 const musics = [ music.bgm_menu_1, music.bgm_menu_2, music.bgm_menu_3, music.bgm_menu_4 ]
 let currentMusicIndex = Math.floor( Math.random() * musics.length )
@@ -32,8 +35,6 @@ export default class Menu extends Container {
         super()
         this.isMenuActive = true
 
-        resetScoreToPrevious()
-
         this.bg = new BackgroundImage( images.bg_main, 0x333333 )
         this.addChild(this.bg)
 
@@ -42,7 +43,7 @@ export default class Menu extends Container {
 
         this.popup = new Popup()
 
-        this.ui = new MenuUI(this, SCENE_NAME.Level)
+        this.ui = new MenuUI(this, SCENE_NAME.Level, BUTTON_TYPE.START)
         this.addChild(this.ui)
 
         this.results = new FlashButton(FLASH_TYPE.RESULTS, this.showResults.bind(this), 0.45)
@@ -128,30 +129,76 @@ export default class Menu extends Container {
     }
 
     changeAvatar() {
-        nextAvatar()
-        const AVA_KEY = playerAvatarKeys[playerAvatarIndex]
-        this.playerBody.texture = images[ AVA_KEY ]
-        this.playerEye.texture = AVATARS[AVA_KEY].eye !== 'EMPTY'
-            ? images[ AVATARS[AVA_KEY].eye ] : Texture.EMPTY
-        this.playerTongue.texture = AVATARS[AVA_KEY].tongue !== 'EMPTY'
-            ? images[ AVATARS[AVA_KEY].tongue ] : Texture.EMPTY
+        console.log(countAvailableAvatars())
+        if (countAvailableAvatars() > 1) {
+            setAvatar()
+            this.player.updateTexture()
+        } else {
+            this.addChild( new FlyText(TEXT_NO_SKINS[getLanguage()], 0, 0, false) )
+        }
     }
 
     showResults() {
-
+        this.addChild( new FlyText('...', 0, 0, false) )
     }
 
     addSaveForCoins() {
-        playerAddSave(1)
-        this.saveText.text = playerSaves
+        if (!isSaveCoinsAvailable) {
+            const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.LIMIT][getLanguage()]
+            this.addChild( new FlyText(message, 0, 0, false) )
+        } else if (playerCoins < 5 ) {
+            const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.LOW_COINS][getLanguage()]
+            this.addChild( new FlyText(message, 0, 0, false) )
+        } else {
+            playerAddSave(5)
+            this.ui.updateSaves()
+            this.ui.updateCoins()
+            setSaveCoinsDisable()
+            this.buySave.deactivate()
+            const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.GET_SAVE][getLanguage()]
+            this.addChild( new FlyText(message, 0, 0, false) )
+        }
     }
 
     addSaveForAd() {
+        if (isSaveAdAvailable) {
+            let done = false
+            showRewardAdSDK( (isOk) => {
+                if (done) return
 
+                if (isOk) {
+                    done = true
+                    setSaveAdDisable()
+                    this.adSave.deactivate()
+                    playerAddSave()
+                    this.ui.updateSaves()
+                
+                    const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.GET_SAVE][getLanguage()]
+                    this.addChild( new FlyText(message, 0, 0, false) )
+                } else {
+                    const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.ERROR][getLanguage()]
+                    this.addChild( new FlyText(message, 0, 0, false) )
+                }
+            })
+            
+        } else {
+            const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.LIMIT][getLanguage()]
+            this.addChild( new FlyText(message, 0, 0, false) )
+        }
     }
 
     rotateWheel() {
-        startScene( SCENE_NAME.Wheel )
+        let done = false
+        showRewardAdSDK( (isOk) => {
+            if (done) return
+
+            if (isOk) {
+                startScene( SCENE_NAME.Wheel )
+            } else {
+                const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.ERROR][getLanguage()]
+                this.addChild( new FlyText(message, 0, 0, false) )
+            }
+        })
     }
 
     openShop() {

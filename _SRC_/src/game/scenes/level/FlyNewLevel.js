@@ -18,7 +18,7 @@ export default class FlyNewLevel extends Container {
         this.coin.anchor.set(0, 0)
         this.addChild(this.coin)
 
-        this.coinText = new Text({text: '+' + addCoins, style: styles.coins})
+        this.coinText = new Text({text: '+' + (addCoins - 1), style: styles.coins})
         this.coinText.scale.set(1.2)
         this.coinText.anchor.set(1, 0)
         this.addChild(this.coinText)

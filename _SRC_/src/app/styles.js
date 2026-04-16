@@ -51,13 +51,14 @@ export let styles = {
     saves: null,
 
     flyText: null,
-    flyTextLevel: null,
+    flyMessage: null,
 
     button: null,
     buttonHover: null,
     
     popupTitle: null,
     popupDescription: null,
+    popupLabel: null,
 }
 
 export function initFontStyles() {
@@ -158,26 +159,19 @@ export function initFontStyles() {
         dropShadowDistance: 6,
     })
 
-    styles.flyTextLevel = new TextStyle({
+    styles.flyMessage = new TextStyle({
         fontFamily: fonts.P,
-        fontSize: 64,
-        fill: comboGradient,
+        fontSize: 48,
+        fill: 0xffffff,
         align: 'center',
 
         wordWrap: true,
-        wordWrapWidth: 700,
-        lineHeight: 64,
+        wordWrapWidth: 320,
 
         stroke: {
             color: 0x000000,
             width: 6
         },
-
-        dropShadow: true,
-        dropShadowColor: '#ff0000',
-        dropShadowBlur: 6,
-        dropShadowAngle: Math.PI * 0.5,
-        dropShadowDistance: 6,
     })
 
     styles.button = new TextStyle({
@@ -206,7 +200,6 @@ export function initFontStyles() {
         wordWrapWidth: 700,
         lineHeight: 64,
     })
-
     styles.popupDescription = new TextStyle({
         fontFamily: fonts.P,
         fontSize: 32,
@@ -215,6 +208,19 @@ export function initFontStyles() {
         wordWrap: true,
         wordWrapWidth: 700,
         lineHeight: 32,
+    })
+    styles.popupLabel = new TextStyle({
+        fontFamily: fonts.P,
+        fontSize: 32,
+        fill: 0xffffff,
+        align: 'center',
+        wordWrap: true,
+        wordWrapWidth: 260,
+        lineHeight: 32,
+        stroke: {
+            color: 0x000000,
+            width: 2
+        }
     })
 
     styles.isReady = true

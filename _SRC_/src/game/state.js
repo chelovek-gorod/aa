@@ -14,28 +14,49 @@ let previousLevelTypes = []
 
 export let playerAvatarsShop = {
     player_0: 0, // set 0 if purchased
-    player_1: 2,
-    player_2: 0,
-    player_3: 0,
-    player_4: 15,
-    player_5: 20,
-    player_6: 30,
-    player_7: 40,
-    player_8: 50,
-    player_9: 60,
-    player_10: 80,
-    player_11: 100,
-    player_12: 120,
+    player_1: 5,
+    player_2: 10,
+    player_3: 15,
+    player_4: 20,
+    player_5: 30,
+    player_6: 40,
+    player_7: 50,
+    player_8: 60,
+    player_9: 80,
+    player_10: 100,
+    player_11: 120,
+    player_12: 150,
 }
 export let playerAvatarKeys = Object.keys(playerAvatarsShop)
 export let playerAvatarIndex = Math.min( 0, playerAvatarKeys.length - 1)
-export function nextAvatar() {
-    let index = playerAvatarIndex + 1
-    if (index === playerAvatarKeys.length) index = 0
+export function setAvatar() {
+    let index = playerAvatarIndex
+    do {
+        if (++index === playerAvatarKeys.length) index = 0
+    } while(playerAvatarsShop['player_' + index] !== 0)
+
     playerAvatarIndex = index
+    updateStoredData()
+}
+export function buyAvatar(index) {
+    const shopKey = 'player_' + index
+    if (playerCoins < playerAvatarsShop[shopKey]) return false
+    
+    playerCoins -= playerAvatarsShop[shopKey]
+    playerAvatarsShop[shopKey] = 0
+    playerAvatarIndex = index
+    updateStoredData()
+    return true
+}
+export function countAvailableAvatars() { 
+    let count = 0
+    for (const key of playerAvatarKeys) {
+        if (playerAvatarsShop[key] === 0) count++
+    }
+    return count
 }
 
-export let addCoins = 1
+export let addCoins = 1 // coins add if reached new level
 export let playerCoins = 0
 export let playerSaves = 0
 export let playerLevel = 1
@@ -44,15 +65,20 @@ export let playerTopScore = 0
 export let playerTarget = 20 // score for next level
 export let playerPrevious = 0 // score before next level
 export let playerProgress = 0 // score rate for next level
+
+export let isSaveCoinsAvailable = true
+export let isSaveAdAvailable = true
+
 export function playerAddScore(score) {
     playerScore += score
     if (playerScore >= playerTarget) {
         playerPrevious = playerTarget
         playerLevel++
-        playerCoins += addCoins;
+        playerCoins += addCoins
         addCoins++
         playerTarget += Math.floor(playerLevel * 1.2) * 20
         getNextLevel()
+        updateStoredData()
     }           
     playerProgress = (playerScore - playerPrevious) / (playerTarget - playerPrevious)
     playerTopScore = Math.max(playerScore, playerTopScore)
@@ -66,18 +92,30 @@ export function playerAddCoins(count) {
 export function playerUseSave() {
     addCoins = 1
     playerSaves--
+    console.log('addCoins =', addCoins )
+
+    if (playerSaves < 0) {
+        playerSaves = 0
+        playerScore = playerPrevious
+        playerProgress = 0
+        levelType = getLevelType()
+        isSaveCoinsAvailable = true
+        isSaveAdAvailable = true
+    }
+
+    updateStoredData()
 }
-export function playerAddSave(count) {
-    playerSaves += count
+export function playerAddSave(price = 0) {
+    playerSaves++
+    playerCoins -= price
+    updateStoredData()
 }
 
-export function resetScoreToPrevious() {
-    addCoins = 1
-    playerSaves = 0
-    playerScore = playerPrevious
-    playerProgress = (playerScore - playerPrevious) / (playerTarget - playerPrevious)
-
-    levelType = getLevelType()
+export function setSaveCoinsDisable() {
+    isSaveCoinsAvailable = false
+}
+export function setSaveAdDisable() {
+    isSaveAdAvailable = false
 }
 
 function getLevelType() {
@@ -113,9 +151,32 @@ function getLevelType() {
 }
 
 export function getStateData() {
-
+    const gameState =  {
+        playerAvatarsShop, playerAvatarIndex,
+        playerCoins, playerSaves, playerLevel,
+        playerTopScore, playerTarget, playerPrevious,
+        isSaveCoinsAvailable, isSaveAdAvailable
+    }
+    return gameState
 }
 
-export function setStoredState() {
+export function setStoredState(savedState) {
+    if (!savedState) return
+
+    if ('playerAvatarsShop' in savedState) playerAvatarsShop = savedState.playerAvatarsShop
+    if ('playerAvatarIndex' in savedState) playerAvatarIndex = savedState.playerAvatarIndex
+    if ('playerCoins' in savedState) playerCoins = savedState.playerCoins
+    if ('playerSaves' in savedState) playerSaves = savedState.playerSaves
+    if ('playerLevel' in savedState) playerLevel = savedState.playerLevel
+    if ('playerTopScore' in savedState) playerTopScore = savedState.playerTopScore
+    if ('playerTarget' in savedState) playerTarget = savedState.playerTarget
+    if ('playerPrevious' in savedState) {
+        playerPrevious = savedState.playerPrevious
+        playerScore = savedState.playerPrevious
+    }
+    if ('isSaveCoinsAvailable' in savedState) isSaveCoinsAvailable = savedState.isSaveCoinsAvailable
+    if ('isSaveAdAvailable' in savedState) isSaveAdAvailable = savedState.isSaveAdAvailable
     
+    // После обновления пересчитываем прогресс
+    playerProgress = 0
 }
