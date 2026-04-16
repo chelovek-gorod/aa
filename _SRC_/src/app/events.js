@@ -28,6 +28,8 @@ export const events = createEnum([
 
     'pauseGameplay',
     'resumeGameplay',
+
+    'getTopResults',
 ])
 
 export function screenResize( data ) {
@@ -89,4 +91,8 @@ export function pauseGameplay() {
 }
 export function resumeGameplay() {
     EventHub.emit( events.resumeGameplay )
+}
+
+export function getTopResults(data) {
+    EventHub.emit( events.getTopResults, data )
 }

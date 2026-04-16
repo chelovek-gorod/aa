@@ -1,9 +1,8 @@
-import { Container, Sprite, Text, Texture } from 'pixi.js'
+import { Container, Sprite } from 'pixi.js'
 import { kill, tickerAdd } from '../../../app/application'
 import { atlases, images } from '../../../app/assets'
 import BackgroundImage from '../../BG/BackgroundImage'
 import MenuUI from '../../UI/MenuUI'
-import Popup from '../../popup/Popup'
 import { SCENE_NAME } from '../SceneManager'
 import { BUTTON_TYPE, FLY_MESSAGE_TYPE, TEXT_FLY_MESSAGE } from '../../localText'
 import FlashButton, { FLASH_TYPE } from '../../UI/FlashButton'
@@ -54,9 +53,6 @@ export default class WheelScene extends Container {
         this.ui = new MenuUI(this, SCENE_NAME.Menu, BUTTON_TYPE.STOP, this.stopWheel.bind(this))
         this.addChild(this.ui)
 
-        this.popup = new Popup()
-        this.addChild(this.popup)
-
         tickerAdd(this)
     }
 
@@ -66,7 +62,6 @@ export default class WheelScene extends Container {
 
         this.bg.screenResize(screenData)
         this.ui.screenResize(screenData)
-        this.popup.screenResize(screenData)
 
         const widthRate = screenData.width / screenData.height
 

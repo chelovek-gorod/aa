@@ -5,17 +5,19 @@ import { EventHub, events } from "../../app/events"
 
 import LoadScene from "./load/LoadScene"
 import MenuScene from "./menu/MenuScene"
+import ResultsScene from "./results/ResultsScene"
 import ShopScene from "./shop/ShopScene"
 import LevelScene from "./level/LevelScene"
-import WheelScene from "./wheel.js/WheelScene"
+import WheelScene from "./wheel/WheelScene"
 
 export const SCENE_NAME = createEnum(
-    ['Load', 'Menu', 'Shop', 'Wheel', 'Level']
+    ['Load', 'Menu', 'Results', 'Shop', 'Wheel', 'Level']
 )
 
 const SCENES = {
     [SCENE_NAME.Load] : LoadScene,
     [SCENE_NAME.Menu] : MenuScene,
+    [SCENE_NAME.Results] : ResultsScene,
     [SCENE_NAME.Shop] : ShopScene,
     [SCENE_NAME.Wheel] : WheelScene,
     [SCENE_NAME.Level] : LevelScene,

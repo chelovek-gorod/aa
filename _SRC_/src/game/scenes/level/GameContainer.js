@@ -120,7 +120,7 @@ export default class GameContainer extends Container {
     }
 
     getFlyClick() {
-        if (this.player && playerSaves >= 0) this.player.fly()
+        if (this.player && timeScale >= 1) this.player.fly()
     }
 
     slowDown() {

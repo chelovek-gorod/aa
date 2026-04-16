@@ -13,7 +13,7 @@ import { SCENE_NAME } from '../SceneManager'
 import { BUTTON_TYPE, FLY_MESSAGE_TYPE, TEXT_FLY_MESSAGE, TEXT_NO_SKINS } from '../../localText'
 import FlyText from '../level/FlyText'
 import { getLanguage } from '../../localization'
-import { showRewardAdSDK } from '../../storage'
+import { getTopPlayers, showRewardAdSDK } from '../../storage'
 
 const musics = [ music.bgm_menu_1, music.bgm_menu_2, music.bgm_menu_3, music.bgm_menu_4 ]
 let currentMusicIndex = Math.floor( Math.random() * musics.length )
@@ -139,7 +139,8 @@ export default class Menu extends Container {
     }
 
     showResults() {
-        this.addChild( new FlyText('...', 0, 0, false) )
+        getTopPlayers()
+        startScene( SCENE_NAME.Results )
     }
 
     addSaveForCoins() {

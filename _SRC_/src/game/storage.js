@@ -1,4 +1,4 @@
-import { EventHub, events, gamePause, gameResume } from '../app/events'
+import { EventHub, events, gamePause, gameResume, getTopResults } from '../app/events'
 import { getSoundData, setStoredSoundData } from '../app/sound'
 import LocalMockSDK from '../sdk/LocalMock'
 import YaGamesSDK from '../sdk/YaGamesSDK'
@@ -84,4 +84,15 @@ export function showRewardAdSDK( callback ) {
         */
         callback(isOk)
     })
+}
+
+export function getTopPlayers() {
+    // leaderboardName, topQuantity, aroundQuantity, callback
+    SDK.fetchLeaderboard(LEADERBOARD_NAME, 10, 3, (response) => getAnswerTopPlayers(response))
+}
+function getAnswerTopPlayers(response) {
+    // prepare data from response
+
+    // send event with data
+    getTopResults(response)
 }
