@@ -156,6 +156,14 @@ export const images = {
     asteroid_stone_9: 'asteroid_stone_9.png',
 
     popup_bg: 'popup.png',
+
+    load_spinner: 'load_spinner.png',
+    medal_line: 'medal_line.png',
+    medal_used: 'medal_used.png',
+    medal_player: 'medal_player.png',
+    medal_1: 'medal_1.png',
+    medal_2: 'medal_2.png',
+    medal_3: 'medal_3.png',
 }
 export const atlases = {
     smoke: 'smoke.json',

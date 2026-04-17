@@ -381,6 +381,23 @@ export const TEXT_FREE_WHEEL_SUBTITLE = {
     vi: 'Quay vòng quay may mắn miễn phí mỗi giờ!',
 }
 
+export const TEXT_LOAD_TOP = {
+    en: 'Loading leaderboard',
+    ru: 'Загружаем рекорды',
+    tr: 'Skor tablosu yükleniyor',
+    es: 'Cargando clasificación',
+    de: 'Bestenliste wird geladen',
+    pt: 'Carregando classificação',
+    fr: 'Chargement du classement',
+    pl: 'Wczytywanie rankingu',
+    it: 'Caricamento classifica',
+    nl: 'Ranglijst laden',
+    cs: 'Načítání žebříčku',
+    id: 'Memuat papan skor',
+    th: 'กำลังโหลดกระดานผู้นำ',
+    vi: 'Đang tải bảng xếp hạng',
+}
+
 export const TEXT_EMPTY = {
     en: '',
     ru: '',

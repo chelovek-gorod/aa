@@ -67,6 +67,8 @@ export let styles = {
     popupTitle: null,
     popupDescription: null,
     popupLabel: null,
+
+    topTable: null,
 }
 
 export function initFontStyles() {
@@ -236,6 +238,17 @@ export function initFontStyles() {
         stroke: {
             color: 0x000000,
             width: 3
+        }
+    })
+
+    styles.topTable = new TextStyle({
+        fontFamily: fonts.P,
+        fontSize: 24,
+        fill: 0xffffff,
+        align: 'center',
+        stroke: {
+            color: 0x000000,
+            width: 2
         }
     })
 

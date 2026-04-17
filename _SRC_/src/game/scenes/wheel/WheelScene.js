@@ -65,9 +65,10 @@ export default class WheelScene extends Container {
         this.ui = new MenuUI(this, SCENE_NAME.Menu, BUTTON_TYPE.STOP, this.stopWheel.bind(this))
         this.addChild(this.ui)
 
+        this.popup = new Popup()
+        this.addChild(this.popup)
+
         if (freeSpinTime === 0) {
-            this.popup = new Popup()
-            this.addChild(this.popup)
             this.popup.show(POPUP_TYPE.FREE_SPIN)
             soundPlay(sounds.se_free_spin)
             setFreeSpinTime()
@@ -85,7 +86,7 @@ export default class WheelScene extends Container {
 
         this.bg.screenResize(screenData)
         this.ui.screenResize(screenData)
-        if (this.popup) this.popup.screenResize(screenData)
+        this.popup.screenResize(screenData)
         this.firework.resize(screenData.width, screenData.height)
 
         const widthRate = screenData.width / screenData.height
@@ -176,7 +177,9 @@ export default class WheelScene extends Container {
         this.wheelBorder.tint = 0x333333
 
         launchFirework({
-            point: {x: 0, y: 240}, offset: {x: 80, y: 40}, count: 18, sparks: 120
+            point: {x: 0, y: this.height * 0.1},
+            offset: {x: this.width * 0.1, y: this.height * 0.05},
+            count: 18, sparks: 120
         })
         soundPlay(sounds.se_fireworks)
     }
