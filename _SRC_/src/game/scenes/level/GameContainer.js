@@ -164,7 +164,7 @@ export default class GameContainer extends Container {
         launchFirework({
             point: {x: 0, y: 360}, offset: {x: 120, y: 60}, count: 18, sparks: 120
         })
-        soundPlay(sounds.se_free_spin)
+        soundPlay(sounds.se_level)
     }
 
     tick(deltaMs) {

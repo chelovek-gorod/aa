@@ -7,8 +7,8 @@ const state = {
     isSoundOn: true,
     soundVolume: 1.0,
     isMusicOn: true,
-    musicVolume: 0.4,
-    volumeStep: 0.2,
+    musicVolume: 0.7,
+    volumeStep: 0.1,
 }
 
 let isGamePaused = false

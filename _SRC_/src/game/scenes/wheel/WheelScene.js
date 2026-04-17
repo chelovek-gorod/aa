@@ -22,6 +22,8 @@ const SIZE = 620
 
 const CLICK_TIMEOUT = 600
 
+const AUTO_STOP_TIME = 6000
+
 const WHEEL_SPEED = 0.012
 const FRICTION = 0.976        // коэффициент замедления
 const MIN_SPEED = 0.0018      // порог, ниже которого проверяем сектор
@@ -44,6 +46,7 @@ export default class WheelScene extends Container {
 
         this.speed = WHEEL_SPEED
         this.clickTimeout = CLICK_TIMEOUT
+        this.autoStopTimer = AUTO_STOP_TIME
 
         this.wheelDisc = new Sprite(images.wheel_disc)
         this.wheelDisc.anchor.set(0.5)
@@ -112,6 +115,7 @@ export default class WheelScene extends Container {
 
                 this.speed = WHEEL_SPEED
                 this.clickTimeout = CLICK_TIMEOUT
+                this.autoStopTimer = AUTO_STOP_TIME
 
                 tickerAdd(this)
             } else {
@@ -133,6 +137,7 @@ export default class WheelScene extends Container {
 
         this.ui.startButton.setActive(false)
         this.speed *= FRICTION
+        this.autoStopTimer = 0
     }
 
     onWheelStopped(currentSector) {
@@ -171,8 +176,9 @@ export default class WheelScene extends Container {
         this.wheelBorder.tint = 0x333333
 
         launchFirework({
-            point: {x: 0, y: 320}, offset: {x: 120, y: 60}, count: 9, sparks: 60
+            point: {x: 0, y: 240}, offset: {x: 80, y: 40}, count: 18, sparks: 120
         })
+        soundPlay(sounds.se_fireworks)
     }
 
     getCurrentSector() {
@@ -186,6 +192,11 @@ export default class WheelScene extends Container {
         if (this.speed === 0) return
 
         if (this.clickTimeout > 0) this.clickTimeout -= deltaMs
+
+        if (this.speed === WHEEL_SPEED && this.autoStopTimer > 0) {
+            this.autoStopTimer -= deltaMs
+            if (this.autoStopTimer <= 0) this.stopWheel()
+        }
 
         this.wheelDisc.rotation += this.speed * deltaMs
 

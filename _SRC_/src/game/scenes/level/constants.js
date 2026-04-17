@@ -8,5 +8,5 @@ for (let i = 0; i < NOISE_BUFFER_SIZE; i++) {
     NOISE_BUFFER[i] = Math.random() * 2 - 1 // диапазон -1.0 ... 1.0
 }
 
-export const HELP_DURATION = 2400
-export const HELP_IN_OUT = 1800
+export const HELP_DURATION = 3600
+export const HELP_IN_OUT = 2400

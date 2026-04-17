@@ -6,21 +6,21 @@ import { timeScale } from "../state";
 import { NOISE_BUFFER, NOISE_BUFFER_SIZE, NOISE_MASK, _2PI } from "../scenes/level/constants";
 
 // ========== ПАРАМЕТРЫ (оптимизированы под текстуру 32x32 с glow) ==========
-const ROCKET_SIZE = 0.12;
-const TRAIL_SIZE = 0.05;
-const EXPLOSION_SIZE_MIN = 0.08;
-const EXPLOSION_SIZE_MAX = 0.25;
+const ROCKET_SIZE = 0.18;
+const TRAIL_SIZE = 0.12;
+const EXPLOSION_SIZE_MIN = 0.12;
+const EXPLOSION_SIZE_MAX = 0.36;
 
-const ROCKET_SPEED = 1.3;
+const ROCKET_SPEED = 1.2;
 const EXPLOSION_SPEED = 0.36;
 const GRAVITY = 0.0009;
 const ROCKET_GRAVITY = 0.0018;
 
-const TRAIL_COUNT = 10;               // уменьшено, т.к. частицы стали мелкими
-const ALPHA_DECAY_EXPLOSION = 0.0012;
+const TRAIL_COUNT = 12;               // уменьшено, т.к. частицы стали мелкими
+const ALPHA_DECAY_EXPLOSION = 0.0009;
 
-const LAUNCH_DELAY_MIN = 50;
-const LAUNCH_DELAY_MAX = 300;
+const LAUNCH_DELAY_MIN = 120;
+const LAUNCH_DELAY_MAX = 360;
 
 const COLORS = [
     0xff5555, 0xff9933, 0xffdd44, 0x55cc55, 0x5599ff, 0xbb66ff, 0xff66aa

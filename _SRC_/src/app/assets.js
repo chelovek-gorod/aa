@@ -66,7 +66,7 @@ export const images = {
 
     done: 'OK.png',
 
-    help: 'help.png',
+    help: 'help2.png',
 
     music_0: 'music_0.png',
     music_1: 'music_1.png',
@@ -165,6 +165,7 @@ export const sounds = {
     se_hover: 'se_hover.mp3',
     se_click: 'se_click.mp3',
     se_fall: 'se_fall.mp3',
+    se_level: 'se_level.mp3',
     se_asteroid_explosion: 'se_asteroid.mp3',
     se_obstacle_explosion: 'se_obstacle_explosion.mp3',
     se_player_up: 'se_player_up.mp3',
@@ -172,6 +173,7 @@ export const sounds = {
     se_save: 'se_save.mp3',
     se_new_skin: 'se_new_skin.mp3',
     se_free_spin: 'se_free_spin.mp3',
+    se_fireworks: 'se_fireworks.mp3',
 }
 export const music = {
     bgm_menu_1: 'bgm_menu_1.mp3',

@@ -7,7 +7,7 @@ import Shaker from './Shaker'
 import GameContainer from './GameContainer'
 import UI from './UI'
 import { getDeviceType, kill, tickerAdd, tickerRemove } from '../../../app/application'
-import { playerLevel } from '../../state'
+import { playerTopScore } from '../../state'
 import { HELP_DURATION, HELP_IN_OUT } from './constants'
 import Popup, { POPUP_TYPE } from '../../popup/Popup'
 
@@ -36,7 +36,11 @@ export default class LevelScene extends Container {
         this.gameContainer = new GameContainer(this.shaker)
         this.shaker.addChild(this.gameContainer)
 
-        if (playerLevel === 1) {
+        if (playerTopScore < 10) {
+            this.helpBg = new Graphics()
+            this.helpBg.alpha = 0
+            this.addChild(this.helpBg)
+
             this.help = new Sprite(images.help)
             this.help.anchor.set(0.5)
             this.help.alpha = 0
@@ -98,6 +102,10 @@ export default class LevelScene extends Container {
         this.redrawTapArea()
 
         if(this.help) {
+            this.helpBg.clear()
+            this.helpBg.rect(-screenData.centerX, -screenData.centerY, screenData.width, screenData.height)
+            this.helpBg.fill(0x000000)
+
             const helpScale = Math.min(
                 1,
                 screenData.width / this.help.texture.width,
@@ -148,6 +156,7 @@ export default class LevelScene extends Container {
         if(this.help) {
             if (this.help.time > HELP_DURATION) {
                 this.help.alpha = Math.min(1, this.help.alpha + this.help.alphaStep * deltaMs)
+                this.helpBg.alpha = this.help.alpha * 0.75
                 if (this.help.alpha === 1) this.help.time = HELP_DURATION
             } else {
                 if (this.help.alpha === 1) {
@@ -158,9 +167,12 @@ export default class LevelScene extends Container {
                     }
                 } else {
                     this.help.alpha = Math.max(0, this.help.alpha - this.help.alphaStep * deltaMs)
+                    this.helpBg.alpha = this.help.alpha * 0.75
                     if (this.help.alpha === 0) {
                         this.help.destroy()
                         this.help = null
+                        this.helpBg.destroy()
+                        this.helpBg = null
                         tickerRemove(this)
                     }
                 }
