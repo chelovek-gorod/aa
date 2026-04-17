@@ -143,6 +143,7 @@ export const images = {
 
     spark: 'spark.png',
     snowflake: 'snowflake.png',
+    firework: 'firework.png',
 
     asteroid_stone_1: 'asteroid_stone_1.png',
     asteroid_stone_2: 'asteroid_stone_2.png',

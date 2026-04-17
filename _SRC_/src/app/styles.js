@@ -36,6 +36,14 @@ const savesGradient = new FillGradient({
       { offset: 1,    color: '#ff0000' },
     ],
 })
+const titleGradient = new FillGradient({
+    type: 'linear',
+    colorStops: [
+      { offset: 0,    color: '#ffFF00' },
+      { offset: 0.5,    color: '#ffffff' },
+      { offset: 1,    color: '#ffFF00' },
+    ],
+})
 
 export let styles = {
     isReady: false, /* if true -> fonts is already loaded */
@@ -194,20 +202,28 @@ export function initFontStyles() {
     styles.popupTitle = new TextStyle({
         fontFamily: fonts.P,
         fontSize: 64,
-        fill: levelGradient,
+        fill: titleGradient,
         align: 'center',
         wordWrap: true,
         wordWrapWidth: 600,
         lineHeight: 64,
+        stroke: {
+            color: 0x000000,
+            width: 3
+        }
     })
     styles.popupDescription = new TextStyle({
         fontFamily: fonts.P,
         fontSize: 32,
-        fill: savesGradient,
+        fill: 0xffffff,
         align: 'center',
         wordWrap: true,
         wordWrapWidth: 600,
         lineHeight: 32,
+        stroke: {
+            color: 0x000000,
+            width: 3
+        }
     })
     styles.popupLabel = new TextStyle({
         fontFamily: fonts.P,
@@ -219,7 +235,7 @@ export function initFontStyles() {
         lineHeight: 32,
         stroke: {
             color: 0x000000,
-            width: 2
+            width: 3
         }
     })
 

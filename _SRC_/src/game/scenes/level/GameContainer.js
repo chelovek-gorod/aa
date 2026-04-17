@@ -1,7 +1,9 @@
 import { Container, TilingSprite, ColorMatrixFilter, AnimatedSprite, Sprite } from "pixi.js";
 import { kill, tickerAdd, tickerRemove } from "../../../app/application";
-import { atlases, images } from "../../../app/assets";
-import { EventHub, events, shakeScreen, startScene } from "../../../app/events";
+import { atlases, images, sounds } from "../../../app/assets";
+import { EventHub, events, launchFirework, shakeScreen, startScene } from "../../../app/events";
+import { soundPlay } from "../../../app/sound";
+import FireworkParticles from "../../popup/Firework";
 import { levelType, LEVEL_TYPE, playerSaves, playerUseSave, setTimeScale, timeScale } from "../../state";
 import { SCENE_NAME } from "../SceneManager";
 import Asteroids from "./Asteroids";
@@ -89,10 +91,14 @@ export default class GameContainer extends Container {
             this.snow = new SnowParticles(this.scrollSpeed)
             this.addChild(this.snow.container)
         }
+
+        this.firework = new FireworkParticles(false)
+        this.addChild(this.firework.container)
         
         EventHub.on( events.slowDown, this.slowDown, this )
         EventHub.on( events.pauseGameplay, this.pause, this )
         EventHub.on( events.resumeGameplay, this.resume, this )
+        EventHub.on( events.getNextLevel, this.launchFirework, this )
 
         tickerAdd(this)
     }
@@ -116,6 +122,7 @@ export default class GameContainer extends Container {
         this.asteroids.resize(width)
         this.stones.resize(width, height)
         this.sparks.resize(width, height)
+        this.firework.resize(width, height)
         if (this.snow) this.snow.resize(screenData)
     }
 
@@ -153,6 +160,13 @@ export default class GameContainer extends Container {
         tickerAdd(this)
     }
 
+    launchFirework() {
+        launchFirework({
+            point: {x: 0, y: 360}, offset: {x: 120, y: 60}, count: 18, sparks: 120
+        })
+        soundPlay(sounds.se_free_spin)
+    }
+
     tick(deltaMs) {
         if (timeScale < 1 && !this.isGamePaused) {
             setTimeScale( Math.max(0, timeScale - SLOW_DOWN_STEP * deltaMs) )
@@ -188,12 +202,16 @@ export default class GameContainer extends Container {
         EventHub.off( events.slowDown, this.slowDown, this )
         EventHub.off( events.pauseGameplay, this.pause, this )
         EventHub.off( events.resumeGameplay, this.resume, this )
+        EventHub.off( events.getNextLevel, this.launchFirework, this )
 
         this.sparks.kill()
         this.sparks = null
 
         this.stones.kill()
         this.stones = null
+
+        this.firework.kill()
+        this.firework = null
 
         if (this.snow) {
             this.snow.kill()

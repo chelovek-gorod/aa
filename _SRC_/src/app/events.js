@@ -29,6 +29,8 @@ export const events = createEnum([
     'pauseGameplay',
     'resumeGameplay',
 
+    'launchFirework',
+
     'getTopResults',
 ])
 
@@ -95,4 +97,8 @@ export function resumeGameplay() {
 
 export function getTopResults(data) {
     EventHub.emit( events.getTopResults, data )
+}
+
+export function launchFirework(point) {
+    EventHub.emit( events.launchFirework, point )
 }

@@ -1,6 +1,7 @@
 import { Sprite, Container, Text } from "pixi.js";
 import { kill, tickerAdd } from "../../../app/application";
 import { images } from "../../../app/assets";
+import { soundPlay } from "../../../app/sound";
 import { styles } from "../../../app/styles";
 import { addCoins } from "../../state";
 

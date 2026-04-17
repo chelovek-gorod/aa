@@ -157,12 +157,12 @@ export default class Popup extends Container {
         const description = TEXT_FREE_WHEEL_SUBTITLE[this.currentLanguage]
         const descriptionText = new Text({text: description, style: styles.popupDescription})
         descriptionText.anchor.set(0.5, 0)
-        descriptionText.position.set(0, 140)
+        descriptionText.position.set(0, 130)
         this.content.addChild(descriptionText)
 
         const image = new Sprite(images.free_spin)
         image.anchor.set(0.5)
-        image.position.set(0, -20)
+        image.position.set(0, -30)
         this.content.addChild(image)
 
         this.closeButton.setTextKey( BUTTON_TYPE.SPIN )

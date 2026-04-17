@@ -12,11 +12,15 @@ import { freeSpinTime, playerAddCoins, playerAddSave, setFreeSpinTime } from '..
 import { showRewardAdSDK } from '../../storage'
 import Popup, { POPUP_TYPE } from '../../popup/Popup'
 import { soundPlay } from '../../../app/sound'
+import FireworkParticles from '../../popup/Firework'
+import { launchFirework } from '../../../app/events'
 
 const OFFSET_Y = 120
 const OFFSET_X = 30
 
 const SIZE = 620
+
+const CLICK_TIMEOUT = 600
 
 const WHEEL_SPEED = 0.012
 const FRICTION = 0.976        // коэффициент замедления
@@ -34,9 +38,12 @@ export default class WheelScene extends Container {
         this.addChild(this.bg)
 
         this.mainContainer = new Container()
+        this.mainContainer.eventMode = 'static'
+        this.mainContainer.on('pointerdown', this.getWheelClick, this)
         this.addChild(this.mainContainer)
 
         this.speed = WHEEL_SPEED
+        this.clickTimeout = CLICK_TIMEOUT
 
         this.wheelDisc = new Sprite(images.wheel_disc)
         this.wheelDisc.anchor.set(0.5)
@@ -63,6 +70,9 @@ export default class WheelScene extends Container {
             setFreeSpinTime()
         }
 
+        this.firework = new FireworkParticles()
+        this.addChild(this.firework.container)
+
         tickerAdd(this)
     }
 
@@ -73,6 +83,7 @@ export default class WheelScene extends Container {
         this.bg.screenResize(screenData)
         this.ui.screenResize(screenData)
         if (this.popup) this.popup.screenResize(screenData)
+        this.firework.resize(screenData.width, screenData.height)
 
         const widthRate = screenData.width / screenData.height
 
@@ -100,6 +111,8 @@ export default class WheelScene extends Container {
                 this.ui.resetButton(BUTTON_TYPE.STOP, SCENE_NAME.Menu, this.stopWheel.bind(this))
 
                 this.speed = WHEEL_SPEED
+                this.clickTimeout = CLICK_TIMEOUT
+
                 tickerAdd(this)
             } else {
                 const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.ERROR][getLanguage()]
@@ -108,7 +121,16 @@ export default class WheelScene extends Container {
         })
     }
 
+    getWheelClick() {
+        if (this.speed !== WHEEL_SPEED || this.clickTimeout > 0) return
+
+        this.stopWheel()
+        soundPlay(sounds.se_hover)
+    }
+
     stopWheel() {
+        if (this.speed !== WHEEL_SPEED || this.clickTimeout > 0) return
+
         this.ui.startButton.setActive(false)
         this.speed *= FRICTION
     }
@@ -117,7 +139,7 @@ export default class WheelScene extends Container {
         this.ui.startButton.setActive(true)
         this.ui.resetButton(BUTTON_TYPE.BACK, SCENE_NAME.Menu)
         // Здесь можно добавить логику награды за выпавший сектор
-        console.log('Wheel stopped at sector:', currentSector)
+        // console.log('Wheel stopped at sector:', currentSector)
         let coins = 0
         switch(currentSector) {
             case 19 :
@@ -147,6 +169,10 @@ export default class WheelScene extends Container {
         this.adButton.setStartScale(1)
         this.wheelDisc.tint = 0x333333
         this.wheelBorder.tint = 0x333333
+
+        launchFirework({
+            point: {x: 0, y: 320}, offset: {x: 120, y: 60}, count: 9, sparks: 60
+        })
     }
 
     getCurrentSector() {
@@ -158,6 +184,8 @@ export default class WheelScene extends Container {
 
     tick(deltaMs) {
         if (this.speed === 0) return
+
+        if (this.clickTimeout > 0) this.clickTimeout -= deltaMs
 
         this.wheelDisc.rotation += this.speed * deltaMs
 
@@ -174,5 +202,12 @@ export default class WheelScene extends Container {
                 }
             }
         }
+    }
+
+    kill() {
+        this.mainContainer.off('pointerdown', this.stopWheel, this)
+
+        this.firework.kill()
+        this.firework = null
     }
 }

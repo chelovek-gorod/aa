@@ -8,7 +8,7 @@ export const setTimeScale = (ts) => timeScale = ts
 export let isAdAvailable = true
 
 // controlled by SceneManager.js
-const FREE_SPIN_HOURS = 1 / 60
+const FREE_SPIN_HOURS = 1
 export let freeSpinTime = 0
 export const resetFreeSpinTime = () => freeSpinTime = 0
 export const setFreeSpinTime = () => freeSpinTime = Date.now() + 1000 * 60 * 60 * FREE_SPIN_HOURS 
