@@ -13,7 +13,7 @@ import { showRewardAdSDK } from '../../storage'
 import Popup, { POPUP_TYPE } from '../../popup/Popup'
 import { soundPlay } from '../../../app/sound'
 import FireworkParticles from '../../popup/Firework'
-import { launchFirework } from '../../../app/events'
+import { EventHub, events, launchFirework } from '../../../app/events'
 
 const OFFSET_Y = 120
 const OFFSET_X = 30
@@ -44,9 +44,9 @@ export default class WheelScene extends Container {
         this.mainContainer.on('pointerdown', this.getWheelClick, this)
         this.addChild(this.mainContainer)
 
-        this.speed = WHEEL_SPEED
-        this.clickTimeout = CLICK_TIMEOUT
-        this.autoStopTimer = AUTO_STOP_TIME
+        this.speed = 0
+        this.clickTimeout = 0
+        this.autoStopTimer = 0
 
         this.wheelDisc = new Sprite(images.wheel_disc)
         this.wheelDisc.anchor.set(0.5)
@@ -71,13 +71,14 @@ export default class WheelScene extends Container {
         if (freeSpinTime === 0) {
             this.popup.show(POPUP_TYPE.FREE_SPIN)
             soundPlay(sounds.se_free_spin)
-            setFreeSpinTime()
+        } else {
+            this.startFirstSpin(false)
         }
+
+        EventHub.on( events.freeSpinPopupClosed, this.startFirstSpin, this )
 
         this.firework = new FireworkParticles()
         this.addChild(this.firework.container)
-
-        tickerAdd(this)
     }
 
     screenResize(screenData) {
@@ -98,6 +99,16 @@ export default class WheelScene extends Container {
         const scaleY = Math.min(1, height / SIZE)
         this.mainContainer.scale.set(Math.min(scaleX, scaleY))
         this.mainContainer.position.set(0, widthRate > 1 ? -36 : 0)
+    }
+
+    startFirstSpin(isFree = true) {
+        if (isFree) setFreeSpinTime()
+
+        this.speed = WHEEL_SPEED
+        this.clickTimeout = CLICK_TIMEOUT
+        this.autoStopTimer = AUTO_STOP_TIME
+
+        tickerAdd(this)
     }
 
     rotateWheel() {
@@ -220,6 +231,7 @@ export default class WheelScene extends Container {
 
     kill() {
         this.mainContainer.off('pointerdown', this.stopWheel, this)
+        EventHub.off( events.freeSpinPopupClosed, this.startFirstSpin, this )
 
         this.firework.kill()
         this.firework = null

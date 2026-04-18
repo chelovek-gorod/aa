@@ -15,7 +15,7 @@ const OFFSET_Y = 120
 const OFFSET_X = 30
 
 const TABLE_WIDTH = 680
-const TABLE_HEIGHT = 680
+const TABLE_HEIGHT = 68
 
 // Цвета для анимации спиннера
 const COLOR_BLUE = 0x3366ff;

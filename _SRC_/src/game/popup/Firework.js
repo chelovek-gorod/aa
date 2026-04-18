@@ -6,9 +6,9 @@ import { timeScale } from "../state";
 import { NOISE_BUFFER, NOISE_BUFFER_SIZE, NOISE_MASK, _2PI } from "../scenes/level/constants";
 
 // ========== ПАРАМЕТРЫ (оптимизированы под текстуру 32x32 с glow) ==========
-const ROCKET_SIZE = 0.18;
-const TRAIL_SIZE = 0.12;
-const EXPLOSION_SIZE_MIN = 0.12;
+const ROCKET_SIZE = 0.12;
+const TRAIL_SIZE = 0.06;
+const EXPLOSION_SIZE_MIN = 0.18;
 const EXPLOSION_SIZE_MAX = 0.36;
 
 const ROCKET_SPEED = 1.2;

@@ -32,6 +32,7 @@ export const events = createEnum([
     'launchFirework',
 
     'getTopResults',
+    'freeSpinPopupClosed',
 ])
 
 export function screenResize( data ) {
@@ -101,4 +102,8 @@ export function getTopResults(data) {
 
 export function launchFirework(point) {
     EventHub.emit( events.launchFirework, point )
+}
+
+export function freeSpinPopupClosed() {
+    EventHub.emit( events.freeSpinPopupClosed )
 }
