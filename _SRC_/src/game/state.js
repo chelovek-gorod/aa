@@ -98,7 +98,6 @@ export function playerAddCoins(count) {
 export function playerUseSave() {
     addCoins = 1
     playerSaves--
-    console.log('addCoins =', addCoins )
 
     if (playerSaves < 0) {
         playerSaves = 0

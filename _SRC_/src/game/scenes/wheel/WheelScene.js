@@ -1,5 +1,5 @@
 import { Container, Sprite } from 'pixi.js'
-import { kill, tickerAdd } from '../../../app/application'
+import { kill, tickerAdd, tickerRemove } from '../../../app/application'
 import { atlases, images, sounds } from '../../../app/assets'
 import BackgroundImage from '../../BG/BackgroundImage'
 import MenuUI from '../../UI/MenuUI'
@@ -13,7 +13,7 @@ import { showRewardAdSDK } from '../../storage'
 import Popup, { POPUP_TYPE } from '../../popup/Popup'
 import { soundPlay } from '../../../app/sound'
 import FireworkParticles from '../../popup/Firework'
-import { EventHub, events, launchFirework } from '../../../app/events'
+import { EventHub, events } from '../../../app/events'
 
 const OFFSET_Y = 120
 const OFFSET_X = 30
@@ -65,6 +65,9 @@ export default class WheelScene extends Container {
         this.ui = new MenuUI(this, SCENE_NAME.Menu, BUTTON_TYPE.STOP, this.stopWheel.bind(this))
         this.addChild(this.ui)
 
+        this.firework = new FireworkParticles(true)
+        this.addChild(this.firework.container)
+
         this.popup = new Popup()
         this.addChild(this.popup)
 
@@ -72,13 +75,10 @@ export default class WheelScene extends Container {
             this.popup.show(POPUP_TYPE.FREE_SPIN)
             soundPlay(sounds.se_free_spin)
         } else {
-            this.startFirstSpin(false)
+            setTimeout( () => this.startFirstSpin(false), 1 )
         }
 
         EventHub.on( events.freeSpinPopupClosed, this.startFirstSpin, this )
-
-        this.firework = new FireworkParticles()
-        this.addChild(this.firework.container)
     }
 
     screenResize(screenData) {
@@ -187,7 +187,7 @@ export default class WheelScene extends Container {
         this.wheelDisc.tint = 0x333333
         this.wheelBorder.tint = 0x333333
 
-        launchFirework({
+        this.firework.launch({
             point: {x: 0, y: this.height * 0.1},
             offset: {x: this.width * 0.1, y: this.height * 0.05},
             count: 18, sparks: 120
@@ -230,6 +230,7 @@ export default class WheelScene extends Container {
     }
 
     kill() {
+        tickerRemove(this)
         this.mainContainer.off('pointerdown', this.stopWheel, this)
         EventHub.off( events.freeSpinPopupClosed, this.startFirstSpin, this )
 

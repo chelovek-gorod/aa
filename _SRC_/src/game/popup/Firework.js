@@ -27,7 +27,7 @@ const COLORS = [
 ];
 
 export default class FireworkParticles {
-    constructor(isAddBlendMode = true) {
+    constructor(isBlandModeAdd = false) {
         this.container = new ParticleContainer({
             dynamicProperties: {
                 position: true,
@@ -36,7 +36,7 @@ export default class FireworkParticles {
                 color: true
             }
         });
-        this.container.blendMode = isAddBlendMode ? "add" : "normal";
+        if (isBlandModeAdd) this.container.blendMode = "add"
 
         this.pool = [];
         this.particles = [];
@@ -91,9 +91,7 @@ export default class FireworkParticles {
             this.pendingLaunches.push({ timer: delay, data: rocketData });
         }
 
-        if (this.rockets.length === 0 && this.particles.length === 0 && this.pendingLaunches.length > 0) {
-            tickerAdd(this);
-        }
+        if (this.pendingLaunches.length > 0) tickerAdd(this)
     }
 
     _spawnRocket({ x, y, sparksMin, sparksMax }) {
@@ -355,6 +353,7 @@ export default class FireworkParticles {
         EventHub.off(events.launchFirework, this.launch, this);
         tickerRemove(this);
         if (this.container) {
+            if (this.container.parent) this.container.parent.removeChild(this.container)
             this.container.destroy({ children: true });
             this.container = null;
         }

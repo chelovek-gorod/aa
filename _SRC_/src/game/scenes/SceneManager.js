@@ -98,6 +98,7 @@ export default class SceneManager {
     }
     showScreenBlocker() {
         this.blocker.visible = true
+        this.blocker.interactive = true
         sceneAdd(this.blocker)
         document.body.style.cursor = "default"
         this.blocker.cursor = "default"
@@ -126,6 +127,8 @@ export default class SceneManager {
 
         sceneRemove(this.blocker)
         sceneAdd(this.scenesQueue[0])
+        this.blocker.interactive = false
+        this.blocker.cursor = "default"
         sceneAdd(this.blocker)
     }
 

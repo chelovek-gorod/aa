@@ -1,10 +1,10 @@
-import { Container, TilingSprite, ColorMatrixFilter, AnimatedSprite, Sprite } from "pixi.js";
-import { kill, tickerAdd, tickerRemove } from "../../../app/application";
+import { Container, TilingSprite, ColorMatrixFilter, Sprite } from "pixi.js";
+import { tickerAdd, tickerRemove } from "../../../app/application";
 import { atlases, images, sounds } from "../../../app/assets";
 import { EventHub, events, launchFirework, shakeScreen, startScene } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import FireworkParticles from "../../popup/Firework";
-import { levelType, LEVEL_TYPE, playerSaves, playerUseSave, setTimeScale, timeScale } from "../../state";
+import { levelType, LEVEL_TYPE, playerUseSave, setTimeScale, timeScale } from "../../state";
 import { SCENE_NAME } from "../SceneManager";
 import Asteroids from "./Asteroids";
 import Clouds from "./Clouds";
@@ -87,18 +87,18 @@ export default class GameContainer extends Container {
         this.sparks = new SparksParticles(this.scrollSpeed)
         this.addChild(this.sparks.container)
 
+        this.firework = new FireworkParticles()
+        this.addChild(this.firework.container)
+
         if (levelType === LEVEL_TYPE.SNOW) {
             this.snow = new SnowParticles(this.scrollSpeed)
             this.addChild(this.snow.container)
         }
-
-        this.firework = new FireworkParticles(false)
-        this.addChild(this.firework.container)
         
         EventHub.on( events.slowDown, this.slowDown, this )
         EventHub.on( events.pauseGameplay, this.pause, this )
         EventHub.on( events.resumeGameplay, this.resume, this )
-        EventHub.on( events.getNextLevel, this.launchFirework, this )
+        EventHub.on( events.getNextLevel, this.addFirework, this )
 
         tickerAdd(this)
     }
@@ -124,6 +124,15 @@ export default class GameContainer extends Container {
         this.sparks.resize(width, height)
         this.firework.resize(width, height)
         if (this.snow) this.snow.resize(screenData)
+    }
+
+    addFirework() {
+        launchFirework({
+            point: {x: 0, y: 240},
+            offset: {x: 120, y: 60},
+            count: 18, sparks: 120
+        })
+        soundPlay(sounds.se_level)
     }
 
     getFlyClick() {
@@ -160,13 +169,6 @@ export default class GameContainer extends Container {
         tickerAdd(this)
     }
 
-    launchFirework() {
-        launchFirework({
-            point: {x: 0, y: 360}, offset: {x: 120, y: 60}, count: 18, sparks: 120
-        })
-        soundPlay(sounds.se_level)
-    }
-
     tick(deltaMs) {
         if (timeScale < 1 && !this.isGamePaused) {
             setTimeScale( Math.max(0, timeScale - SLOW_DOWN_STEP * deltaMs) )
@@ -199,10 +201,12 @@ export default class GameContainer extends Container {
     }
 
     kill() {
+        setTimeScale(1)
+
         EventHub.off( events.slowDown, this.slowDown, this )
         EventHub.off( events.pauseGameplay, this.pause, this )
         EventHub.off( events.resumeGameplay, this.resume, this )
-        EventHub.off( events.getNextLevel, this.launchFirework, this )
+        EventHub.off( events.getNextLevel, this.addFirework, this )
 
         this.sparks.kill()
         this.sparks = null

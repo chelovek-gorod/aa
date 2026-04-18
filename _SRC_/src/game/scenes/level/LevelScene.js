@@ -36,21 +36,6 @@ export default class LevelScene extends Container {
         this.gameContainer = new GameContainer(this.shaker)
         this.shaker.addChild(this.gameContainer)
 
-        if (playerTopScore < 10) {
-            this.helpBg = new Graphics()
-            this.helpBg.alpha = 0
-            this.addChild(this.helpBg)
-
-            this.help = new Sprite(images.help)
-            this.help.anchor.set(0.5)
-            this.help.alpha = 0
-            this.help.time = HELP_DURATION + HELP_IN_OUT
-            this.help.alphaStep = 1 / HELP_IN_OUT
-            this.addChild(this.help)
-
-            tickerAdd(this)
-        }
-
         this.tapArea = new Graphics()
         this.tapArea.alpha = 0.0003
         this.tapArea.eventMode = 'static'
@@ -65,6 +50,21 @@ export default class LevelScene extends Container {
 
         this.UI = new UI(this.gameContainer)
         this.addChild(this.UI)
+
+        if (playerTopScore < 10) {
+            this.helpBg = new Graphics()
+            this.helpBg.alpha = 0.75
+            this.addChild(this.helpBg)
+
+            this.help = new Sprite(images.help)
+            this.help.anchor.set(0.5)
+            this.help.alpha = 0
+            this.help.time = HELP_DURATION + HELP_IN_OUT
+            this.help.alphaStep = 1 / HELP_IN_OUT
+            this.addChild(this.help)
+
+            tickerAdd(this)
+        }
 
         this.popup = new Popup()
         this.addChild(this.popup)
@@ -156,7 +156,6 @@ export default class LevelScene extends Container {
         if(this.help) {
             if (this.help.time > HELP_DURATION) {
                 this.help.alpha = Math.min(1, this.help.alpha + this.help.alphaStep * deltaMs)
-                this.helpBg.alpha = this.help.alpha * 0.75
                 if (this.help.alpha === 1) this.help.time = HELP_DURATION
             } else {
                 if (this.help.alpha === 1) {
@@ -181,8 +180,8 @@ export default class LevelScene extends Container {
         }
 
         if (this.redIsUp) {
-            this.tapArea.alpha = Math.min(0.6, this.tapArea.alpha + this.redSpeed * deltaMs)
-            if (this.tapArea.alpha === 0.6) this.redIsUp = false
+            this.tapArea.alpha = Math.min(0.75, this.tapArea.alpha + this.redSpeed * deltaMs)
+            if (this.tapArea.alpha === 0.75) this.redIsUp = false
         } else {
             this.tapArea.alpha = Math.max(0.0003, this.tapArea.alpha - this.redSpeed * deltaMs)
             if (this.tapArea.alpha === 0.0003) {
