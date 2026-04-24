@@ -1,14 +1,13 @@
-import { Container, Text, Point, Sprite } from "pixi.js";
-import { getSafeAreaOffsets, kill, tickerAdd, tickerRemove } from "../../app/application";
-import { images } from "../../app/assets";
-import { EventHub, events, startScene } from "../../app/events";
+import { Container, Text, Sprite } from "pixi.js";
+import { getSafeAreaOffsets, tickerAdd, tickerRemove } from "../../app/application";
+import { atlases } from "../../app/assets";
+import { startScene } from "../../app/events";
 import { styles } from "../../app/styles";
 import { playerCoins, playerLevel, playerSaves, playerTopScore } from "../state";
 import TapIcon from "./TapIcon"
 import { formatNumber } from "../scenes/level/UI"
 import { POPUP_TYPE } from "../popup/Popup";
 import Button from "./Button";
-import { SCENE_NAME } from "../scenes/SceneManager";
 
 export default class MenuUI extends Container {
     constructor(menu, targetScene, buttonType, buttonCallback = null) {
@@ -18,7 +17,7 @@ export default class MenuUI extends Container {
 
         this.levelContainer = new Container()
         
-        this.levelIcon = new Sprite(images.cup)
+        this.levelIcon = new Sprite(atlases.ui.textures.cup)
         this.levelIcon.scale.set(0.5)
         this.levelContainer.addChild(this.levelIcon)
 
@@ -33,7 +32,7 @@ export default class MenuUI extends Container {
         this.addChild(this.levelContainer)
 
         this.settingsContainer = new Container()
-        this.settingsButton = new TapIcon( images.settings, this.openSettings.bind(this), true )
+        this.settingsButton = new TapIcon( atlases.ui.textures.settings, this.openSettings.bind(this), true )
         this.settingsButton.anchor.set(1, 0)
         this.settingsButton.scale.set(0.5)
         this.settingsContainer.addChild(this.settingsButton)
@@ -42,7 +41,7 @@ export default class MenuUI extends Container {
         this.coinAnimations = 0
         this.coinContainer = new Container()
 
-        this.coinIcon = new Sprite(images.coin)
+        this.coinIcon = new Sprite(atlases.ui.textures.coin)
         this.coinIcon.anchor.set(1, 0)
         this.coinIcon.scale.set(0.5)
         this.coinContainer.addChild(this.coinIcon)
@@ -56,7 +55,7 @@ export default class MenuUI extends Container {
         this.saveAnimations = 0
         this.saveContainer = new Container()
 
-        this.saveIcon = new Sprite(images.save)
+        this.saveIcon = new Sprite(atlases.ui.textures.save)
         this.saveIcon.scale.set(0.5)
         this.saveContainer.addChild(this.saveIcon)
 

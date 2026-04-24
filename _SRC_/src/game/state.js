@@ -1,5 +1,5 @@
 import { EventHub, events, getNextLevel } from "../app/events"
-import { updateStoredData } from "../game/storage"
+import { setLeaderboardScore, updateStoredData } from "../game/storage"
 import { createEnum } from "../utils/functions"
 
 export let timeScale = 1
@@ -15,7 +15,7 @@ export const setFreeSpinTime = () => freeSpinTime = Date.now() + 1000 * 60 * 60 
 
 export const LEVEL_TYPE = createEnum(['GROUND', 'WATER', 'SNOW', 'MOON'])
 
-export let levelType = LEVEL_TYPE.GROUND
+export let levelType = LEVEL_TYPE.WATER
 let previousLevelTypes = []
 
 export let playerAvatarsShop = {
@@ -77,6 +77,10 @@ export let isSaveAdAvailable = true
 
 export function playerAddScore(score) {
     playerScore += score
+    if (playerScore > playerTopScore) {
+        playerTopScore = playerScore
+        setLeaderboardScore(playerScore)
+    }
     if (playerScore >= playerTarget) {
         playerPrevious = playerTarget
         playerLevel++
@@ -87,7 +91,6 @@ export function playerAddScore(score) {
         updateStoredData()
     }           
     playerProgress = (playerScore - playerPrevious) / (playerTarget - playerPrevious)
-    playerTopScore = Math.max(playerScore, playerTopScore)
 }
 export function playerUseCoins(count) {
     playerCoins -= count

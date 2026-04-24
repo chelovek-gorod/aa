@@ -2,7 +2,7 @@ import { Application } from 'pixi.js'
 import { changeFocus, EventHub, events, screenResize } from './events'
 
 // app settings
-let isAutoFoolScreen = false
+let isAutoFoolScreen = true
 
 let isGlobalAppCursor = false // NEED DEPRECIATED
 export let appPointer = null

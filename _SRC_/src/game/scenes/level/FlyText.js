@@ -1,6 +1,5 @@
-import { Sprite, Text } from "pixi.js";
+import { Text } from "pixi.js";
 import { kill, tickerAdd } from "../../../app/application";
-import { images } from "../../../app/assets";
 import { styles } from "../../../app/styles";
 
 export default class FlyText extends Text {

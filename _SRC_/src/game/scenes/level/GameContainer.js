@@ -1,6 +1,6 @@
 import { Container, TilingSprite, ColorMatrixFilter, Sprite } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
-import { atlases, images, sounds } from "../../../app/assets";
+import { atlases, sounds } from "../../../app/assets";
 import { EventHub, events, launchFirework, shakeScreen, startScene } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import FireworkParticles from "../../popup/Firework";
@@ -38,12 +38,19 @@ export default class GameContainer extends Container {
 
         this.isGamePaused = false
 
-        this.bgSky = new TilingSprite(levelType === LEVEL_TYPE.MOON ? images.bg_night_sky : images.bg_day_sky)
+        this.bgSky = new TilingSprite(
+            levelType === LEVEL_TYPE.MOON
+            ? atlases.levels.textures.bg_night_sky
+            : atlases.levels.textures.bg_day_sky
+        )
         this.bgSky.anchor.set(0.5, 0)
         this.bgSky.position.set(0, -BG_HEIGHT * 0.5)
         this.addChild(this.bgSky)
 
-        this.planet = new Sprite(levelType === LEVEL_TYPE.MOON ? images.Earth : images.Moon)
+        this.planet = new Sprite(
+            levelType === LEVEL_TYPE.MOON
+            ? atlases.gameplay.textures.Earth
+            : atlases.gameplay.textures.Moon)
         this.planet.anchor.set(0.5)
         this.planet.minX = -4000
         this.planet.maxX = 4000
@@ -53,12 +60,12 @@ export default class GameContainer extends Container {
         this.planet.speedY = 0.03
         this.addChild(this.planet)
 
-        this.bgBottom = new TilingSprite(images['bg_' + levelType.toLowerCase() + '_bottom'])
+        this.bgBottom = new TilingSprite(atlases.levels.textures['bg_' + levelType.toLowerCase() + '_bottom'])
         this.bgBottom.anchor.set(0.5, 1)
         this.bgBottom.position.set(0, BG_HEIGHT * 0.5)
         this.addChild(this.bgBottom)
 
-        this.bgTop = new TilingSprite(images['bg_' + levelType.toLowerCase() + '_top'])
+        this.bgTop = new TilingSprite(atlases.levels.textures['bg_' + levelType.toLowerCase() + '_top'])
         this.bgTop.anchor.set(0.5, 0)
         this.bgTop.position.set(0, -BG_HEIGHT * 0.5)
         this.addChild(this.bgTop)

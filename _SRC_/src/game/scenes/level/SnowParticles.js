@@ -1,6 +1,6 @@
 import { Particle, ParticleContainer } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
-import { images } from "../../../app/assets";
+import { atlases } from "../../../app/assets";
 import { NOISE_BUFFER, NOISE_BUFFER_SIZE, NOISE_MASK, _2PI } from "./constants";
 import { createEnum } from "../../../utils/functions";
 import { timeScale } from "../../state";
@@ -101,7 +101,7 @@ export default class SnowParticles {
         const cfg = SNOW_TYPES[type]
         const scale = randomRange(cfg.scaleMin, cfg.scaleMax)
         const flake = new Particle({
-            texture: images.snowflake,
+            texture: atlases.gameplay.textures.snowflake,
             x: 0, y: 0,
             anchorX: 0.5, anchorY: 0.5,
             scaleX: scale, scaleY: scale,

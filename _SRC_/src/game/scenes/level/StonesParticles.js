@@ -1,6 +1,6 @@
 import { Particle, ParticleContainer } from "pixi.js"
 import { tickerAdd, tickerRemove } from "../../../app/application"
-import { images } from "../../../app/assets"
+import { atlases } from "../../../app/assets"
 import { EventHub, events } from "../../../app/events"
 import { ASTEROID_TYPE } from "./Asteroids"
 import { NOISE_BUFFER, NOISE_BUFFER_SIZE, NOISE_MASK, _2PI } from "./constants"
@@ -27,7 +27,7 @@ const STONE_COLORS = {
 
 function createStone() {
     const stone = new Particle({
-        texture: images['asteroid_stone_' + getImageIndex()],
+        texture: atlases.gameplay.textures['asteroid_stone_' + getImageIndex()],
         x: 0,
         y: 0,
         anchorX: 0.5,

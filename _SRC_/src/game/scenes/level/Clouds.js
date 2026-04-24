@@ -1,6 +1,6 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerAdd } from "../../../app/application";
-import { images } from "../../../app/assets";
+import { atlases } from "../../../app/assets";
 import { timeScale } from "../../state";
 
 const CLOUD_WIDTH = 326
@@ -32,7 +32,7 @@ export default class Clouds extends Container {
         if (this.children.length === 0) {
             const step = width / 4
             for (let i = 8; i > 0; i--) {
-                const cloud = new Sprite(images['cloud_' + (i % 4 + 1)])
+                const cloud = new Sprite(atlases.gameplay.textures['cloud_' + (i % 4 + 1)])
                 const x = -this.offset + i * step + step * Math.random()
                 const y = MIN_Y + MID_Y * Math.random()
                 cloud.position.set(x, -y)

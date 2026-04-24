@@ -68,7 +68,9 @@ export let styles = {
     popupDescription: null,
     popupLabel: null,
 
-    topTable: null,
+    topTableCenter: null,
+    topTableLeft: null,
+    topTableRight: null,
 }
 
 export function initFontStyles() {
@@ -241,11 +243,31 @@ export function initFontStyles() {
         }
     })
 
-    styles.topTable = new TextStyle({
+    styles.topTableCenter = new TextStyle({
         fontFamily: fonts.P,
         fontSize: 24,
         fill: 0xffffff,
         align: 'center',
+        stroke: {
+            color: 0x000000,
+            width: 2
+        }
+    })
+    styles.topTableLeft = new TextStyle({
+        fontFamily: fonts.P,
+        fontSize: 24,
+        fill: 0xffffff,
+        align: 'left',
+        stroke: {
+            color: 0x000000,
+            width: 2
+        }
+    })
+    styles.topTableRight = new TextStyle({
+        fontFamily: fonts.P,
+        fontSize: 24,
+        fill: 0xffffff,
+        align: 'right',
         stroke: {
             color: 0x000000,
             width: 2

@@ -1,5 +1,5 @@
 import { Sprite, Container, RenderTexture, Texture } from "pixi.js"
-import { atlases, images } from "../../app/assets"
+import { atlases } from "../../app/assets"
 import { getAppRenderer } from "../../app/application"
 import { AVATARS } from "../scenes/level/Player"
 import { playerAvatarIndex, playerAvatarKeys } from "../state"
@@ -9,11 +9,11 @@ export function renderPlayer(index = null) {
     const appRenderer = getAppRenderer()
 
     if (index) {
-        const bg = new Sprite(images.popup_bg)
+        const bg = new Sprite(atlases.ui.textures.popup)
         bg.scale.set(0.3)
         container.addChild( bg )
     } else {
-        const bg = new Sprite(images.ui_skin_bg)
+        const bg = new Sprite(atlases.ui.textures.ui_skin_bg)
         bg.scale.set(0.9) //
         container.addChild( bg )
     }
@@ -23,12 +23,12 @@ export function renderPlayer(index = null) {
     // playerContainer.position.set(index ? 116 : 136, index ? 86 : 118)
     playerContainer.position.set(index ? 116 : 122, index ? 86 : 106)
     const AVA_KEY = playerAvatarKeys[index ? index : playerAvatarIndex]
-    const playerBody = new Sprite(images[ AVA_KEY ])
+    const playerBody = new Sprite(atlases.player.textures[ AVA_KEY ])
     playerBody.anchor.set(0.5)
     playerContainer.addChild(playerBody)
     const playerEye = new Sprite(
         AVATARS[AVA_KEY].eye !== 'EMPTY'
-        ? images[ AVATARS[AVA_KEY].eye ]
+        ? atlases.player.textures[ AVATARS[AVA_KEY].eye ]
         : Texture.EMPTY
     )
     playerEye.anchor.set(0.5)
@@ -36,7 +36,7 @@ export function renderPlayer(index = null) {
     playerContainer.addChild(playerEye)
     const playerTongue = new Sprite(
         AVATARS[AVA_KEY].tongue !== 'EMPTY'
-        ? images[ AVATARS[AVA_KEY].tongue ]
+        ? atlases.player.textures[ AVATARS[AVA_KEY].tongue ]
         : Texture.EMPTY
     )
     playerTongue.pivot.set(47, 7)

@@ -1,5 +1,5 @@
 import { Container, Text, Sprite } from "pixi.js"
-import { atlases, images, sounds } from "../../app/assets"
+import { atlases, sounds } from "../../app/assets"
 import { removeCursorPointer, setCursorPointer } from "../../utils/functions"
 import { styles } from "../../app/styles"
 import { soundPlay } from "../../app/sound"
@@ -25,12 +25,12 @@ export default class Button extends Container {
         
 
         this.backImage = new Sprite(
-            images.button
+            atlases.ui.textures.button
             //atlases.ui.textures[ icon ? 'button_icon' : 'button' ]
         )
         this.backImage.anchor.set(0.5)
         this.frontImage = new Sprite(
-            images.button_hover
+            atlases.ui.textures.button_hover
             //atlases.ui.textures[ icon ? 'button_icon_hover' : 'button_hover' ]
         )
         this.frontImage.anchor.set(0.5)

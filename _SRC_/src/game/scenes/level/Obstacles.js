@@ -1,6 +1,6 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerRemove, tickerAdd, kill } from "../../../app/application";
-import { images, sounds } from "../../../app/assets";
+import { atlases, sounds } from "../../../app/assets";
 import { addExplosion, addSmoke, addSparks, resetCombo, shakeScreen, slowDown, removePlyerSave } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { createEnum, getRandom } from "../../../utils/functions";
@@ -121,13 +121,13 @@ const LAUNCHER_COLLIDERS = [
 
 class Bus extends Sprite {
     constructor() {
-        super(images.bus)
+        super(atlases.gameplay.textures.bus)
         this.anchor.set(0.5, 1)
 
         this.speedRateX = 1
         this.isAlive = true
 
-        this.halfWidth = images.bus.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.bus.width * 0.5
         this.position.set(START_X + this.halfWidth, BUS_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -140,7 +140,7 @@ class Bus extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.bus_black
+        this.texture = atlases.gameplay.textures.bus_black
 
         addSparks({x: this.x - 70, y: this.y - 75, isExplosion: true, count: 16})
         addSparks({x: this.x + 70, y: this.y - 75, isExplosion: true, count: 16})
@@ -160,7 +160,7 @@ class Bus extends Sprite {
 
 class Building extends Sprite {
     constructor() {
-        super(images['building_' + buildingIndex])
+        super(atlases.gameplay.textures['building_' + buildingIndex])
         this.anchor.set(0.5, 1)
         this.buildingIndex = buildingIndex
 
@@ -172,7 +172,7 @@ class Building extends Sprite {
 
         this.isSliding = true
 
-        this.halfWidth = images['building_' + this.buildingIndex].width * 0.5
+        this.halfWidth = atlases.gameplay.textures['building_' + this.buildingIndex].width * 0.5
         this.position.set(START_X + this.halfWidth, BUILDING_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -185,7 +185,7 @@ class Building extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images['building_' + this.buildingIndex + '_black']
+        this.texture = atlases.gameplay.textures['building_' + this.buildingIndex + '_black']
 
         addSparks({x: this.x, y: this.y - 100, isExplosion: true, count: 16})
         addSparks({x: this.x, y: this.y - 190, isExplosion: true, count: 16})
@@ -205,7 +205,7 @@ class Building extends Sprite {
 
 class Ship extends Sprite {
     constructor() {
-        super(images.ship)
+        super(atlases.gameplay.textures.ship)
         this.anchor.set(0.5, 1)
 
         this.speedRateX = 0.8
@@ -213,7 +213,7 @@ class Ship extends Sprite {
 
         this.isSliding = true
 
-        this.halfWidth = images.ship.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.ship.width * 0.5
         this.position.set(START_X + this.halfWidth, BUILDING_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -240,7 +240,7 @@ class Ship extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.ship_black
+        this.texture = atlases.gameplay.textures.ship_black
         this.smokePoint = 0
 
         addSparks({x: this.x - 126, y: this.y - 78, isExplosion: true, count: 16})
@@ -266,13 +266,13 @@ class Ship extends Sprite {
 
 class Sign extends Sprite {
     constructor() {
-        super(images.sign)
+        super(atlases.gameplay.textures.sign)
         this.anchor.set(0.5, 1)
 
         this.speedRateX = 0.6
         this.isAlive = true
 
-        this.halfWidth = images.sign.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.sign.width * 0.5
         this.position.set(START_X + this.halfWidth, BUS_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -293,7 +293,7 @@ class Sign extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.sign_black
+        this.texture = atlases.gameplay.textures.sign_black
 
         addSparks({x: this.x, y: this.y - 56, isExplosion: true, count: 16})
         addExplosion({x: this.x, y: this.y - 56})
@@ -311,13 +311,13 @@ class Sign extends Sprite {
 
 class Plane extends Sprite {
     constructor() {
-        super(images.plane)
+        super(atlases.gameplay.textures.plane)
         this.anchor.set(0.5, 0)
 
         this.speedRateX = 1.7
         this.isAlive = true
 
-        this.halfWidth = images.plane.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.plane.width * 0.5
         this.position.set(START_X + this.halfWidth, AIR_MIN_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -338,7 +338,7 @@ class Plane extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.plane_black
+        this.texture = atlases.gameplay.textures.plane_black
         this.rotation -= 0.3
 
         addSparks({x: this.x - 90, y: this.y + 60, isExplosion: true, count: 16})
@@ -361,13 +361,13 @@ class Plane extends Sprite {
 
 class Airship extends Sprite {
     constructor() {
-        super(images.airship)
+        super(atlases.gameplay.textures.airship)
         this.anchor.set(0.5, 0)
 
         this.speedRateX = 0.7
         this.isAlive = true
 
-        this.halfWidth = images.airship.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.airship.width * 0.5
         this.position.set(START_X + this.halfWidth, AIR_MIN_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -380,7 +380,7 @@ class Airship extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.airship_black
+        this.texture = atlases.gameplay.textures.airship_black
         this.rotation -= 0.2
 
         addSparks({x: this.x - 80, y: this.y + 70, isExplosion: true, count: 16})
@@ -403,7 +403,7 @@ class Airship extends Sprite {
 
 class Copter extends Sprite {
     constructor() {
-        super(images.copter)
+        super(atlases.gameplay.textures.copter)
         this.anchor.set(0.5, 0)
 
         this.speedRateX = 0.9
@@ -416,7 +416,7 @@ class Copter extends Sprite {
         this.phaseSpeed = 0.0012
         this.maxAngle = Math.PI * 0.25 
 
-        this.halfWidth = images.copter.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.copter.width * 0.5
         this.position.set(START_X + this.halfWidth, COPTER_MIN_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -439,7 +439,7 @@ class Copter extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.copter_black
+        this.texture = atlases.gameplay.textures.copter_black
         this.rotation -= 0.35
 
         addSparks({x: this.x - 40, y: this.y + 50, isExplosion: true, count: 16})
@@ -462,16 +462,16 @@ class Copter extends Sprite {
 
 class Aerostat extends Sprite {
     constructor() {
-        super(images.aerostat)
+        super(atlases.gameplay.textures.aerostat)
         this.anchor.set(0.5, 0)
 
         this.speedRateX = 0.5
         this.isAlive = true
 
-        this.maxY = AIR_MAX_Y - images.aerostat.height
+        this.maxY = AIR_MAX_Y - atlases.gameplay.textures.aerostat.height
         this.isMoveUp = Math.random() < 0.5
 
-        this.halfWidth = images.aerostat.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.aerostat.width * 0.5
         this.position.set(START_X + this.halfWidth, AIR_MIN_Y + (this.maxY - AIR_MIN_Y) * 0.5)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -495,7 +495,7 @@ class Aerostat extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.aerostat_black
+        this.texture = atlases.gameplay.textures.aerostat_black
 
         addSparks({x: this.x, y: this.y + 55, isExplosion: true, count: 16})
         addSparks({x: this.x, y: this.y + 140, isExplosion: true, count: 8})
@@ -517,7 +517,7 @@ class Aerostat extends Sprite {
 
 class Base extends Sprite {
     constructor() {
-        super(images.base)
+        super(atlases.gameplay.textures.base)
         this.anchor.set(0.5, 1)
 
         this.speedRateX = 0.8
@@ -525,7 +525,7 @@ class Base extends Sprite {
 
         this.isSliding = true
 
-        this.halfWidth = images.base.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.base.width * 0.5
         this.position.set(START_X + this.halfWidth, BUILDING_Y - 50)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -539,7 +539,7 @@ class Base extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.base_black
+        this.texture = atlases.gameplay.textures.base_black
 
         addSparks({x: this.x - 80, y: this.y - 80, isExplosion: true, count: 16})
         addSparks({x: this.x + 10, y: this.y - 96, isExplosion: true, count: 16})
@@ -563,16 +563,16 @@ class Base extends Sprite {
 
 class Drone extends Sprite {
     constructor() {
-        super(images.drone)
+        super(atlases.gameplay.textures.drone)
         this.anchor.set(0.5, 0)
 
         this.speedRateX = 0.4
         this.isAlive = true
 
-        this.maxY = AIR_MAX_Y - images.drone.height * 1.5
+        this.maxY = AIR_MAX_Y - atlases.gameplay.textures.drone.height * 1.5
         this.isMoveUp = Math.random() < 0.5
 
-        this.halfWidth = images.drone.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.drone.width * 0.5
         this.position.set(START_X + this.halfWidth, AIR_MIN_Y + (this.maxY - AIR_MIN_Y) * 0.5)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -596,7 +596,7 @@ class Drone extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.drone_black
+        this.texture = atlases.gameplay.textures.drone_black
 
         addSparks({x: this.x - 50, y: this.y + 36, isExplosion: true, count: 12})
         addSparks({x: this.x + 50, y: this.y + 36, isExplosion: true, count: 12})
@@ -618,13 +618,13 @@ class Drone extends Sprite {
 
 class Track extends Sprite {
     constructor() {
-        super(images.track)
+        super(atlases.gameplay.textures.track)
         this.anchor.set(0.5, 1)
 
         this.speedRateX = 1
         this.isAlive = true
 
-        this.halfWidth = images.track.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.track.width * 0.5
         this.position.set(START_X + this.halfWidth, BUS_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -637,7 +637,7 @@ class Track extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.track_black
+        this.texture = atlases.gameplay.textures.track_black
 
         addSparks({x: this.x - 50, y: this.y - 150, isExplosion: true, count: 16})
         addSparks({x: this.x + 100, y: this.y - 110, isExplosion: true, count: 16})
@@ -657,13 +657,13 @@ class Track extends Sprite {
 
 class Wagon extends Sprite {
     constructor() {
-        super(images.wagon)
+        super(atlases.gameplay.textures.wagon)
         this.anchor.set(0.5, 0)
 
         this.speedRateX = 0.9
         this.isAlive = true
 
-        this.halfWidth = images.wagon.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.wagon.width * 0.5
         this.position.set(START_X + this.halfWidth, WAGON_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -684,7 +684,7 @@ class Wagon extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.wagon_black
+        this.texture = atlases.gameplay.textures.wagon_black
 
         addSparks({x: this.x, y: this.y + 134, isExplosion: true, count: 16})
         addExplosion({x: this.x, y: this.y + 134})
@@ -702,13 +702,13 @@ class Wagon extends Sprite {
 
 class Satellite extends Sprite {
     constructor() {
-        super(images.satellite)
+        super(atlases.gameplay.textures.satellite)
         this.anchor.set(0.5, 0)
 
         this.speedRateX = 1.3
         this.isAlive = true
 
-        this.halfWidth = images.satellite.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.satellite.width * 0.5
         this.position.set(START_X + this.halfWidth, getRandom(SPACE_MIN_Y, SPACE_MAX_Y))
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -729,7 +729,7 @@ class Satellite extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.satellite_black
+        this.texture = atlases.gameplay.textures.satellite_black
 
         addSparks({x: this.x, y: this.y + 89, isExplosion: true, count: 16})
         addExplosion({x: this.x, y: this.y + 89})
@@ -748,13 +748,13 @@ class Satellite extends Sprite {
 
 class Rover extends Sprite {
     constructor() {
-        super(images.rover)
+        super(atlases.gameplay.textures.rover)
         this.anchor.set(0.5, 1)
 
         this.speedRateX = 1
         this.isAlive = true
 
-        this.halfWidth = images.rover.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.rover.width * 0.5
         this.position.set(START_X + this.halfWidth, BUS_Y + 40)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -767,7 +767,7 @@ class Rover extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.rover_black
+        this.texture = atlases.gameplay.textures.rover_black
 
         addSparks({x: this.x - 38, y: this.y - 186, isExplosion: true, count: 12})
         addSparks({x: this.x - 50, y: this.y - 100, isExplosion: true, count: 16})
@@ -788,7 +788,7 @@ class Rover extends Sprite {
 
 class Module extends Sprite {
     constructor() {
-        super(images.module)
+        super(atlases.gameplay.textures.module)
         this.anchor.set(0.5, 1)
 
         this.speedRateX = 0.8
@@ -796,7 +796,7 @@ class Module extends Sprite {
 
         this.isSliding = true
 
-        this.halfWidth = images.module.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.module.width * 0.5
         this.position.set(START_X + this.halfWidth, MODULE_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -808,7 +808,7 @@ class Module extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.module_black
+        this.texture = atlases.gameplay.textures.module_black
 
         addSparks({x: this.x - 80, y: this.y - 124, isExplosion: true, count: 12})
         addSparks({x: this.x , y: this.y - 200, isExplosion: true, count: 12})
@@ -828,13 +828,13 @@ class Module extends Sprite {
 
 class Launcher extends Sprite {
     constructor() {
-        super(images.launcher)
+        super(atlases.gameplay.textures.launcher)
         this.anchor.set(0.5, 1)
 
         this.speedRateX = 1
         this.isAlive = true
 
-        this.halfWidth = images.launcher.width * 0.5
+        this.halfWidth = atlases.gameplay.textures.launcher.width * 0.5
         this.position.set(START_X + this.halfWidth, LAUNCHER_Y)
 
         this.playerMinX = PLAYER_X - this.halfWidth
@@ -850,7 +850,7 @@ class Launcher extends Sprite {
 
     setDamage() {
         this.isAlive = false
-        this.texture = images.launcher_black
+        this.texture = atlases.gameplay.textures.launcher_black
 
         for (let i = this.smokePoints.length - 1; i >= 0; i--) {
             addSparks({

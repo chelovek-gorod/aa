@@ -3,15 +3,13 @@ import { EventHub, events, freeSpinPopupClosed, resumeGameplay } from "../../app
 import Button from "../UI/Button"
 import TapIcon from "../UI/TapIcon"
 import { getAvailableLanguages, getLanguage, getLanguageName, setLanguage } from "../localization"
-import { atlases, images, sounds } from "../../app/assets"
+import { atlases } from "../../app/assets"
 import { styles } from "../../app/styles"
-import { getAppScreen, kill, tickerAdd, tickerRemove, blackStageEventMode } from "../../app/application"
-//import {  } from "../localText"
+import { getAppScreen, kill, tickerAdd, tickerRemove } from "../../app/application"
 import { musicGetState, musicGetVolume, musicOff, musicOn, musicSetVolume,
-    soundGetState, soundGetVolume, soundOff, soundOn, soundPlay, soundSetVolume } from "../../app/sound"
+    soundGetState, soundGetVolume, soundOff, soundOn, soundSetVolume } from "../../app/sound"
 import { createEnum } from "../../utils/functions"
 import Overlay from "./Overlay"
-import { showRewardAdSDK } from "../storage"
 import { BUTTON_TYPE, TEXT_FREE_WHEEL_SUBTITLE, TEXT_FREE_WHEEL_TITLE, TEXT_MUSIC, TEXT_POPUP_TITLE, TEXT_SOUND } from "../localText"
 
 export const POPUP_TYPE =  createEnum([
@@ -67,7 +65,7 @@ export default class Popup extends Container {
         this.box.scale.set(0)
         this.addChild(this.box)
 
-        this.bg = new Sprite( images.popup_bg )
+        this.bg = new Sprite( atlases.ui.textures.popup )
         this.bg.anchor.set(0.5)
         this.box.addChild(this.bg)
 
@@ -161,7 +159,7 @@ export default class Popup extends Container {
         descriptionText.position.set(0, 130)
         this.content.addChild(descriptionText)
 
-        const image = new Sprite(images.free_spin)
+        const image = new Sprite(atlases.ui.textures.free_spin)
         image.anchor.set(0.5)
         image.position.set(0, -30)
         this.content.addChild(image)
@@ -180,7 +178,7 @@ export default class Popup extends Container {
         this.settingsUI.musicLabel.position.set(-200, -160)
         this.content.addChild( this.settingsUI.musicLabel )
 
-        const musicTexture = images[ 'music_' + findSoundMusic(true) ]
+        const musicTexture = atlases.ui.textures[ 'music_' + findSoundMusic(true) ]
         this.settingsUI.musicBtn = new TapIcon( musicTexture, this.changeMusic.bind(this) )
         this.settingsUI.musicBtn.anchor.set(0.5)
         this.settingsUI.musicBtn.position.set(-200, -70)
@@ -193,7 +191,7 @@ export default class Popup extends Container {
         this.settingsUI.soundLabel.position.set(200, -160)
         this.content.addChild( this.settingsUI.soundLabel )
 
-        const soundTexture = images[ 'sound_' + findSoundMusic(false) ]
+        const soundTexture = atlases.ui.textures[ 'sound_' + findSoundMusic(false) ]
         this.settingsUI.soundBtn = new TapIcon( soundTexture, this.changeSound.bind(this) )
         this.settingsUI.soundBtn.anchor.set(0.5)
         this.settingsUI.soundBtn.position.set(200, -70)
@@ -208,7 +206,7 @@ export default class Popup extends Container {
         this.settingsUI.langLabel.position.set(0, 10)
         this.content.addChild( this.settingsUI.langLabel )
 
-        this.settingsUI.leftBtn = new TapIcon(images.left, this.prevLang.bind(this))  
+        this.settingsUI.leftBtn = new TapIcon(atlases.ui.textures.left, this.prevLang.bind(this))  
         this.settingsUI.leftBtn.anchor.set(0.5)
         this.settingsUI.leftBtn.position.set(-120, 90)
         this.content.addChild( this.settingsUI.leftBtn )
@@ -219,7 +217,7 @@ export default class Popup extends Container {
         this.settingsUI.langCode.position.set(0, 90)
         this.content.addChild( this.settingsUI.langCode )
 
-        this.settingsUI.rightBtn = new TapIcon( images.right, this.nextLang.bind(this))
+        this.settingsUI.rightBtn = new TapIcon( atlases.ui.textures.right, this.nextLang.bind(this))
         this.settingsUI.rightBtn.anchor.set(0.5)
         this.settingsUI.rightBtn.position.set(120, 90)
         this.content.addChild( this.settingsUI.rightBtn )
@@ -244,7 +242,7 @@ export default class Popup extends Container {
             musicOn()
             iconIndex = 1
         }
-        const musicTexture = images[ 'music_' + iconIndex ]
+        const musicTexture = atlases.ui.textures[ 'music_' + iconIndex ]
         this.settingsUI.musicBtn.setIcon( musicTexture )
     }
 
@@ -265,7 +263,7 @@ export default class Popup extends Container {
             soundOn()
             iconIndex = 1
         }
-        const soundTexture = images[ 'sound_' + iconIndex ]
+        const soundTexture = atlases.ui.textures[ 'sound_' + iconIndex ]
         this.settingsUI.soundBtn.setIcon( soundTexture )
     }
 

@@ -1,6 +1,6 @@
 import { Container, Sprite } from "pixi.js";
 import { tickerRemove, tickerAdd } from "../../../app/application";
-import { images, sounds } from "../../../app/assets";
+import { atlases, sounds } from "../../../app/assets";
 import { addExplosion, addScore, addSmoke, addSparks, addStones, shakeScreen, resetCombo } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { createEnum } from "../../../utils/functions";
@@ -95,7 +95,7 @@ export default class Asteroids extends Container {
         if (asteroidIndex === ASTEROIDS_LIST.length) asteroidIndex = 0
 
         const asteroid = this.pull.length ? this.pull.pop() : new Sprite()
-        asteroid.texture = images[IMAGES[type]]
+        asteroid.texture = atlases.gameplay.textures[IMAGES[type]]
         asteroid.anchor.set(0.5)
         asteroid.type = type
         asteroid.y = MIN_Y + MID_Y * Math.random()

@@ -1206,7 +1206,7 @@
 		]
 	},
 	"meta": {
-		"image": "explosion.png",
+		"image": "explosion.webp",
 		"format": "RGBA8888",
 		"size": {
 			"w": 2048,

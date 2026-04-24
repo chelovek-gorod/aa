@@ -1,6 +1,6 @@
 import { Container, Sprite, MeshPlane, Texture } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
-import { images, sounds } from "../../../app/assets";
+import { atlases, sounds } from "../../../app/assets";
 import { addSmoke, addSparks, shakeScreen } from "../../../app/events";
 import { soundPlay } from "../../../app/sound";
 import { levelType, LEVEL_TYPE, playerAvatarIndex, playerAvatarKeys, timeScale } from "../../state";
@@ -73,12 +73,12 @@ export default class Player extends Container {
         this.squashTimer = 0
         this.se_fall_rate = levelType === LEVEL_TYPE.GROUND || levelType === LEVEL_TYPE.MOON ? 1 : 0.5
 
-        this.body = new Sprite(images[AVA_KEY])
+        this.body = new Sprite(atlases.player.textures[AVA_KEY])
         this.body.anchor.set(0.5)
         this.addChild(this.body)
 
         if (AVATARS[AVA_KEY].eye !== 'EMPTY') {
-            this.eye = new Sprite(images[ AVATARS[AVA_KEY].eye ])
+            this.eye = new Sprite(atlases.player.textures[ AVATARS[AVA_KEY].eye ])
             this.eye.anchor.set(0.5)
             this.eye.position.set(32, -16)
             this.addChild(this.eye)
@@ -88,7 +88,7 @@ export default class Player extends Container {
 
         if (AVATARS[AVA_KEY].tongue !== 'EMPTY') {
             this.tongue = new MeshPlane({
-                texture: images[ AVATARS[AVA_KEY].tongue ],
+                texture: atlases.player.textures[ AVATARS[AVA_KEY].tongue ],
                 verticesX: 9,
                 verticesY: 3
             })

@@ -48,12 +48,12 @@ export default class WheelScene extends Container {
         this.clickTimeout = 0
         this.autoStopTimer = 0
 
-        this.wheelDisc = new Sprite(images.wheel_disc)
+        this.wheelDisc = new Sprite(atlases.ui.textures.wheel_disc)
         this.wheelDisc.anchor.set(0.5)
         this.wheelDisc.rotation = Math.random() * (Math.PI * 2)
         this.mainContainer.addChild(this.wheelDisc)
 
-        this.wheelBorder = new Sprite(images.wheel_border)
+        this.wheelBorder = new Sprite(atlases.ui.textures.wheel_border)
         this.wheelBorder.anchor.set(0.5)
         this.mainContainer.addChild(this.wheelBorder)
 

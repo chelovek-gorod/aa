@@ -1,15 +1,16 @@
 import { Container, Graphics, Sprite } from 'pixi.js'
-import { images, music } from '../../../app/assets'
+import { atlases, music } from '../../../app/assets'
 import { EventHub, events, pauseGameplay } from '../../../app/events'
 import { setMusicList } from '../../../app/sound'
 import { getLanguage } from '../../localization'
 import Shaker from './Shaker'
 import GameContainer from './GameContainer'
 import UI from './UI'
-import { getDeviceType, kill, tickerAdd, tickerRemove } from '../../../app/application'
+import { getDeviceType, tickerAdd, tickerRemove } from '../../../app/application'
 import { playerTopScore } from '../../state'
 import { HELP_DURATION, HELP_IN_OUT } from './constants'
 import Popup, { POPUP_TYPE } from '../../popup/Popup'
+import { gameplayRunSDK, gameplayStopSDK } from '../../storage'
 
 const musics = [ 
     music.bgm_1, music.bgm_2, music.bgm_3, music.bgm_4,
@@ -26,6 +27,8 @@ function getMusic() {
 export default class LevelScene extends Container {
     constructor() {
         super()
+
+        gameplayRunSDK()
 
         this.currentLanguage = getLanguage()
         EventHub.on( events.updateLanguage, this.updateLanguage, this )
@@ -55,8 +58,7 @@ export default class LevelScene extends Container {
             this.helpBg = new Graphics()
             this.helpBg.alpha = 0.75
             this.addChild(this.helpBg)
-
-            this.help = new Sprite(images.help)
+            this.help = new Sprite(atlases.gameplay.textures.help)
             this.help.anchor.set(0.5)
             this.help.alpha = 0
             this.help.time = HELP_DURATION + HELP_IN_OUT
@@ -193,6 +195,8 @@ export default class LevelScene extends Container {
     }
 
     kill() {
+        gameplayStopSDK()
+        
         tickerRemove(this)
 
         if (this.handlerKeyboard) {

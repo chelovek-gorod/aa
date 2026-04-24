@@ -1,0 +1,89 @@
+{"frames": {
+
+"bg_day_sky":
+{
+	"frame": {"x":2,"y":2,"w":900,"h":700},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":900,"h":700},
+	"sourceSize": {"w":900,"h":700}
+},
+"bg_ground_bottom":
+{
+	"frame": {"x":2,"y":1406,"w":900,"h":368},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":900,"h":368},
+	"sourceSize": {"w":900,"h":368}
+},
+"bg_ground_top":
+{
+	"frame": {"x":904,"y":1555,"w":900,"h":257},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":443,"w":900,"h":257},
+	"sourceSize": {"w":900,"h":700}
+},
+"bg_moon_bottom":
+{
+	"frame": {"x":904,"y":1243,"w":900,"h":310},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":39,"w":900,"h":310},
+	"sourceSize": {"w":900,"h":368}
+},
+"bg_moon_top":
+{
+	"frame": {"x":1806,"y":2,"w":900,"h":199},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":501,"w":900,"h":199},
+	"sourceSize": {"w":900,"h":700}
+},
+"bg_night_sky":
+{
+	"frame": {"x":2,"y":704,"w":900,"h":700},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":900,"h":700},
+	"sourceSize": {"w":900,"h":700}
+},
+"bg_snow_bottom":
+{
+	"frame": {"x":904,"y":503,"w":900,"h":368},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":900,"h":368},
+	"sourceSize": {"w":900,"h":368}
+},
+"bg_snow_top":
+{
+	"frame": {"x":904,"y":2,"w":900,"h":499},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":201,"w":900,"h":499},
+	"sourceSize": {"w":900,"h":700}
+},
+"bg_water_bottom":
+{
+	"frame": {"x":904,"y":873,"w":900,"h":368},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":900,"h":368},
+	"sourceSize": {"w":900,"h":368}
+},
+"bg_water_top":
+{
+	"frame": {"x":1806,"y":904,"w":900,"h":170},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":530,"w":900,"h":170},
+	"sourceSize": {"w":900,"h":700}
+}},
+"meta": {
+	"image": "levels.webp",
+	"format": "RGBA8888",
+	"size": {"w":2007,"h":1814},
+	"scale": "1"
+}
+}

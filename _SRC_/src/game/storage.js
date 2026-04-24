@@ -1,4 +1,4 @@
-import { EventHub, events, gamePause, gameResume, getTopResults } from '../app/events'
+import { gamePause, gameResume, getTopResults } from '../app/events'
 import { getSoundData, setStoredSoundData } from '../app/sound'
 import LocalMockSDK from '../sdk/LocalMock'
 import YaGamesSDK from '../sdk/YaGamesSDK'
@@ -8,7 +8,7 @@ import { getStateData, setStoredState } from './state'
 
 export let isReadySDK = false
 
-const LEADERBOARD_NAME = 'crashDashLB'
+const LEADERBOARD_NAME = 'CrashDashLB'
 
 // localStorage.clear()
 
@@ -69,8 +69,14 @@ function SDKsetSavedState( savedState ) {
     setStoredState(savedState)
 }
 
-export function GameReadySDK() {
+export function gameReadySDK() {
     SDK.gameReady()
+}
+export function gameplayRunSDK() {
+    SDK.gameplayStart()
+}
+export function gameplayStopSDK() {
+    SDK.gameplayStop()
 }
 export function showFullScreenAdSDK() {
     gamePause()
@@ -89,11 +95,19 @@ export function showRewardAdSDK( callback ) {
 
 export function getTopPlayers() {
     // leaderboardName, topQuantity, aroundQuantity, callback
-    SDK.fetchLeaderboard(LEADERBOARD_NAME, 10, 3, (response) => getAnswerTopPlayers(response))
+    SDK.fetchLeaderboard(LEADERBOARD_NAME, 20, 5, (response) => getAnswerTopPlayers(response))
 }
 function getAnswerTopPlayers(response) {
     // prepare data from response
 
     // send event with data
     getTopResults(response)
+}
+
+export function loginPlayer(callback) {
+    SDK.requestAuth((isOk) => callback(isOk))
+}
+
+export function setLeaderboardScore(score, extraData = '') {
+    SDK.setLeaderboardScore(LEADERBOARD_NAME, score, extraData)
 }

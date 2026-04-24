@@ -1,7 +1,6 @@
 import { Sprite, Container, Text } from "pixi.js";
 import { kill, tickerAdd } from "../../../app/application";
-import { images, sounds } from "../../../app/assets";
-import { soundPlay } from "../../../app/sound";
+import { atlases } from "../../../app/assets";
 import { styles } from "../../../app/styles";
 import { addCoins } from "../../state";
 
@@ -9,12 +8,12 @@ export default class FlyNewLevel extends Container {
     constructor() {
         super()
 
-        this.cup = new Sprite(images.cup)
+        this.cup = new Sprite(atlases.ui.textures.cup)
         this.cup.scale.set(-1, 1)
         this.cup.anchor.set(0.5, 1)
         this.addChild(this.cup)
 
-        this.coin = new Sprite(images.coin)
+        this.coin = new Sprite(atlases.ui.textures.coin)
         this.coin.scale.set(0.4)
         this.coin.anchor.set(0, 0)
         this.addChild(this.coin)

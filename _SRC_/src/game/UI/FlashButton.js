@@ -1,5 +1,5 @@
 import { Sprite, Container } from "pixi.js"
-import { atlases, images, sounds } from "../../app/assets"
+import { atlases, sounds } from "../../app/assets"
 import { createEnum, removeCursorPointer, setCursorPointer } from "../../utils/functions"
 import { soundPlay } from "../../app/sound"
 import { tickerAdd, tickerRemove } from "../../app/application"
@@ -20,18 +20,18 @@ export default class FlashButton extends Container {
         super()
 
         const icon =
-            type === FLASH_TYPE.RESULTS ? images.ui_results :
+            type === FLASH_TYPE.RESULTS ? atlases.ui.textures.ui_results :
             type === FLASH_TYPE.SKIN ? renderPlayer() :
-            type === FLASH_TYPE.BUY_SAVE ? images.ui_buy_save :
-            type === FLASH_TYPE.WHEEL ? images.ui_spin_for_ad :
-            type === FLASH_TYPE.SHOP ? images.ui_skin_shop :
-            images.ui_save_for_ad
+            type === FLASH_TYPE.BUY_SAVE ? atlases.ui.textures.ui_buy_save :
+            type === FLASH_TYPE.WHEEL ? atlases.ui.textures.ui_spin_for_ad :
+            type === FLASH_TYPE.SHOP ? atlases.ui.textures.ui_skin_shop :
+            atlases.ui.textures.ui_save_for_ad
 
         this.icon = new Sprite(icon)
         this.icon.anchor.set(0.5)
         this.addChild(this.icon)
 
-        this.flash = new Sprite(images.flash_line)
+        this.flash = new Sprite(atlases.ui.textures.flash_line)
         this.flash.anchor.set(0.5)
         this.flashSpeed = 0.6
         this.flash.position.set( (MAX_X * 2) * flashRateX - MAX_X, 0 )

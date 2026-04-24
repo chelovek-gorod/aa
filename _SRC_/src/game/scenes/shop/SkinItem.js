@@ -1,6 +1,6 @@
 import { Container, Sprite, Text } from "pixi.js";
 import { tickerAdd, tickerRemove } from "../../../app/application";
-import { images, sounds } from "../../../app/assets";
+import { atlases, sounds } from "../../../app/assets";
 import { soundPlay } from "../../../app/sound";
 import { styles } from "../../../app/styles";
 import { removeCursorPointer, setCursorPointer } from "../../../utils/functions";
@@ -28,7 +28,7 @@ export default class SkinItem extends Container {
 
         const price = playerAvatarsShop['player_' + skinIndex]
         if (price > 0) {
-            this.priceCoin = new Sprite(images.coin)
+            this.priceCoin = new Sprite(atlases.ui.textures.coin)
             this.priceCoin.scale.set(0.35)
             this.priceContainer.addChild(this.priceCoin)
     
@@ -39,7 +39,7 @@ export default class SkinItem extends Container {
     
             this.priceContainer.position.set( -this.priceContainer.width * 0.5 - 5, 40)
         } else {
-            this.done = new Sprite(images.done)
+            this.done = new Sprite(atlases.ui.textures.done)
             this.done.scale.set(0.35)
             this.priceContainer.addChild(this.done)
             this.priceContainer.position.set( -this.priceContainer.width * 0.5, 0)
@@ -71,7 +71,7 @@ export default class SkinItem extends Container {
         this.priceTex.destroy()
         this.priceTex = null
 
-        this.done = new Sprite(images.done)
+        this.done = new Sprite(atlases.ui.textures.done)
         this.done.scale.set(0.35)
         this.priceContainer.addChild(this.done)
         this.priceContainer.position.set( -this.priceContainer.width * 0.5, 0)

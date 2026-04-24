@@ -1,6 +1,6 @@
 import { Container, Text, Point, Graphics, Sprite } from "pixi.js";
 import { getSafeAreaOffsets, kill, tickerAdd, tickerRemove } from "../../../app/application";
-import { images } from "../../../app/assets";
+import { atlases } from "../../../app/assets";
 import { EventHub, events, pauseGameplay } from "../../../app/events";
 import { styles } from "../../../app/styles";
 import { playerAddScore, playerCoins, playerLevel, playerProgress, playerSaves, playerScore, playerTarget } from "../../state";
@@ -32,7 +32,7 @@ export default class UI extends Container {
         this.centerTop = new Container()
         this.addChild(this.centerTop)
 
-        this.levelIcon = new Sprite(images.cup)
+        this.levelIcon = new Sprite(atlases.ui.textures.cup)
         this.levelIcon.scale.set(0.5)
         this.addChild(this.levelIcon)
 
@@ -56,13 +56,13 @@ export default class UI extends Container {
         this.comboText.anchor.set(0, 0)
         this.centerTop.addChild(this.comboText)
 
-        this.pauseButton = new TapIcon( images.pause, pauseGameplay, true )
+        this.pauseButton = new TapIcon( atlases.ui.textures.pause, pauseGameplay, true )
         this.pauseButton.anchor.set(1, 0)
         this.pauseButton.scale.set(0.5)
         this.addChild(this.pauseButton)
 
         this.coinAnimations = 0
-        this.coinIcon = new Sprite(images.coin)
+        this.coinIcon = new Sprite(atlases.ui.textures.coin)
         this.coinIcon.anchor.set(0, 1)
         this.coinIcon.scale.set(0.5)
         this.addChild(this.coinIcon)
@@ -72,7 +72,7 @@ export default class UI extends Container {
         this.addChild(this.coinsText)
 
         this.saveAnimations = 0
-        this.saveIcon = new Sprite(images.save)
+        this.saveIcon = new Sprite(atlases.ui.textures.save)
         this.saveIcon.anchor.set(1, 1)
         this.saveIcon.scale.set(0.5)
         this.addChild(this.saveIcon)

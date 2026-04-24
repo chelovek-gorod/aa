@@ -1,6 +1,6 @@
 import { Particle, ParticleContainer } from "pixi.js"
 import { tickerAdd, tickerRemove } from "../../../app/application"
-import { images } from "../../../app/assets"
+import { atlases } from "../../../app/assets"
 import { EventHub, events } from "../../../app/events"
 import { timeScale } from "../../state"
 import { NOISE_BUFFER, NOISE_BUFFER_SIZE, NOISE_MASK, _2PI } from "./constants"
@@ -27,7 +27,7 @@ function getScale(isBig) {
 function createSpark( isBig = false ) {
     const scale = getScale(isBig)
     const spark = new Particle({
-        texture: images.spark,
+        texture: atlases.gameplay.textures.spark,
         x: 0,
         y: 0,
         anchorX: 0.5,

@@ -10,7 +10,7 @@ import { SCENE_NAME } from '../SceneManager'
 import { getFirstUserAction, soundPlay } from '../../../app/sound'
 import { getLanguage } from '../../localization'
 import { TEXT_GET_FIRST_CLICK } from '../../localText'
-import { isReadySDK } from '../../storage'
+import { gameReadySDK, isReadySDK } from '../../storage'
 import { playerScore } from '../../state'
 
 const ALPHA_STEP = 0.003
@@ -218,6 +218,7 @@ export default class LoadScene extends Container {
     getClick() {
         if (!this.isLoadingDone) return
 
+        gameReadySDK()
         getFirstUserAction()
         soundPlay(sounds.se_click)
 
