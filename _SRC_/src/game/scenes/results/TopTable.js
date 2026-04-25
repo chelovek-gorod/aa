@@ -117,25 +117,26 @@ export default class TopTable extends Container {
             const icon = new Sprite(atlases.ui.textures['medal_' + data.rank])
             icon.anchor.set(0.5)
             icon.scale.set(0.5)
-            icon.position.set(90, y)
+            icon.position.set(60, y)
             this.listContainer.addChild(icon)
         } else {
             const rank = new Text({ text: data.rank.toLocaleString('ru-RU'), style: styles.topTableCenter })
             rank.anchor.set(0.5)
-            rank.position.set(90, y)
+            rank.scale.set(data.rank > 999_999 ? 0.75 : 1)
+            rank.position.set(60, y)
             this.listContainer.addChild(rank)
         }
 
         const playerAvatar = new Sprite(atlases.ui.textures.player_avatar)
         playerAvatar.anchor.set(0.5)
-        playerAvatar.position.set(200, y)
+        playerAvatar.position.set(150, y)
         playerAvatar.width = 48
         playerAvatar.height = 48
         this.listContainer.addChild(playerAvatar)
 
         const avatarMask = new Sprite(atlases.ui.textures.player_avatar_mask)
         avatarMask.anchor.set(0.5)
-        avatarMask.position.set(200, y)
+        avatarMask.position.set(150, y)
         avatarMask.width = 48
         avatarMask.height = 48
         this.listContainer.addChild(avatarMask)
@@ -159,13 +160,14 @@ export default class TopTable extends Container {
             ? data.playerName.slice(0, 20) + '...' 
             : data.playerName
         const playerName = new Text({ text: displayName, style: styles.topTableLeft })
-        playerName.anchor.set(0.5)
-        playerName.position.set(290, y)
+        playerName.anchor.set(0, 0.5)
+        playerName.scale.set(displayName.length > 15 ? 0.5 : 0.75)
+        playerName.position.set(180, y)
         this.listContainer.addChild(playerName)
 
         const playerScore = new Text({ text: formatNumber(data.score, true), style: styles.topTableRight })
         playerScore.anchor.set(1, 0.5)
-        playerScore.position.set(620, y)
+        playerScore.position.set(640, y)
         this.listContainer.addChild(playerScore)
 
         const line = new Sprite(atlases.ui.textures.medal_line)
