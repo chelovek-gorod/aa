@@ -1,13 +1,16 @@
 import { Container, Text, Sprite } from "pixi.js";
-import { getSafeAreaOffsets, tickerAdd, tickerRemove } from "../../app/application";
+import { getAppScreen, getSafeAreaOffsets, kill, tickerAdd, tickerRemove } from "../../app/application";
 import { atlases } from "../../app/assets";
-import { startScene } from "../../app/events";
+import { EventHub, events, startScene, updateTopResults } from "../../app/events";
 import { styles } from "../../app/styles";
 import { playerCoins, playerLevel, playerSaves, playerTopScore } from "../state";
 import TapIcon from "./TapIcon"
 import { formatNumber } from "../scenes/level/UI"
 import { POPUP_TYPE } from "../popup/Popup";
 import Button from "./Button";
+import { BUTTON_TYPE, TEXT_NEED_LOGIN } from "../localText";
+import { getLanguage } from "../localization";
+import { loginPlayer, setLeaderboardScore } from "../storage";
 
 export default class MenuUI extends Container {
     constructor(menu, targetScene, buttonType, buttonCallback = null) {
@@ -81,17 +84,26 @@ export default class MenuUI extends Container {
         this.startButton.scale.set(0.75)
         this.buttonContainer.addChild(this.startButton)
         this.addChild(this.buttonContainer)
+
+        this.loginText = null
+        this.loginButton = null
+
+        EventHub.on( events.updateLanguage, this.updateLanguage, this )
     }
 
     screenResize(screenData) {
         const safeArea = getSafeAreaOffsets()
         const scaleUI = Math.min( 1, screenData.width / 500, screenData.height / 500 )
+        const scaleBC = Math.min( scaleUI, 
+            this.loginButton ? screenData.width / 800 : screenData.width / 400
+        )
 
         this.levelContainer.scale.set(scaleUI)
         this.settingsContainer.scale.set(scaleUI)
         this.coinContainer.scale.set(scaleUI)
         this.saveContainer.scale.set(scaleUI)
-        this.buttonContainer.scale.set(scaleUI)
+
+        this.buttonContainer.scale.set(scaleBC)
 
         const topX = screenData.centerX - 10
         const topY = -screenData.centerY + 10 + safeArea.top
@@ -108,7 +120,51 @@ export default class MenuUI extends Container {
             this.saveContainer.position.set(topX - 65 * scaleUI, topY + 80 * scaleUI)
         }
 
-        this.buttonContainer.position.set(0, screenData.centerY - 10 -75 * scaleUI - safeArea.bottom)
+        this.buttonContainer.position.set(0, screenData.centerY - 10 -75 * scaleBC - safeArea.bottom)
+        if (this.loginButton) {
+            this.startButton.position.set(-140, 0)
+            this.loginButton.position.set(140, 0)
+            this.loginText.position.set(0, -70)
+        } else {
+            this.startButton.position.set(0, 0)
+        }
+    }
+
+    changeLogin(isAuthorized) {
+        if (isAuthorized) {
+            if (this.loginText) {
+                this.buttonContainer.removeChild(this.loginText)
+                this.loginText.destroy()
+                this.loginText = null
+            }
+            if (this.loginButton) {
+                this.buttonContainer.removeChild(this.loginButton)
+                kill(this.loginButton)
+                this.loginButton = null
+            }
+        } else {
+            if (!this.loginText) {
+                this.loginText = new Text({text: TEXT_NEED_LOGIN[getLanguage()], style: styles.topTableCenter})
+                this.loginText.anchor.set(0.5)
+                this.buttonContainer.addChild(this.loginText)
+            }
+
+            if (!this.loginButton) {
+                this.loginButton = new Button(null, BUTTON_TYPE.LOGIN, this.clickLogin.bind(this))
+                this.loginButton.scale.set(0.75)
+                this.buttonContainer.addChild(this.loginButton)
+            }
+        }
+        this.screenResize(getAppScreen())
+    }
+
+    clickLogin() {
+        loginPlayer((isOk) => {
+            if (isOk) {
+                setLeaderboardScore(playerTopScore)
+                updateTopResults()
+            }
+        })
     }
 
     openSettings() {
@@ -138,6 +194,10 @@ export default class MenuUI extends Container {
             }
         this.startButton.setCallback(this.buttonCallback.bind(this))
         if (buttonType) this.startButton.setTextKey( buttonType )
+    }
+
+    updateLanguage(lang) {
+        if (this.loginText) this.loginText.text = TEXT_NEED_LOGIN[lang]
     }
 
     tick(deltaMs) {
@@ -170,5 +230,6 @@ export default class MenuUI extends Container {
 
     kill() {
         tickerRemove(this)
+        EventHub.off( events.updateLanguage, this.updateLanguage, this )
     }
 }

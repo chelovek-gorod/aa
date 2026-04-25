@@ -197,6 +197,7 @@ export default class Menu extends Container {
             if (done) return
 
             if (isOk) {
+                done = true
                 startScene( SCENE_NAME.Wheel )
             } else {
                 const message = TEXT_FLY_MESSAGE[FLY_MESSAGE_TYPE.ERROR][getLanguage()]

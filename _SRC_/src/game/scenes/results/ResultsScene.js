@@ -32,10 +32,6 @@ export default class ResultsScene extends Container {
         this.mainContainer.addChild(this.spinner)
 
         this.table = null
-        this.tableHeight = 0
-
-        //this.test = new Graphics()
-        //this.addChild(this.test)
 
         this.ui = new MenuUI(this, SCENE_NAME.Menu, BUTTON_TYPE.BACK)
         this.addChild(this.ui)
@@ -44,6 +40,7 @@ export default class ResultsScene extends Container {
         this.addChild(this.popup)
 
         EventHub.on( events.getTopResults, this.getTopResults, this )
+        EventHub.on( events.updateTopResults, this.updateTopResults, this )
     }
 
     screenResize(screenData) {
@@ -61,25 +58,8 @@ export default class ResultsScene extends Container {
         const scaleY = Math.min(1, height / TABLE_HEIGHT)
         const scale = Math.min(scaleX, scaleY)
 
-        this.tableHeight = Math.min(440, Math.floor(height / scale))
-        if (this.table) this.table.setHeight(this.tableHeight)
-
         this.mainContainer.scale.set(scale)
         this.mainContainer.position.set(0, screenData.isLandscape ? -40 : 10)
-
-        // this.updateTest(width, height, scale, screenData.isLandscape)
-    }
-
-    updateTest(freeWidth, freeHeight, scale, isH) {
-        this.test.clear()
-        this.test.roundRect(
-            -freeWidth * 0.5,
-            isH ? -freeHeight * 0.5 - 30 : -freeHeight * 0.5 + 10,
-            freeWidth,
-            freeHeight,
-            18
-        )
-        this.test.fill(0x00ff00)
     }
 
     getTopResults(data) {
@@ -87,23 +67,30 @@ export default class ResultsScene extends Container {
         kill(this.spinner)
         this.spinner = null
 
-        this.table = new TopTable(data, this.tableHeight, this.updateTableData.bind(this))
+        this.table = new TopTable(data)
         this.mainContainer.addChild(this.table)
+
+        this.ui.changeLogin(data.isAuthorized)
     }
 
-    updateTableData() {
-        this.mainContainer.removeChild(this.table)
-        kill(this.table)
-        this.table = null
+    updateTopResults() {
+        if (this.table) {
+            this.mainContainer.removeChild(this.table)
+            kill(this.table)
+            this.table = null
+        }
         
-        this.spinner = new LoadSpinner()
-        this.mainContainer.addChild(this.spinner)
-
+        if (!this.spinner) {
+            this.spinner = new LoadSpinner()
+            this.mainContainer.addChild(this.spinner)
+        }
+        
         getTopPlayers()
     }
 
     kill() {
         EventHub.off( events.getTopResults, this.getTopResults, this )
+        EventHub.off( events.updateTopResults, this.updateTopResults, this )
 
         if (this.table) this.table.clearTable()
     }

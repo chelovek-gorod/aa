@@ -15,7 +15,7 @@ export const setFreeSpinTime = () => freeSpinTime = Date.now() + 1000 * 60 * 60 
 
 export const LEVEL_TYPE = createEnum(['GROUND', 'WATER', 'SNOW', 'MOON'])
 
-export let levelType = LEVEL_TYPE.WATER
+export let levelType = LEVEL_TYPE.GROUND
 let previousLevelTypes = []
 
 export let playerAvatarsShop = {

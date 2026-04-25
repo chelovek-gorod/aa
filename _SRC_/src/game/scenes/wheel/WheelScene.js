@@ -119,6 +119,8 @@ export default class WheelScene extends Container {
             if (done) return
 
             if (isOk) {
+                done = true
+                
                 this.adButton.setStartScale(0)
                 this.wheelDisc.tint = null
                 this.wheelBorder.tint = null

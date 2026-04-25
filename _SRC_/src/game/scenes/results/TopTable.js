@@ -3,19 +3,16 @@ import { atlases } from "../../../app/assets"
 import { EventHub, events } from "../../../app/events"
 import { styles } from "../../../app/styles"
 import { getLanguage } from "../../localization"
-import { BUTTON_TYPE, TEXT_EMPTY_TOP_LIST, TEXT_NEED_LOGIN } from "../../localText"
-import { playerScore } from "../../state"
-import { loginPlayer, setLeaderboardScore } from "../../storage"
-import Button from "../../UI/Button"
+import { TEXT_EMPTY_TOP_LIST } from "../../localText"
 import ScrollContainer from "../../UI/ScrollContainer"
 import { formatNumber } from "../level/UI"
 import { TABLE_HEIGHT, TABLE_WIDTH } from "./ResultsScene"
 
 const LINE_H = 64
-const LOGIN_OFFSET = 128
+const LOGIN_OFFSET = 64
 
 export default class TopTable extends Container {
-    constructor(data, height, updateCallback) {
+    constructor(data) {
         super()
 
         this.isAuthorized = data.isAuthorized
@@ -23,39 +20,16 @@ export default class TopTable extends Container {
         this.aroundEntries = data.aroundEntries || []
         this.topEntries = data.topEntries || []
 
-        this.tableHeight = this.isAuthorized ? height : height - LOGIN_OFFSET
-        this.updateCallback = updateCallback
+        this.emptyText = null
 
         this.listContainer = new Container()
         this.fillTable()
 
-        this.scroller = new ScrollContainer(this.listContainer, this.tableHeight)
+        this.scroller = new ScrollContainer(this.listContainer, TABLE_HEIGHT)
         this.scroller.position.set(-TABLE_WIDTH * 0.5, -TABLE_HEIGHT * 0.5)
         this.addChild(this.scroller)
 
-        this.loginButton = null
-        this.loginText = null
-        this.emptyText = null
-
         EventHub.on( events.updateLanguage, this.getLanguage, this )
-    }
-
-    setHeight(height) {
-        this.tableHeight = this.isAuthorized ? height : height - LOGIN_OFFSET
-        this.scroller.setHeight(this.tableHeight)
-        if (this.loginText) this.loginText.position.y = this.tableHeight * 0.5 - 10
-        if (this.loginButton) this.loginButton.position.y = this.tableHeight * 0.5 + 50
-    }
-
-    login() {
-        loginPlayer((isOk) => {
-            if (isOk) {
-                setLeaderboardScore(playerScore)
-                this.clearTable()
-                this.updateCallback()
-                console.log('LOG IN')
-            }
-        })
     }
 
     clearTable() {
@@ -66,14 +40,6 @@ export default class TopTable extends Container {
                 }
                 child.destroy({ children: true })
             })
-        }
-        if (this.loginButton) {
-            this.removeChild(this.loginButton)
-            this.loginButton = null
-        }
-        if (this.loginText) {
-            this.removeChild(this.loginText)
-            this.loginText = null
         }
         if (this.emptyText) {
             this.removeChild(this.emptyText)
@@ -95,18 +61,6 @@ export default class TopTable extends Container {
                 if (rowData === null) this.addSeparator(i)
                 else this.addLine(rowData, i, i === lastRowIndex)
             })
-        }
-
-        if (!this.isAuthorized) {
-            this.loginText = new Text({ text: TEXT_NEED_LOGIN[getLanguage()], style: styles.topTableCenter })
-            this.loginText.anchor.set(0.5)
-            this.loginText.position.set(0, this.tableHeight * 0.5 - 10)
-            this.addChild(this.loginText)
-
-            this.loginButton = new Button(null, BUTTON_TYPE.LOGIN, this.login.bind(this))
-            this.loginButton.scale.set(0.75)
-            this.loginButton.position.set(0, this.tableHeight * 0.5 + 50)
-            this.addChild(this.loginButton)
         }
     }
 
@@ -188,8 +142,10 @@ export default class TopTable extends Container {
         playerAvatar.mask = avatarMask
 
         if (data.avatarSrc) {
+            console.log('data.avatarSrc', data.avatarSrc)
             Assets.load({
                 src: data.avatarSrc,
+                loadParser: 'loadTextures',
                 data: { crossOrigin: 'anonymous' }
             }).then((avatarTexture) => {
                 playerAvatar.texture = avatarTexture
@@ -221,7 +177,6 @@ export default class TopTable extends Container {
     }
 
     getLanguage(lang) {
-        if (this.loginText) this.loginText.text = TEXT_NEED_LOGIN[lang]
         if (this.emptyText) this.emptyText.text = TEXT_EMPTY_TOP_LIST[lang]
     }
 

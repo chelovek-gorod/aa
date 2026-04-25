@@ -31,6 +31,7 @@ export const events = createEnum([
 
     'launchFirework',
 
+    'updateTopResults',
     'getTopResults',
     'freeSpinPopupClosed',
 ])
@@ -96,6 +97,9 @@ export function resumeGameplay() {
     EventHub.emit( events.resumeGameplay )
 }
 
+export function updateTopResults() {
+    EventHub.emit( events.updateTopResults )
+}
 export function getTopResults(data) {
     EventHub.emit( events.getTopResults, data )
 }

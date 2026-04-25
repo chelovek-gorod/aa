@@ -1,253 +1,89 @@
+{"frames": {
+
+"bg_day_sky":
 {
-  "frames": {
-    "bg_day_sky": {
-      "frame": {
-        "x": 3,
-        "y": 3,
-        "w": 900,
-        "h": 699
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 900,
-        "h": 699
-      },
-      "sourceSize": {
-        "w": 900,
-        "h": 700
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bg_night_sky": {
-      "frame": {
-        "x": 909,
-        "y": 3,
-        "w": 900,
-        "h": 699
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 900,
-        "h": 699
-      },
-      "sourceSize": {
-        "w": 900,
-        "h": 700
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bg_water_top": {
-      "frame": {
-        "x": 1815,
-        "y": 3,
-        "w": 900,
-        "h": 168
-      },
-      "rotated": true,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 531,
-        "w": 900,
-        "h": 168
-      },
-      "sourceSize": {
-        "w": 900,
-        "h": 700
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bg_snow_top": {
-      "frame": {
-        "x": 3,
-        "y": 909,
-        "w": 900,
-        "h": 497
-      },
-      "rotated": true,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 202,
-        "w": 900,
-        "h": 497
-      },
-      "sourceSize": {
-        "w": 900,
-        "h": 700
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bg_moon_top": {
-      "frame": {
-        "x": 3,
-        "y": 1815,
-        "w": 900,
-        "h": 198
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 502,
-        "w": 900,
-        "h": 198
-      },
-      "sourceSize": {
-        "w": 900,
-        "h": 700
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bg_ground_bottom": {
-      "frame": {
-        "x": 909,
-        "y": 708,
-        "w": 900,
-        "h": 368
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 900,
-        "h": 368
-      },
-      "sourceSize": {
-        "w": 900,
-        "h": 368
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bg_snow_bottom": {
-      "frame": {
-        "x": 506,
-        "y": 708,
-        "w": 900,
-        "h": 368
-      },
-      "rotated": true,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 900,
-        "h": 368
-      },
-      "sourceSize": {
-        "w": 900,
-        "h": 368
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bg_water_bottom": {
-      "frame": {
-        "x": 909,
-        "y": 1082,
-        "w": 900,
-        "h": 368
-      },
-      "rotated": true,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 900,
-        "h": 368
-      },
-      "sourceSize": {
-        "w": 900,
-        "h": 368
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bg_moon_bottom": {
-      "frame": {
-        "x": 1283,
-        "y": 1082,
-        "w": 900,
-        "h": 308
-      },
-      "rotated": true,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 40,
-        "w": 900,
-        "h": 308
-      },
-      "sourceSize": {
-        "w": 900,
-        "h": 368
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bg_ground_top": {
-      "frame": {
-        "x": 1597,
-        "y": 1082,
-        "w": 900,
-        "h": 255
-      },
-      "rotated": true,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 444,
-        "w": 900,
-        "h": 255
-      },
-      "sourceSize": {
-        "w": 900,
-        "h": 700
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    }
-  },
-  "meta": {
-    "image": "levels.png",
-    "format": "RGBA8888",
-    "size": {
-      "w": 1986,
-      "h": 2016
-    },
-    "scale": 1
-  }
+	"frame": {"x":2,"y":2,"w":900,"h":700},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":900,"h":700},
+	"sourceSize": {"w":900,"h":700}
+},
+"bg_ground_bottom":
+{
+	"frame": {"x":2,"y":1406,"w":900,"h":368},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":900,"h":368},
+	"sourceSize": {"w":900,"h":368}
+},
+"bg_ground_top":
+{
+	"frame": {"x":904,"y":1555,"w":900,"h":257},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":443,"w":900,"h":257},
+	"sourceSize": {"w":900,"h":700}
+},
+"bg_moon_bottom":
+{
+	"frame": {"x":904,"y":1243,"w":900,"h":310},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":39,"w":900,"h":310},
+	"sourceSize": {"w":900,"h":368}
+},
+"bg_moon_top":
+{
+	"frame": {"x":1806,"y":2,"w":900,"h":199},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":501,"w":900,"h":199},
+	"sourceSize": {"w":900,"h":700}
+},
+"bg_night_sky":
+{
+	"frame": {"x":2,"y":704,"w":900,"h":700},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":900,"h":700},
+	"sourceSize": {"w":900,"h":700}
+},
+"bg_snow_bottom":
+{
+	"frame": {"x":904,"y":503,"w":900,"h":368},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":900,"h":368},
+	"sourceSize": {"w":900,"h":368}
+},
+"bg_snow_top":
+{
+	"frame": {"x":904,"y":2,"w":900,"h":499},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":201,"w":900,"h":499},
+	"sourceSize": {"w":900,"h":700}
+},
+"bg_water_bottom":
+{
+	"frame": {"x":904,"y":873,"w":900,"h":368},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":900,"h":368},
+	"sourceSize": {"w":900,"h":368}
+},
+"bg_water_top":
+{
+	"frame": {"x":1806,"y":904,"w":900,"h":170},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":530,"w":900,"h":170},
+	"sourceSize": {"w":900,"h":700}
+}},
+"meta": {
+	"image": "levels.png",
+	"format": "RGBA8888",
+	"size": {"w":2007,"h":1814},
+	"scale": "1"
+}
 }
